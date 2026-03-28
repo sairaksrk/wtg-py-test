@@ -1,0 +1,14 @@
+{
+	"zod": {
+		"error": "Please specify correctly: {code}",
+		"required": "Please specify",
+		"minimum": "Please specify at least {minimum} characters",
+		"maximum": "Please specify at most {maximum} characters",
+		"invalid_type_number": "Please specify a number",
+		"invalid_type_string": "Please specify a string",
+		"invalid_format_email": "Email format is incorrect",
+		"password-not-match": "Passwords do not match",
+		"email-already-registered": "This email is already registered",
+		"invalid-title": "Please select a valid title from the list"
+	}
+}

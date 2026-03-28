@@ -1,0 +1,14 @@
+{
+	"zod": {
+		"error": "กรุณาระบุอย่างถูกต้อง: {code}",
+		"required": "กรุณาระบุ",
+		"minimum": "กรุณาระบุอย่างน้อย {minimum} ตัว",
+		"maximum": "กรุณาระบุ {maximum} ตัว",
+		"invalid_type_number": "กรุณาระบุตัวเลขเท่านั้น",
+		"invalid_type_string": "กรุณาระบุตัวอักษรเท่านั้น",
+		"invalid_format_email": "รูปแบบอีเมลไม่ถูกต้อง",
+		"password-not-match": "รหัสผ่านไม่ตรงกัน",
+		"email-already-registered": "อีเมลนี้ถูกใช้งานแล้ว",
+		"invalid-title": "กรุณาเลือกคำนำหน้าจากรายการที่กำหนด"
+	}
+}

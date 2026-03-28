@@ -1,0 +1,141 @@
+{
+  "button": {
+    "save": "บันทึกรายการ",
+    "cancel": "ยกเลิกรายการ",
+    "secondary-cancel": "ยกเลิก",
+    "confirm": "ยืนยัน",
+    "close": "ปิด",
+    "add-item": "เพิ่มรายการ",
+    "delete": "ลบ"
+  },
+  "pagination": {
+    "from": "จาก",
+    "show": "แสดง",
+    "of": "ของ",
+    "total": "รายการ"
+  },
+  "filter": "ตัวกรอง",
+  "clear": "ล้างเงื่อนไข",
+  "search-data": "ค้นหาข้อมูล",
+
+  "successfully": "ดำเนินการสำเร็จ",
+  "successfully-description": "ระบบได้ดำเนินการตามคำสั่งของคุณเรียบร้อยแล้ว",
+  "save-data-confirmation": "ยืนยันการบันทึกข้อมูล",
+  "save-data-confirmation-description": "โปรดตรวจสอบความถูกต้องของข้อมูลก่อนบันทึก",
+  "delete-confirmation": "ยืนยันการลบ",
+  "delete-confirmation-description": "คุณต้องการที่จะลบรายการนี้ใช่หรือไม่?",
+  "tools": "เครื่องมือ",
+  "preview-dropdown": "ดูข้อมูล",
+  "edit-dropdown": "จัดการข้อมูล",
+  "delete-dropdown": "ลบข้อมูล",
+  "preview-title": "ดูข้อมูล",
+  "preview-sub-title": "รายละเอียดของข้อมูล",
+  "not-found": "ไม่พบข้อมูล",
+  "search-placeholder": "พิมพ์เพื่อค้นหา",
+  "error-occur": "พบข้อผิดพลาด",
+  "error-detail": "รายละเอียดข้อผิดพลาด",
+  "home": "หน้าแรก",
+  "active": "ใช้งาน",
+  "inactive": "ไม่ใช้งาน",
+  "created-at": "วันที่สร้าง",
+  "no-data": "ไม่มีข้อมูล",
+  "showing-results": "แสดง {from} ถึง {to} จาก {total} รายการ",
+  "edit-item": "แก้ไขรายการ",
+  "delete-item": "ลบรายการ",
+  "view-item": "ดูรายการ",
+  "breadcrumb": {
+    "detail": "รายละเอียด"
+  },
+  "alert": {
+    "confirm": "ยืนยัน",
+    "cancel": "ยกเลิก",
+    "close": "ปิด",
+    "error-occur": "พบข้อผิดพลาด",
+    "error-detail": "รายละเอียดข้อผิดพลาด"
+  },
+  "add-item": "เพิ่มรายการ",
+  "module-title": "ระบบแดชบอร์ด <br></br> (Dashboard)",
+  "external": {
+    "reset": "รีเซ็ต",
+    "send": "ส่ง",
+    "sending": "กำลังส่ง...",
+    "email-sent": "ส่งอีเมลแล้ว",
+    "sms-sent": "ส่ง SMS แล้ว",
+    "to": "ถึง",
+    "from": "จาก",
+    "subject": "หัวข้อ",
+    "body": "เนื้อหา",
+    "message": "ข้อความ",
+    "phone-number": "เบอร์โทรศัพท์",
+    "company-name": "ชื่อบริษัท",
+    "company-logo-url": "โลโก้บริษัท (URL)",
+    "last-payload": "Payload ล่าสุด",
+    "last-response": "Response ล่าสุด",
+    "placeholder": {
+      "email-to": "user@example.com",
+      "email-from": "noreply@your-domain.com",
+      "subject": "หัวข้อ",
+      "body": "พิมพ์ข้อความ...",
+      "phone": "เช่น 66812345678",
+      "sms": "พิมพ์ข้อความ SMS...",
+      "company": "WeTogether",
+      "logo": "https://..."
+    },
+    "helper": {
+      "required-email": "กรุณากรอก ถึง / จาก / หัวข้อ / ชื่อบริษัท",
+      "required-sms": "กรุณากรอก เบอร์โทรศัพท์ และ ข้อความ",
+      "sms-msisdn": "ฝั่งระบบต้องการรูปแบบ msisdn (ตัวเลขเท่านั้น) ผ่าน ThaiBulkSMS",
+      "length": "ความยาว: {count}"
+    }
+  },
+  "demo": {
+    "refresh": "รีเฟรช",
+    "loading": "กำลังโหลด...",
+    "create-new": "สร้างใหม่",
+    "edit-item": "แก้ไขรายการ",
+    "create-item": "สร้างรายการใหม่",
+    "delete-item": "ลบรายการ",
+    "name-th": "ชื่อ (ไทย)",
+    "name-en": "ชื่อ (อังกฤษ)",
+    "file-name": "ชื่อไฟล์",
+    "file-url": "URL ไฟล์",
+    "file-upload": "อัปโหลดไฟล์",
+    "upload-file": "อัปโหลดไฟล์",
+    "uploading": "กำลังอัปโหลด...",
+    "created-at": "สร้างเมื่อ",
+    "actions": "การดำเนินการ",
+    "list-view": "มุมมองรายการ",
+    "file": "ไฟล์",
+    "view-file": "ดูไฟล์",
+    "cancel": "ยกเลิก",
+    "update": "อัปเดต",
+    "create": "สร้าง",
+    "saving": "กำลังบันทึก...",
+    "required": "จำเป็น",
+    "no-items": "ไม่พบรายการ คลิก \"สร้างใหม่\" เพื่อเพิ่มรายการ",
+    "placeholder": {
+      "name-th": "กรอกชื่อภาษาไทย",
+      "name-en": "กรอกชื่อภาษาอังกฤษ",
+      "file-name": "กรอกชื่อไฟล์",
+      "file-url": "กรอก URL ไฟล์"
+    },
+    "validation": {
+      "title": "ข้อผิดพลาดในการตรวจสอบ",
+      "required-fields": "ชื่อ (ไทย) และ ชื่อ (อังกฤษ) เป็นฟิลด์ที่จำเป็น"
+    },
+    "success": {
+      "created-title": "สร้างสำเร็จ",
+      "created-desc": "สร้าง {name} สำเร็จแล้ว",
+      "updated-title": "อัปเดตสำเร็จ",
+      "updated-desc": "อัปเดต {name} สำเร็จแล้ว",
+      "deleted-title": "ลบสำเร็จ",
+      "deleted-desc": "ลบ {name} สำเร็จแล้ว"
+    },
+    "error": {
+      "title": "ข้อผิดพลาด",
+      "save-failed": "บันทึกไม่สำเร็จ",
+      "delete-failed": "ลบไม่สำเร็จ",
+      "fetch-failed": "โหลดข้อมูลไม่สำเร็จ"
+    }
+  }
+}

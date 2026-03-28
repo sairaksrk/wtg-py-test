@@ -1,0 +1,29 @@
+{
+  "add-request-information": "Add Request",
+  "rate": "Rate",
+  "field": {
+    "request-number": "Request Number",
+    "date-of-request": "Search Request",
+    "agency": "Agency",
+    "position-of-request": "Position",
+    "status": "Status",
+    "responsible-person": "Responsible Person",
+    "select-agency": "Select Agency",
+    "position-type": "Position Type",
+    "position-level": "Position Level",
+    "position": "Position",
+    "quantity": "Quantity",
+    "amount" : "Amount"
+  },
+
+  "column-manpower": {
+    "actions": "Actions",
+    "request-number":  "Request Number",
+    "submission-date": "Submission Data",
+    "agency": "Agency",
+    "number-of-requests":  "Number Of Requests",
+    "number-of-amount": "Number Of Amount",
+    "status": "Status",
+    "responsible-person": "Responsible Person"
+  }
+}

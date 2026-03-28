@@ -1,0 +1,29 @@
+{
+  "add-request-information": "เพิ่มข้อมุลคำขอ",
+  "rate": "อัตรา",
+  "field": {
+    "request-number": "เลขที่คำขอ",
+    "date-of-request": "วันที่ขอ",
+    "agency": "หน่วยงาน",
+    "position-of-request": "ตำแหน่งที่ร้องขอ",
+    "status": "สถานะ",
+    "responsible-person": "ผู้รับผิดชอบ",
+    "select-agency": "เลือกหน่วยงาน",
+    "position-type": "ประเภทตำแหน่ง",
+    "position-level": "ระดับตำแหน่ง",
+    "position": "ตำแหน่ง",
+    "quantity": "จำนวน",
+    "amount": "จำนวน"
+  },
+
+  "column-manpower": {
+    "actions": "เครื่องมือ",
+    "request-number": "เลขที่คำขอ",
+    "submission-date": "วันที่ส่งเรื่อง",
+    "agency": "หน่วยงาน",
+    "number-of-requests": "จำนวนคำขอ",
+    "number-of-amount": "จำนวนอนุมัติ",
+    "status": "สถานะ",
+    "responsible-person": "ผู้รับผิดชอบ"
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "button": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "secondary-cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "add-item": "Add Item",
+    "delete": "Delete"
+  },
+  "pagination": {
+    "from": "From",
+    "show": "Show",
+    "of": "of",
+    "total": "Total(s)"
+  },
+
+  "filter": "Filter",
+  "clear": "Clear",
+  "search-data": "Search Data",
+
+  "successfully": "Successfully",
+  "successfully-description": "The system has successfully processed your order.",
+  "save-data-confirmation": "Save Data Confirmation",
+  "save-data-confirmation-description": "โปรดตรวจสอบความถูกต้องของข้อมูลก่อนบันทึก",
+  "delete-confirmation": "Delete Confirmation",
+  "delete-confirmation-description": "Are you sure you want to delete this item? This action cannot be undone.",
+  "tools": "Tools",
+  "preview-dropdown": "Preview",
+  "edit-dropdown": "Manage",
+  "delete-dropdown": "Delete",
+  "preview-title": "Preview",
+  "preview-sub-title": "Preview information",
+  "not-found": "Not found",
+  "search-placeholder": "Type to search",
+  "error-occur": "Error occur",
+  "error-detail": "Error detail",
+  "home": "Home",
+  "active": "Active",
+  "inactive": "Inactive",
+  "created-at": "Created At",
+  "no-data": "No data available",
+  "edit-item": "Edit Item",
+  "delete-item": "Delete Item",
+  "view-item": "View Item",
+  "showing-results": "Showing {from} to {to} of {total} results",
+  "breadcrumb": {
+    "detail": "Detail"
+  },
+  "alert": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "close": "Close",
+    "error-occur": "Error occur",
+    "error-detail": "Error detail"
+  },
+  "add-item": "Add Item",
+  "module-title": "Dashboard <br></br> System",
+  "external": {
+    "reset": "Reset",
+    "send": "Send",
+    "sending": "Sending...",
+    "email-sent": "Email sent",
+    "sms-sent": "SMS sent",
+    "to": "To",
+    "from": "From",
+    "subject": "Subject",
+    "body": "Body",
+    "message": "Message",
+    "phone-number": "Phone number",
+    "company-name": "Company Name",
+    "company-logo-url": "Company Logo (URL)",
+    "last-payload": "Last payload",
+    "last-response": "Last response",
+    "placeholder": {
+      "email-to": "user@example.com",
+      "email-from": "noreply@your-domain.com",
+      "subject": "Subject",
+      "body": "Write your message...",
+      "phone": "e.g. 66812345678",
+      "sms": "Write your SMS...",
+      "company": "WeTogether",
+      "logo": "https://..."
+    },
+    "helper": {
+      "required-email": "Please fill in To / From / Subject / Company Name.",
+      "required-sms": "Please fill in Phone number and Message.",
+      "sms-msisdn": "Backend expects msisdn format (numbers only) via ThaiBulkSMS.",
+      "length": "Length: {count}"
+    }
+  },
+  "demo": {
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "create-new": "Create New",
+    "edit-item": "Edit Item",
+    "create-item": "Create New Item",
+    "delete-item": "Delete Item",
+    "name-th": "Name (TH)",
+    "name-en": "Name (EN)",
+    "file-name": "File Name",
+    "file-url": "File URL",
+    "file-upload": "File Upload",
+    "upload-file": "Upload File",
+    "uploading": "Uploading...",
+    "created-at": "Created At",
+    "actions": "Actions",
+    "list-view": "List View",
+    "file": "File",
+    "view-file": "View File",
+    "cancel": "Cancel",
+    "update": "Update",
+    "create": "Create",
+    "saving": "Saving...",
+    "required": "required",
+    "no-items": "No items found. Click \"Create New\" to add one.",
+    "placeholder": {
+      "name-th": "Enter Thai name",
+      "name-en": "Enter English name",
+      "file-name": "Enter file name",
+      "file-url": "Enter file URL"
+    },
+    "validation": {
+      "title": "Validation Error",
+      "required-fields": "Name (TH) and Name (EN) are required fields"
+    },
+    "success": {
+      "created-title": "Created Successfully",
+      "created-desc": "{name} has been created",
+      "updated-title": "Updated Successfully",
+      "updated-desc": "{name} has been updated",
+      "deleted-title": "Deleted Successfully",
+      "deleted-desc": "{name} has been deleted"
+    },
+    "error": {
+      "title": "Error",
+      "save-failed": "Failed to save",
+      "delete-failed": "Failed to delete",
+      "fetch-failed": "Failed to fetch data"
+    }
+  }
+}
