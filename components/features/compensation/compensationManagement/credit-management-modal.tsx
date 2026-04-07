@@ -16,12 +16,13 @@ import {
   usePositionList,
   usePositionTypeList,
 } from "@/libs/query/master.queries";
-import { useLoadingStore } from "@/stores/loading-store";
-import {
-  CreatePositionItemDto,
-  UpdatePositionItemDto,
-  // MANPOWER_SESSION_KEY,
-} from "@/types/manpower";
+// import { useLoadingStore } from "@/stores/loading-store";
+// import {
+//   CreatePositionItemDto,
+//   UpdatePositionItemDto,
+//   // MANPOWER_SESSION_KEY,
+// } from "@/types/manpower";
+
 import { formatApiError } from "@/types/api";
 import {
   useAddPositionItem,
@@ -30,24 +31,28 @@ import {
   useUpdatePositionItem,
 } from "@/libs/query/manpower.queries";
 import { useRouter } from "@/i18n/navigation";
-import { TextArea } from "@/components/ui/textarea";
 
 const positionFormSchema = z.object({
   itemName: z.string().min(1),
-  reason: z.string().min(0),
+  test1: z.string().min(1),
+  test2: z.string(),
+  test3: z.string(),
+  test4: z.string(),
 });
 
 type PositionFormValues = z.infer<typeof positionFormSchema>;
 
 interface PositionManageModalProps {
   open: boolean;
+  reqId?: string | null;
   editingId?: string | null;
   onClose: () => void;
   onSave: () => void;
 }
 
-export function ItemManagementModal({
+export function CreditManagementModal({
   open,
+  reqId,
   editingId,
   onClose,
   onSave,
@@ -55,7 +60,7 @@ export function ItemManagementModal({
   const router = useRouter();
   const c = useTranslations("common");
   const m = useTranslations("manpower");
-  const updateLoading = useLoadingStore((state) => state.updateLoading);
+  // const updateLoading = useLoadingStore((state) => state.updateLoading);
 
   const {
     control,
@@ -66,7 +71,10 @@ export function ItemManagementModal({
     resolver: zodResolver(positionFormSchema),
     defaultValues: {
       itemName: "",
-      reason: "",
+      test1: "",
+      test2: "",
+      test3: "",
+      test4: "",
     },
   });
 
@@ -120,7 +128,10 @@ export function ItemManagementModal({
     if (!editingId) {
       reset({
         itemName: "",
-        reason: "",
+        test1: "",
+        test2: "",
+        test3: "",
+        test4: "",
       });
     }
   }, [
@@ -130,7 +141,11 @@ export function ItemManagementModal({
     reset,
   ]);
 
-  const onSubmit = async (formData: PositionFormValues) => {};
+  const onSubmit = async (formData: PositionFormValues) => {
+    const reqId = "5ea31ed3-bff6-4f61-aa34-25144cda2270";
+    toastSuccess(c("successfully"), c("successfully-description"));
+    router.push(`/manage-compensation/item-request/${reqId}`);
+  };
 
   // const isLoading =
   //   isLoadingPositionType ||
@@ -154,7 +169,7 @@ export function ItemManagementModal({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
-            <p className="text-base font-medium">ข้อมูลรายละเอียดคำขอ</p>
+            {/* <p className="text-base font-medium">ข้อมูลรายละเอียดคำขอ</p> */}
 
             <Controller
               name="itemName"
@@ -162,7 +177,7 @@ export function ItemManagementModal({
               render={({ field }) => (
                 <Input
                   {...field}
-                  label="ชื่อรายการ"
+                  label="ชื่อกลุ่ม"
                   floatingLabel
                   required
                   error={errors.itemName?.message}
@@ -170,18 +185,80 @@ export function ItemManagementModal({
               )}
             />
 
-            {/* เหตุผล */}
             <Controller
-              name="reason"
+              name="test1"
               control={control}
               render={({ field }) => (
-                <TextArea
-                  {...field}
-                  label="หมายเหตุ"
-                  // disabled={isSaving}
+                <Combobox
+                  // options={test1Options}
+                  options={[
+                    {
+                      label: "วิชาการ ชำนาญการพิเศษ",
+                      value: "วิชาการ ชำนาญการพิเศษ",
+                    },
+                    {
+                      label: "วิชาการ ปฏิบัติการ",
+                      value: "วิชาการ ปฏิบัติการ",
+                    },
+                  ]}
+                  value={field.value}
+                  valueType="string"
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
+                  label="ประเภทและระดับตำแหน่ง"
                   floatingLabel
-                  error={errors.reason?.message}
-                  className="h-36"
+                  required
+                  error={errors.test1?.message}
+                />
+              )}
+            />
+
+            <p className="text-base font-medium">จัดสรรค่าตอบแทน</p>
+
+            <Controller
+              name="test2"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="ผู้อำนวยการสำนักบริหารหนี้สิน"
+                  floatingLabel
+                  // required
+                  error={errors.test2?.message}
+                  thousandSeparator
+                  // icon={}
+                />
+              )}
+            />
+
+            <Controller
+              name="test3"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="รองผู้อำนวยการ"
+                  floatingLabel
+                  // required
+                  error={errors.test3?.message}
+                  thousandSeparator
+                  // icon={}
+                />
+              )}
+            />
+            <Controller
+              name="test4"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="ผู้อำนวยการสำนัก"
+                  floatingLabel
+                  // required
+                  error={errors.test4?.message}
+                  thousandSeparator
+                  // icon={}
                 />
               )}
             />

@@ -16,7 +16,7 @@ interface ManpowerSearchModalProps {
   onSearch: (formData: any) => void;
 }
 
-export function CompensationSearchModal({
+export function RequestSearchModal({
   open,
   onClose,
   onSearch,

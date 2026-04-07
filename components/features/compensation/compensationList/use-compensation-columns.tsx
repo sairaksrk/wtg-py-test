@@ -118,11 +118,11 @@ export function useCompensationColumns({
                 <Button
                   variant="ghost"
                   size="icon"
-                  // onClick={() =>
-                  //   router.push(
-                  //     `/manage-compensation/edit/${row.original.id}`,
-                  //   )
-                  // }
+                  onClick={() =>
+                    router.push(
+                      `/manage-compensation/item-request/${row.original.id}`,
+                    )
+                  }
                   title={c("view-item")}
                   className="text-black hover:text-black"
                 >

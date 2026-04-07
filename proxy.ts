@@ -103,6 +103,7 @@
 // 		"/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
 // 	],
 // }
+
 import type { NextRequest } from "next/server"
 import console from "node:console"
 import createMiddleware from "next-intl/middleware"

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPageSize } from "@/utils/helpers";
 import { CompensationTable } from "./compensation-table";
-import { SearchCompensationModal } from "./compensation-search-modal";
+import { CompensationSearchModal } from "./compensation-search-modal";
 import { useRouter } from "@/i18n/navigation";
 import { useCurrentMenuName } from "@/hooks/use-current-menu";
 import { useTranslations } from "next-intl";
@@ -27,7 +27,7 @@ import {
   useDeleteManpowerRequest,
 } from "@/libs/query/manpower.queries";
 import { formatApiError } from "@/types/api";
-import { ItemManagementModal } from "../compensationManagement/Item-management-modal";
+import { ItemsManagementModal } from "../compensationManagement/items-management-modal";
 
 /**
  * Client Component - Compensation Lis
@@ -41,7 +41,7 @@ export default function CompensationList() {
   const alert = useAlert();
   const updateLoading = useLoadingStore((state) => state.updateLoading);
 
-  const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
+  const [filterCompensationOpen, setFilterCompensationOpen] = useState(false);
 
   const [itemManagementModalOpen, setItemManagementModalOpen] = useState({
     id: null,
@@ -109,7 +109,7 @@ export default function CompensationList() {
   const mockDataList: any = {
     data: [
       {
-        id: "01",
+        id: "5ea31ed3-bff6-4f61-aa34-25144cda2270",
         itemName: "รายการค่าตอบแทนประจำปี 1/2569",
         createdAt: "3 ส.ค. 2569 09:40",
         number: 240,
@@ -117,7 +117,7 @@ export default function CompensationList() {
         approver: "มาลีฮานัว",
       },
       {
-        id: "02",
+        id: "6ea31ed3-bff6-4f61-aa34-25144cda2270",
         itemName: "รายการค่าตอบแทนประจำปี 2/2568",
         createdAt: "1 ม.ค. 2569 09:40",
         number: 10,
@@ -125,7 +125,7 @@ export default function CompensationList() {
         approver: "มาลีฮานัว",
       },
       {
-        id: "03",
+        id: "7ea31ed3-bff6-4f61-aa34-25144cda2270",
         itemName: "รายการค่าตอบแทนประจำปี 1/2568",
         createdAt: "24 มิ.ย. 2568 09:40",
         number: 240,
@@ -133,7 +133,7 @@ export default function CompensationList() {
         approver: "มาลีฮานัว",
       },
       {
-        id: "04",
+        id: "8ea31ed3-bff6-4f61-aa34-25144cda2270",
         itemName: "รายการค่าตอบแทนประจำปี 2/2567",
         createdAt: "20 ธ.ค. 2567 09:40",
         number: 240,
@@ -193,10 +193,11 @@ export default function CompensationList() {
               <Button
                 type="button"
                 className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                onClick={() => setSearchCompensationOpen(true)}
+                onClick={() => setFilterCompensationOpen(true)}
               >
                 <Icon icon="solar:sort-linear" />
                 {c("filter")}
+                {/* ตัวกรอง */}
               </Button>
             </div>
           </div>
@@ -211,19 +212,21 @@ export default function CompensationList() {
             currentPage={filters.page || 1}
             onPageChange={(page) => setFilters({ ...filters, page })}
             rowsPerPage={filters.take}
-            onEdit={(id) => setItemManagementModalOpen({ id: id, state: true })}
+            onEdit={(id) =>
+              router.push(`/manage-compensation/item-request/${id}`)
+            }
             onDelete={onDeleteRequest}
           />
         </CardContent>
       </Card>
 
-      <SearchCompensationModal
-        open={searchCompensationOpen}
-        onClose={() => setSearchCompensationOpen(false)}
+      <CompensationSearchModal
+        open={filterCompensationOpen}
+        onClose={() => setFilterCompensationOpen(false)}
         onSearch={onSearch}
       />
 
-      <ItemManagementModal
+      <ItemsManagementModal
         open={itemManagementModalOpen?.state}
         editingId={itemManagementModalOpen?.id}
         onClose={() => setItemManagementModalOpen({ id: null, state: false })}
