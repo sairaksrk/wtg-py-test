@@ -8,7 +8,7 @@ import { useRouter } from "@/i18n/navigation";
 import { InfoHoverCard } from "./info-hover-card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
-import { ManpowerRequestList } from "@/types/manpower";
+import { ManpowerRequestList } from "@/types/compensation";
 
 interface UseManpowerColumnsProps {
   onEdit?: (id: string) => void;

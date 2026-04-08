@@ -8,7 +8,8 @@ import type {
   UpdateManpowerRequestsDto,
   PositionItems,
   ManpowerRequestDetail,
-} from "@/types/manpower";
+  CompensationListParams,
+} from "@/types/compensation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addPositionItem,
@@ -178,7 +179,7 @@ export function useDeleteManpowerRequest() {
 /**
  * RP-01 Hook to fetch paginated list
  */
-export function useManpowerRequestsList(params?: ManpoweRequestListParams) {
+export function useManpowerRequestsList(params?: CompensationListParams) {
   return useQuery<PaginatedResponse<ManpowerRequestList>, ApiError>({
     queryKey: manpowerKeys.list(params),
     queryFn: () => getManpowerRequestsList(params),

@@ -16,11 +16,19 @@ import { useLoadingStore } from "@/stores/loading-store";
 import { useTableState } from "@/hooks/use-session";
 import ErrorComponent from "@/components/common/error";
 import { toastError, toastSuccess } from "@/utils/toast";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverClose,
+} from "@/components/ui/popover";
 
 import {
-  ManpoweRequestListParams,
-  MANPOWER_SESSION_KEY,
-} from "@/types/manpower";
+  COMPENSATION_SESSION_KEY,
+  CompensationListParams,
+} from "@/types/compensation";
 
 import {
   useManpowerRequestsList,
@@ -40,33 +48,46 @@ export default function CompensationList() {
   const c = useTranslations("common");
   const alert = useAlert();
   const updateLoading = useLoadingStore((state) => state.updateLoading);
+  //   useSetBreadcrumb([{ name: m("add-request-information") }]);
 
-  const [filterCompensationOpen, setFilterCompensationOpen] = useState(false);
+  const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
 
   const [itemManagementModalOpen, setItemManagementModalOpen] = useState({
     id: null,
     state: false,
   });
 
-  const [filters, setFilters] = useTableState<ManpoweRequestListParams>(
-    MANPOWER_SESSION_KEY,
+  const [filters, setFilters] = useTableState<CompensationListParams>(
+    COMPENSATION_SESSION_KEY,
     {
       page: 1,
       take: getPageSize(),
-      // createDate : ""
+      startDate: null,
     },
   );
 
-  const { data, isLoading, isError, error } = useManpowerRequestsList({
-    page: filters.page,
-    take: filters.take,
-    search: filters.search,
-    // createDate: filters.createDate,
-  });
+  // const { data, isLoading, isError, error } = useManpowerRequestsList({
+  //   page: filters.page,
+  //   take: filters.take,
+  //   startDate: filters.startDate,
+  // });
 
+  const isLoading = false;
   const onSearch = (formData: any) => {
-    setFilters({ ...filters, search: formData?.requestNumber });
-    // setFilters({ ...filters, createDate: formData?.createDate });
+    setFilters({ ...filters, startDate: formData?.startDate });
+  };
+
+  const onClearFilters = () => {
+    setFilters({
+      ...filters,
+      // requestNo: "",
+      startDate: null,
+      // departmentId: "",
+      // positionId: "",
+      // status: "",
+      // responsibleHrId: "",
+    });
+    setSearchCompensationOpen(false);
   };
 
   const deleteManpowerMutation = useDeleteManpowerRequest();
@@ -149,26 +170,26 @@ export default function CompensationList() {
     },
   };
 
-  if (isLoading) {
-    return (
-      <div className="py-80">
-        <Loading fullscreen={false} />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="py-80">
+  //       <Loading fullscreen={false} />
+  //     </div>
+  //   );
+  // }
 
-  if (isError) {
-    const { description, statusCode } = formatApiError(error, c("error-occur"));
-    return (
-      <div className="py-0">
-        <div className="bg-card rounded-3xl p-6">
-          <div className="flex flex-col items-center justify-center my-52">
-            <ErrorComponent statusCode={statusCode} message={description} />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (isError) {
+  //   const { description, statusCode } = formatApiError(error, c("error-occur"));
+  //   return (
+  //     <div className="py-0">
+  //       <div className="bg-card rounded-3xl p-6">
+  //         <div className="flex flex-col items-center justify-center my-52">
+  //           <ErrorComponent statusCode={statusCode} message={description} />
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -190,15 +211,41 @@ export default function CompensationList() {
                 {c("button.add-item")}
                 {/* เพิ่มรายการ */}
               </Button>
-              <Button
-                type="button"
-                className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                onClick={() => setFilterCompensationOpen(true)}
+              <Popover
+                open={searchCompensationOpen}
+                onOpenChange={setSearchCompensationOpen}
               >
-                <Icon icon="solar:sort-linear" />
-                {c("filter")}
-                {/* ตัวกรอง */}
-              </Button>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
+                  >
+                    <Icon icon="solar:sort-linear" />
+                    {c("filter")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="end"
+                  className="w-[450px] p-0 overflow-hidden rounded-2xl border-none shadow-2xl mt-2"
+                >
+                  <PopoverHeader className="flex flex-row items-center justify-between px-6 py-4">
+                    <PopoverTitle className="text-xl font-medium text-[#18181B] mt-2">
+                      ตัวกรอง
+                    </PopoverTitle>
+                    <PopoverClose className="text-gray-400 hover:text-gray-600 transition-colors outline-none">
+                      <Icon icon="mdi:close" className="size-6" />
+                    </PopoverClose>
+                  </PopoverHeader>
+
+                  <div className="px-6 pb-6 pt-4 text-black">
+                    <CompensationSearchModal
+                      onSearch={onSearch}
+                      onClearFilters={onClearFilters}
+                      onClose={() => setSearchCompensationOpen(false)}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </CardHeader>
@@ -219,12 +266,6 @@ export default function CompensationList() {
           />
         </CardContent>
       </Card>
-
-      <CompensationSearchModal
-        open={filterCompensationOpen}
-        onClose={() => setFilterCompensationOpen(false)}
-        onSearch={onSearch}
-      />
 
       <ItemsManagementModal
         open={itemManagementModalOpen?.state}

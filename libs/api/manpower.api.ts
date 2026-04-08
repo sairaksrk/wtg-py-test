@@ -10,7 +10,8 @@ import type {
   AddPositionItemDto,
   PositionItems,
   ManpowerRequestDetail,
-} from "@/types/manpower";
+  CompensationListParams,
+} from "@/types/compensation";
 import { api } from "./api";
 
 /**
@@ -107,7 +108,7 @@ export async function deleteManpowerRequests(id: string): Promise<void> {
  * RP-01 Get paginated list
  */
 export async function getManpowerRequestsList(
-  params?: ManpoweRequestListParams,
+  params?: CompensationListParams,
 ): Promise<PaginatedResponse<ManpowerRequestList>> {
   return api<PaginatedResponse<ManpowerRequestList>>(
     "GET",
@@ -118,9 +119,7 @@ export async function getManpowerRequestsList(
         page: params?.page,
         take: params?.take,
         ...(params?.search ? { search: params.search } : {}),
-        ...(params?.requestNumber
-          ? { requestNumber: params.requestNumber }
-          : {}),
+        ...(params?.startDate ? { startDate: params.startDate } : {}),
       },
       plugin: "rp",
     },

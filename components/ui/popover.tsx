@@ -4,6 +4,12 @@ import { Popover as PopoverPrimitive } from "radix-ui";
 import * as React from "react";
 import { cn } from "@/utils/helpers";
 
+function PopoverClose({
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Close>) {
+  return <PopoverPrimitive.Close data-slot="popover-close" {...props} />;
+}
+
 function Popover({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
@@ -85,4 +91,5 @@ export {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
+  PopoverClose,
 };

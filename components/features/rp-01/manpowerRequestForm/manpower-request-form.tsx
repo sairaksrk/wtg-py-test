@@ -34,7 +34,7 @@ import { formatApiError } from "@/types/api";
 import {
   // MANPOWER_SESSION_KEY,
   UpdateManpowerRequestsDto,
-} from "@/types/manpower";
+} from "@/types/compensation";
 
 function getManPowerFormSchema() {
   return z.object({

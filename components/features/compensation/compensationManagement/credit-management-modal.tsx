@@ -16,12 +16,6 @@ import {
   usePositionList,
   usePositionTypeList,
 } from "@/libs/query/master.queries";
-// import { useLoadingStore } from "@/stores/loading-store";
-// import {
-//   CreatePositionItemDto,
-//   UpdatePositionItemDto,
-//   // MANPOWER_SESSION_KEY,
-// } from "@/types/manpower";
 
 import { formatApiError } from "@/types/api";
 import {
@@ -59,7 +53,6 @@ export function CreditManagementModal({
 }: PositionManageModalProps) {
   const router = useRouter();
   const c = useTranslations("common");
-  const m = useTranslations("manpower");
   // const updateLoading = useLoadingStore((state) => state.updateLoading);
 
   const {

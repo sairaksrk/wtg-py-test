@@ -1,7 +1,6 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { format } from "date-fns";
 import * as React from "react";
 import { FieldError } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/utils/helpers";
+import { useDateFormatter } from "@/hooks/use-date-formatter";
 
 interface DatePickerProps {
   placeholder?: string;
@@ -47,6 +47,8 @@ export function DatePicker(props: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
+
+  const { formatToBuddhist } = useDateFormatter();
 
   const bigintToDate = (bigintValue: bigint): Date => {
     return new Date(Number(bigintValue));
@@ -136,7 +138,11 @@ export function DatePicker(props: DatePickerProps) {
                   )}
                 >
                   {value
-                    ? format(getDateValue()!, "dd MMM yyyy")
+                    ? // format(getDateValue()!, "dd MMM yyyy")
+                      // format(displayDate, "dd MMM yyyy", {
+                      //     locale: selectedLocale,
+                      //   })
+                      formatToBuddhist(Number(getDateValue()!), "dd MMM yyyy")
                     : floatingLabel
                       ? ""
                       : placeholder}

@@ -17,6 +17,7 @@
   "filter": "ตัวกรอง",
   "clear": "ล้างเงื่อนไข",
   "search-data": "ค้นหาข้อมูล",
+  "actions": "การดำเนินการ",
 
   "successfully": "ดำเนินการสำเร็จ",
   "successfully-description": "ระบบได้ดำเนินการตามคำสั่งของคุณเรียบร้อยแล้ว",
@@ -86,56 +87,6 @@
       "required-sms": "กรุณากรอก เบอร์โทรศัพท์ และ ข้อความ",
       "sms-msisdn": "ฝั่งระบบต้องการรูปแบบ msisdn (ตัวเลขเท่านั้น) ผ่าน ThaiBulkSMS",
       "length": "ความยาว: {count}"
-    }
-  },
-  "demo": {
-    "refresh": "รีเฟรช",
-    "loading": "กำลังโหลด...",
-    "create-new": "สร้างใหม่",
-    "edit-item": "แก้ไขรายการ",
-    "create-item": "สร้างรายการใหม่",
-    "delete-item": "ลบรายการ",
-    "name-th": "ชื่อ (ไทย)",
-    "name-en": "ชื่อ (อังกฤษ)",
-    "file-name": "ชื่อไฟล์",
-    "file-url": "URL ไฟล์",
-    "file-upload": "อัปโหลดไฟล์",
-    "upload-file": "อัปโหลดไฟล์",
-    "uploading": "กำลังอัปโหลด...",
-    "created-at": "สร้างเมื่อ",
-    "actions": "การดำเนินการ",
-    "list-view": "มุมมองรายการ",
-    "file": "ไฟล์",
-    "view-file": "ดูไฟล์",
-    "cancel": "ยกเลิก",
-    "update": "อัปเดต",
-    "create": "สร้าง",
-    "saving": "กำลังบันทึก...",
-    "required": "จำเป็น",
-    "no-items": "ไม่พบรายการ คลิก \"สร้างใหม่\" เพื่อเพิ่มรายการ",
-    "placeholder": {
-      "name-th": "กรอกชื่อภาษาไทย",
-      "name-en": "กรอกชื่อภาษาอังกฤษ",
-      "file-name": "กรอกชื่อไฟล์",
-      "file-url": "กรอก URL ไฟล์"
-    },
-    "validation": {
-      "title": "ข้อผิดพลาดในการตรวจสอบ",
-      "required-fields": "ชื่อ (ไทย) และ ชื่อ (อังกฤษ) เป็นฟิลด์ที่จำเป็น"
-    },
-    "success": {
-      "created-title": "สร้างสำเร็จ",
-      "created-desc": "สร้าง {name} สำเร็จแล้ว",
-      "updated-title": "อัปเดตสำเร็จ",
-      "updated-desc": "อัปเดต {name} สำเร็จแล้ว",
-      "deleted-title": "ลบสำเร็จ",
-      "deleted-desc": "ลบ {name} สำเร็จแล้ว"
-    },
-    "error": {
-      "title": "ข้อผิดพลาด",
-      "save-failed": "บันทึกไม่สำเร็จ",
-      "delete-failed": "ลบไม่สำเร็จ",
-      "fetch-failed": "โหลดข้อมูลไม่สำเร็จ"
     }
   }
 }

@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/common/data-table";
 import { useManpowerColumns } from "./use-manpower-columns";
-import { ManpowerRequestList } from "@/types/manpower";
+import { ManpowerRequestList } from "@/types/compensation";
 
 interface ManPowerTableProps {
   data: ManpowerRequestList[];

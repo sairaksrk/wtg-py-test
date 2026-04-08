@@ -1,5 +1,5 @@
 import { Accordion } from "radix-ui";
-import { Icon } from "@iconify/react"; // หรือ library icon ที่คุณใช้
+import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
 
 interface BadgeItemProps {
@@ -9,12 +9,17 @@ interface BadgeItemProps {
 
 const BadgeItem = ({ text, status }: BadgeItemProps) => {
   const isDone = status === "done";
+
   return (
     <Badge
       className={`
-      text-sm
-      ${isDone ? "border-[#D4D4D8] bg-white text-[#16A34A]" : "border-[#D4D4D8] bg-white text-[#71717A]"}
-    `}
+        text-sm border
+        ${
+          isDone
+            ? "border-[#D4D4D8] bg-white text-[#16A34A]"
+            : "border-[#D4D4D8] bg-white text-[#71717A]"
+        }
+      `}
     >
       <Icon
         icon={
@@ -27,6 +32,11 @@ const BadgeItem = ({ text, status }: BadgeItemProps) => {
 };
 
 export function ApprovalDetailAccordion({ data }: any) {
+  const doneCount = data?.filter((i: any) => i.status === "done").length || 0;
+  const pendingCount =
+    data?.filter((i: any) => i.status !== "done").length || 0;
+  const total = data?.length || 0;
+
   return (
     <Accordion.Root
       type="single"
@@ -47,15 +57,15 @@ export function ApprovalDetailAccordion({ data }: any) {
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-1.5 text-[#16A34A]">
                 <Icon icon="solar:check-circle-linear" fontSize={18} />
-                <span>พิจารณาเสร็จสิ้น 9 คน</span>
+                <span>พิจารณาเสร็จสิ้น {doneCount} คน</span>
               </div>
 
               <div className="flex items-center gap-1.5 text-[#F97316]">
                 <Icon icon="solar:clock-circle-linear" fontSize={18} />
-                <span>รอพิจารณา 3 คน</span>
+                <span>รอพิจารณา {pendingCount} คน</span>
               </div>
 
-              <span className="text-[#71717A]">ทั้งหมด 12 คน</span>
+              <span className="text-[#71717A]">ทั้งหมด {total} คน</span>
 
               <Icon
                 icon="solar:alt-arrow-down-outline"
@@ -68,7 +78,7 @@ export function ApprovalDetailAccordion({ data }: any) {
         <Accordion.Content className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
           <div className="mx-4 border-t border-[#b7b7b7]" />
           <div className="p-4 flex flex-wrap gap-3">
-            {data?.map((item: any) => (
+            {data.map((item: any) => (
               <BadgeItem key={item.id} text={item.text} status={item.status} />
             ))}
           </div>

@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useDateFormatter } from "@/hooks/use-date-formatter";
 import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
-// import { ManpowerRequestList } from "@/types/manpower";
 
-interface UseManpowerColumnsProps {
+interface UseCreditColumnsProps {
   onEdit?: (id: any) => void;
   onDelete?: (id: string) => void;
 }
@@ -32,15 +31,12 @@ const statusConfig: Record<string, { label: string; color: string }> = {
   },
 };
 
-export function useCreditColumns({
-  onEdit,
-  onDelete,
-}: UseManpowerColumnsProps) {
+export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
   const { formatToBuddhist } = useDateFormatter();
   const router = useRouter();
   const c = useTranslations("common");
 
-  // const columns: ColumnDef<ManpowerRequestList>[] = useMemo(() => {
+  // const columns: ColumnDef<CompensationList>[] = useMemo(() => {
   const columns: ColumnDef<any>[] = useMemo(() => {
     return [
       {

@@ -1,10 +1,9 @@
 import { DataTable } from "@/components/common/data-table";
 import { useCompensationColumns } from "./use-compensation-columns";
-import { ManpowerRequestList } from "@/types/manpower";
-
+import { CompensationList } from "@/types/compensation";
 
 interface CompensationTableProps {
-  data: ManpowerRequestList[];
+  data: CompensationList[];
   totalRows: number;
   currentPage: number;
   onPageChange: (page: number) => void;

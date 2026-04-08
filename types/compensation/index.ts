@@ -1,5 +1,7 @@
 export const MANPOWER_SESSION_KEY = "manpower-table-state";
 
+export const COMPENSATION_SESSION_KEY = "compensation-table-state";
+
 // RP-01 *************************************************
 
 export interface PositionItems {
@@ -129,4 +131,43 @@ export interface DashboardManPowerList {
   number_4: number;
   number_5: number;
   number_6: number;
+}
+
+// PY ---------------------------------------------------------------------------------
+
+export interface CompensationListParams {
+  page?: number;
+  take?: number;
+  search?: string;
+  requestNo?: string;
+  startDate?: number | null;
+  endDate?: number | null;
+  departmentId?: string;
+  positionId?: string;
+  status?: string;
+  responsibleHrId?: string;
+}
+
+
+export interface CompensationList {
+  id: string;
+  requestNumber: string;
+  submissionDate: string;
+  agency: string;
+  numberOfAmount: number;
+  status: string;
+  responsiblePerson: string;
+  createdAt?: string;
+  updatedAt?: string;
+  userStatus?: string;
+  totalAmount: number;
+  departmentId?: string | null;
+  departmentName?: string | null;
+  reason: string;
+  existingMission: string;
+  additionalMission: string;
+  jdDocUrl?: string;
+  fileName?: string;
+  fileUrl?: string;
+  items: PositionItems[];
 }

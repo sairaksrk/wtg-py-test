@@ -20,7 +20,7 @@ import { toastError, toastSuccess } from "@/utils/toast";
 import {
   ManpoweRequestListParams,
   MANPOWER_SESSION_KEY,
-} from "@/types/manpower";
+} from "@/types/compensation";
 
 import {
   useManpowerRequestsList,

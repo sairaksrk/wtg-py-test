@@ -7,9 +7,8 @@ import { useDateFormatter } from "@/hooks/use-date-formatter";
 import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
-// import { ManpowerRequestList } from "@/types/manpower";
 
-interface UseManpowerColumnsProps {
+interface UseCompensationColumnsProps {
   onEdit?: (id: any) => void;
   onDelete?: (id: string) => void;
 }
@@ -36,13 +35,12 @@ const statusConfig: Record<string, { label: string; color: string }> = {
 export function useCompensationColumns({
   onEdit,
   onDelete,
-}: UseManpowerColumnsProps) {
+}: UseCompensationColumnsProps) {
   const { formatToBuddhist } = useDateFormatter();
   const router = useRouter();
   const c = useTranslations("common");
-  const m = useTranslations("manpower");
 
-  // const columns: ColumnDef<ManpowerRequestList>[] = useMemo(() => {
+  // const columns: ColumnDef<CompensationList>[] = useMemo(() => {
   const columns: ColumnDef<any>[] = useMemo(() => {
     return [
       {
@@ -106,8 +104,8 @@ export function useCompensationColumns({
       },
 
       {
-        id: "actions",
-        header: m("column-manpower.actions"),
+        id: "tools",
+        header: c("tools"),
         size: 10,
         cell: ({ row }) => {
           const status = row.original.status;

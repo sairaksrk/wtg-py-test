@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/common/combobox";
 import { DatePicker } from "@/components/common/date-picker";
 
-interface ManpowerSearchModalProps {
+interface RequestSearchModalProps {
   open: boolean;
   onClose: () => void;
   onSearch: (formData: any) => void;
@@ -20,7 +20,7 @@ export function RequestSearchModal({
   open,
   onClose,
   onSearch,
-}: ManpowerSearchModalProps) {
+}: RequestSearchModalProps) {
   const c = useTranslations("common");
   const { control, handleSubmit, reset } = useForm<any>({});
 

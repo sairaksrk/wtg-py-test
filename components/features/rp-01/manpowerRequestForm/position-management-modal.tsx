@@ -21,7 +21,7 @@ import {
   CreatePositionItemDto,
   UpdatePositionItemDto,
   // MANPOWER_SESSION_KEY,
-} from "@/types/manpower";
+} from "@/types/compensation";
 import { formatApiError } from "@/types/api";
 import {
   useAddPositionItem,

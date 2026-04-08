@@ -18,16 +18,12 @@ import { ItemsManagementModal } from "./items-management-modal";
 import { getPageSize } from "@/utils/helpers";
 import { useTableState } from "@/hooks/use-session";
 import {
-  MANPOWER_SESSION_KEY,
-  ManpoweRequestListParams,
-} from "@/types/manpower";
-// import { RequestSearchModal } from "./request-search-modal";
+  COMPENSATION_SESSION_KEY,
+  CompensationListParams,
+} from "@/types/compensation";
 import { CreditManagementModal } from "./credit-management-modal";
 import { CreditTable } from "./credit-table";
 import { ApprovalDetailAccordion } from "./approval-detail-accordion";
-
-// import ErrorComponent from "@/components/common/error";
-// import { formatApiError } from "@/types/api";
 
 interface RequestFormProps {
   reqId?: any;
@@ -36,7 +32,7 @@ interface RequestFormProps {
 const mockDataList: any = {
   data: [
     {
-      id: "01",
+      id: "1ea31ed3-bff6-4f61-aa34-25144cda2275",
       row1: "ที่ปรึกษาฯ",
       row2: 76800.0,
       row3: ["วิชาการทรงคุณวุฒิ"],
@@ -47,7 +43,7 @@ const mockDataList: any = {
       row8: 1,
     },
     {
-      id: "02",
+      id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
       row1: "รองผู้อำนวยการสำนัก",
       row2: 134690.0,
       row3: ["บริหารต้น"],
@@ -58,7 +54,6 @@ const mockDataList: any = {
       row8: 2,
     },
   ],
-
   mockupAppprove: [
     { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
     { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
@@ -97,9 +92,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   const router = useRouter();
   const alert = useAlert();
   const c = useTranslations("common");
-  const m = useTranslations("manpower");
   const updateLoading = useLoadingStore((state) => state.updateLoading);
-
   //   useSetBreadcrumb([{ name: m("add-request-information") }]);
 
   const [creditManagementModalOpen, setCreditManagementModalOpen] =
@@ -108,34 +101,27 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     id: null,
     state: false,
   });
-  //   const [filterCompensationOpen, setFilterCompensationOpen] = useState(false);
 
-  const [filters, setFilters] = useTableState<ManpoweRequestListParams>(
-    MANPOWER_SESSION_KEY,
+  const [status, setStatus] = useState<string>("ฉบับร่าง");
+  // const status = data?.status;
+
+  const [filters, setFilters] = useTableState<CompensationListParams>(
+    COMPENSATION_SESSION_KEY,
     {
       page: 1,
       take: getPageSize(),
-      // createDate : ""
+      // startDate : ""
     },
   );
-
-  //   const {
-  //     data: manpowerData,
-  //     isLoading: isLoadingManpower,
-  //     isError,
-  //     error,
-  //   } = useManpowerRequestsByID(reqId || "");
-
-  const onSearch = (formData: any) => {
-    // setFilters({ ...filters, search: formData?.requestNumber });
-    // setFilters({ ...filters, createDate: formData?.createDate });
-  };
 
   //   const updateMutation = useUpdateManpowerRequest();
   //   const isSaving = updateMutation.isPending;
   //   const isLoading = reqId ? isLoadingManpower : false;
 
-  const onSubmit = async (reqId: string) => {
+  const isLoading = false;
+  const isError = false;
+
+  const onSubmitConsideration = async () => {
     alert.fire({
       type: "warning",
       title: c("save-data-confirmation"),
@@ -145,6 +131,49 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         variant: "default",
         onClick: async () => {
           toastSuccess(c("successfully"), c("successfully-description"));
+          setStatus("รอพิจารณา");
+        },
+      },
+      cancelButton: {
+        label: c("button.secondary-cancel"),
+        variant: "secondary",
+        show: true,
+      },
+    });
+  };
+
+  const onSubmitDeliver = async () => {
+    alert.fire({
+      type: "warning",
+      title: c("save-data-confirmation"),
+      description: c("save-data-confirmation-description"),
+      confirmButton: {
+        label: c("button.confirm"),
+        variant: "default",
+        onClick: async () => {
+          toastSuccess(c("successfully"), c("successfully-description"));
+          setStatus("นำส่งเอกสาร");
+        },
+      },
+      cancelButton: {
+        label: c("button.secondary-cancel"),
+        variant: "secondary",
+        show: true,
+      },
+    });
+  };
+
+  const onSubmitSuccess = async () => {
+    alert.fire({
+      type: "warning",
+      title: c("save-data-confirmation"),
+      description: c("save-data-confirmation-description"),
+      confirmButton: {
+        label: c("button.confirm"),
+        variant: "default",
+        onClick: async () => {
+          toastSuccess(c("successfully"), c("successfully-description"));
+          setStatus("เสร็จสิ้น");
         },
       },
       cancelButton: {
@@ -174,38 +203,29 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     });
   };
 
-  const isLoading = false;
-  const isError = false;
-
   const statusConfig: Record<string, { label: string; color: string }> = {
     ฉบับร่าง: {
       label: "ฉบับร่าง",
       color: "bg-[#F4F4F5] text-subdude",
     },
-    รอตรวจสอบ: {
-      label: "รอตรวจสอบ",
-      color: "bg-[#FEFCE8] text-[#FACC15]",
-    },
-    ยกเลิกรายการ: {
-      label: "ยกเลิกรายการ",
-      color: "bg-[#FEF2F2] text-destructive",
+    รอพิจารณา: {
+      label: "รอพิจารณา",
+      color: "bg-[#FFF7ED] text-[#F97316]",
     },
     อยู่ระหว่างดำเนินการ: {
       label: "อยู่ระหว่างดำเนินการ",
-      color: "bg-[#FFF7ED] text-[#F97316]",
+      color: "bg-[#FEFCE8] text-[#FACC15]",
     },
-    อนุมัติ: {
-      label: "อนุมัติ",
+    นำส่งเอกสาร: {
+      label: "นำส่งเอกสาร",
+      color: "bg-[#F0F9FF] text-[#0EA5E9]",
+    },
+    เสร็จสิ้น: {
+      label: "เสร็จสิ้น",
       color: "bg-[#F0FDF4] text-[#16A34A]",
-    },
-    ไม่อนุมัติ: {
-      label: "ไม่อนุมัติ",
-      color: "bg-[#FEF2F2] text-destructive",
     },
   };
 
-  // const status = manpowerData?.userStatus;
-  const status = "ฉบับร่าง";
   const currentStatus = statusConfig[status as keyof typeof statusConfig] || {
     label: "-",
     color: "bg-gray-100 text-gray-400",
@@ -218,7 +238,6 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       </div>
     );
   }
-
   //   if (isError) {
   //     const { description, statusCode } = formatApiError(error, c("error-occur"));
   //     return (
@@ -234,175 +253,139 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
 
   return (
     <>
-      <div className="min-h-[690px]">
-        <div className="flex flex-col items-center justify-center">
-          <div className="w-full h-full">
-            <div className="mb-6 flex gap-4">
-              <Button
-                variant="secondary"
-                size="icon"
-                className="p-3.5"
-                onClick={() => {
-                  router.push("/manage-compensation");
-                }}
-              >
-                <Icon
-                  icon="solar:alt-arrow-left-outline"
-                  className="text-base"
-                />
-              </Button>
-              <h1 className="text-xl font-medium">
-                รายการค่าตอบแทนประจำปี 2/2569
-              </h1>
-            </div>
+      <div className="flex min-h-[calc(100vh-197px)] flex-col">
+        <main className="flex-1">
+          <div className="flex flex-col items-center justify-center">
+            <div className="w-full h-full">
+              <div className="mb-6 flex gap-4">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="p-3.5"
+                  onClick={() => {
+                    router.push("/manage-compensation");
+                  }}
+                >
+                  <Icon
+                    icon="solar:alt-arrow-left-outline"
+                    className="text-base"
+                  />
+                </Button>
+                <h1 className="text-xl font-medium">
+                  รายการค่าตอบแทนประจำปี 2/2569
+                </h1>
+              </div>
 
-            <div className="flex flex-col gap-6">
-              <Card>
-                <CardHeader>
-                  <div>
-                    <div className="flex flex-row items-center justify-between">
+              <div className="flex flex-col gap-6">
+                <Card>
+                  <CardHeader>
+                    <div>
+                      <div className="flex flex-row items-center justify-between">
+                        <CardTitle>
+                          <h1 className="text-xl font-medium">
+                            รายการค่าตอบแทนประจำปี 1/2569
+                          </h1>
+                        </CardTitle>
+                        {status === "ฉบับร่าง" || status === "รอพิจารณา" ? (
+                          <Button
+                            type="button"
+                            className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
+                            onClick={() =>
+                              setItemManagementModalOpen({
+                                id: null,
+                                state: true,
+                              })
+                            }
+                          >
+                            <Icon icon="solar:pen-outline" />
+                            จัดการข้อมูล
+                          </Button>
+                        ) : null}
+                      </div>
+
+                      <div className="flex items-start justify-start gap-4 mt-2">
+                        <div>
+                          <Badge
+                            className={cn(
+                              "flex items-center gap-2 text-sm font-normal",
+                              currentStatus.color,
+                            )}
+                            variant="secondary"
+                          >
+                            <span className="w-2 h-2 rounded-full bg-current" />
+                            {currentStatus.label}
+                          </Badge>
+                        </div>
+                        <div className="border-r border-gray-400 h-6" />
+                        <div className="flex items-center justify-center gap-2 text-subdude">
+                          <Icon icon="solar:calendar-linear" />
+                          <h1 className="text-sm font-normal text-subdude">
+                            วันที่สร้าง 12 พ.ย. 2568
+                            {/* {formatToBuddhist(Number(mockupDetailFormData?.createdAt))} */}
+                          </h1>
+                        </div>
+
+                        <div className="border-r border-gray-400 h-7" />
+
+                        <div className="flex items-center justify-center gap-2 text-subdude">
+                          <Icon icon="solar:user-linear" />
+                          <h1 className="text-sm font-normal text-subdude">
+                            {/* {mockupDetailFormData?.createBy ?? "-"} */}
+                            ธิดาวารินทร์
+                          </h1>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+
+                {mockDataList.mockupAppprove &&
+                  mockDataList.mockupAppprove.length > 0 && (
+                    <ApprovalDetailAccordion
+                      data={mockDataList?.mockupAppprove}
+                    />
+                  )}
+
+                <Card>
+                  <CardHeader>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
                       <CardTitle>
-                        <h1 className="text-xl font-medium">
-                          รายการค่าตอบแทนประจำปี 1/2569
-                        </h1>
+                        <div className="flex items-center gap-1">
+                          <h1 className="text-xl font-medium">
+                            รายการบริหารวงเงิน
+                          </h1>
+                        </div>
                       </CardTitle>
-                      <Button
-                        type="button"
-                        className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                        onClick={() =>
-                          setItemManagementModalOpen({
-                            id: null,
-                            state: true,
-                          })
-                        }
-                      >
-                        <Icon icon="solar:pen-outline" />
-                        จัดการข้อมูล
-                      </Button>
-                    </div>
 
-                    <div className="flex items-start justify-start gap-4 mt-2">
-                      <div>
-                        <Badge
-                          className={cn(
-                            "flex items-center gap-2 text-sm font-normal",
-                            currentStatus.color,
-                          )}
-                          variant="secondary"
+                      <div className="flex items-center gap-2">
+                        {status !== "เสร็จสิ้น" && (
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              setCreditManagementModalOpen({
+                                id: null,
+                                state: true,
+                              })
+                            }
+                            disabled={isLoading}
+                          >
+                            <Icon icon="solar:add-circle-outline" />
+                            {c("button.add-item")}
+                            {/* เพิ่มรายการ */}
+                          </Button>
+                        )}
+
+                        <Button
+                          type="button"
+                          className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
+                          // onClick={onExport}
                         >
-                          <span className="w-2 h-2 rounded-full bg-current" />
-                          {currentStatus.label}
-                        </Badge>
-                      </div>
-                      <div className="border-r border-gray-400 h-6" />
-                      <div className="flex items-center justify-center gap-2 text-subdude">
-                        <Icon icon="solar:calendar-linear" />
-                        <h1 className="text-sm font-normal text-subdude">
-                          วันที่สร้าง 12 พ.ย. 2568
-                          {/* {formatToBuddhist(Number(mockupDetailFormData?.createdAt))} */}
-                        </h1>
-                      </div>
+                          <Icon icon="solar:download-minimalistic-linear" />
+                          ออกรายงาน
+                          <Icon icon="solar:alt-arrow-down-linear" />
+                        </Button>
 
-                      <div className="border-r border-gray-400 h-7" />
-
-                      <div className="flex items-center justify-center gap-2 text-subdude">
-                        <Icon icon="solar:user-linear" />
-                        <h1 className="text-sm font-normal text-subdude">
-                          {/* {mockupDetailFormData?.createBy ?? "-"} */}
-                          ธิดาวารินทร์
-                        </h1>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-
-              {/* <Card className="border border-[#84CC16] bg-[#F7FEE7]">
-                <CardHeader>
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#b7b7b7] pb-4">
-                    <CardTitle>
-                      <div className="flex items-center gap-1">
-                        <h1 className="text-base font-medium">
-                          รายละเอียดรายการอนุมัติ
-                        </h1>
-                      </div>
-                    </CardTitle>
-
-                    <div className="flex items-center justify-center gap-4 text-sm">
-                      <div className="flex items-center justify-center gap-2 text-[#16A34A]">
-                        <Icon icon="solar:check-circle-linear" />
-                        <p>พิจารณาเสร็จสิ้น 9 คน</p>
-                      </div>
-                      <div className="flex items-center justify-center gap-2 text-[#F97316]">
-                        <Icon icon="solar:clock-circle-linear" />
-                        <p>รอพิจารณา 3 คน</p>
-                      </div>
-
-                      <p className="text-[#71717A]">ทั้งหมด 12 คน</p>
-                      <Icon icon="solar:alt-arrow-up-outline" />
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4">
-                    <Badge
-                      className="text-sm font-normal bg-[#FFFFFF] border border-[#D4D4D8] text-[#16A34A]"
-                      variant="secondary"
-                    >
-                      <Icon icon="solar:check-circle-linear" />
-                      ผู้อำนวยการสำนักเลขานุการกรม
-                    </Badge>
-
-                    <Badge
-                      className="text-sm font-normal bg-[#FFFFFF] border border-[#D4D4D8] text-[#16A34A]"
-                      variant="secondary"
-                    >
-                      <Icon icon="solar:check-circle-linear" />
-                      ผู้อำนวยการกลุ่มตรวจสอบภายใน
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card> */}
-              <ApprovalDetailAccordion data={mockDataList?.mockupAppprove} />
-
-              <Card>
-                <CardHeader>
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <CardTitle>
-                      <div className="flex items-center gap-1">
-                        <h1 className="text-base font-medium">
-                          รายการบริหารวงเงิน
-                        </h1>
-                      </div>
-                    </CardTitle>
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        onClick={() =>
-                          setCreditManagementModalOpen({
-                            id: null,
-                            state: true,
-                          })
-                        }
-                        disabled={isLoading}
-                      >
-                        <Icon icon="solar:add-circle-outline" />
-                        {c("button.add-item")}
-                        {/* เพิ่มรายการ */}
-                      </Button>
-
-                      <Button
-                        type="button"
-                        className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                        // onClick={onExport}
-                      >
-                        <Icon icon="solar:download-minimalistic-linear" />
-                        ออกรายงาน
-                        <Icon icon="solar:alt-arrow-down-linear" />
-                      </Button>
-
-                      {/* <Button
+                        {/* <Button
                         type="button"
                         className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
                         onClick={() => setFilterCompensationOpen(true)}
@@ -410,101 +393,125 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                         <Icon icon="solar:sort-linear" />
                         {c("filter")}
                       </Button> */}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {mockDataList?.data?.length > 0 ? (
-                    <>
-                      <CreditTable
-                        data={mockDataList?.data || []}
-                        totalRows={mockDataList?.meta.itemCount || 0}
-                        // data={data?.data || []}
-                        // totalRows={data?.meta.itemCount || 0}
-                        currentPage={filters.page || 1}
-                        onPageChange={(page) =>
-                          setFilters({ ...filters, page })
-                        }
-                        rowsPerPage={filters.take}
-                        onEdit={(id) =>
-                          router.push(
-                            `/manage-compensation/item-request/${reqId}/${id}`,
-                          )
-                        }
-                        // onDelete={onDeleteRequest}
-                      />
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center gap-6 py-6">
-                      <div className="relative h-24 w-24">
-                        <Image
-                          src="/no-data.png"
-                          alt="Profile Image"
-                          className="rounded-full object-cover"
-                          sizes="(max-width: 768px) 100vw, 80vw"
-                          fill
-                        />
                       </div>
-
-                      <h1 className="text-sm font-light text-subdude">
-                        ยังไม่มีข้อมูล
-                      </h1>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+                  </CardHeader>
+                  <CardContent>
+                    {mockDataList?.data?.length > 0 ? (
+                      <>
+                        <CreditTable
+                          data={mockDataList?.data || []}
+                          totalRows={mockDataList?.meta.itemCount || 0}
+                          // data={data?.data || []}
+                          // totalRows={data?.meta.itemCount || 0}
+                          currentPage={filters.page || 1}
+                          onPageChange={(page) =>
+                            setFilters({ ...filters, page })
+                          }
+                          rowsPerPage={filters.take}
+                          onEdit={(id) =>
+                            router.push(
+                              `/manage-compensation/item-request/${reqId}/${id}`,
+                            )
+                          }
+                          // onDelete={onDeleteRequest}
+                        />
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-6 py-6">
+                        <div className="relative h-24 w-24">
+                          <Image
+                            src="/no-data.png"
+                            alt="Profile Image"
+                            className="rounded-full object-cover"
+                            sizes="(max-width: 768px) 100vw, 80vw"
+                            fill
+                          />
+                        </div>
 
-            <ItemsManagementModal
-              open={itemManagementModalOpen?.state}
-              editingId={itemManagementModalOpen?.id}
-              onClose={() =>
-                setItemManagementModalOpen({ id: null, state: false })
-              }
-              onSave={() =>
-                setItemManagementModalOpen({ id: null, state: false })
-              }
-            />
+                        <h1 className="text-sm font-light text-subdude">
+                          ยังไม่มีข้อมูล
+                        </h1>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
 
-            <CreditManagementModal
-              open={creditManagementModalOpen?.state}
-              editingId={creditManagementModalOpen?.id}
-              reqId={reqId}
-              onClose={() =>
-                setCreditManagementModalOpen({ id: null, state: false })
-              }
-              onSave={() =>
-                setCreditManagementModalOpen({ id: null, state: false })
-              }
-            />
+              <ItemsManagementModal
+                open={itemManagementModalOpen?.state}
+                editingId={itemManagementModalOpen?.id}
+                onClose={() =>
+                  setItemManagementModalOpen({ id: null, state: false })
+                }
+                onSave={() =>
+                  setItemManagementModalOpen({ id: null, state: false })
+                }
+              />
 
-            {/* <RequestSearchModal
+              <CreditManagementModal
+                open={creditManagementModalOpen?.state}
+                editingId={creditManagementModalOpen?.id}
+                reqId={reqId}
+                onClose={() =>
+                  setCreditManagementModalOpen({ id: null, state: false })
+                }
+                onSave={() =>
+                  setCreditManagementModalOpen({ id: null, state: false })
+                }
+              />
+
+              {/* <RequestSearchModal
               open={filterCompensationOpen}
               onClose={() => setFilterCompensationOpen(false)}
               onSearch={onSearch}
             /> */}
+            </div>
           </div>
-        </div>
+        </main>
       </div>
-      <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0">
-        <div className="flex items-center justify-between gap-3">
-          <Button
-            variant="outline"
-            type="button"
-            className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
-            onClick={() => onDeleteRequest?.(reqId)}
-            disabled={!reqId}
-          >
-            ลบรายการ
-          </Button>
-          <Button
-            type="submit"
-            // disabled={!reqId}
-            disabled={true}
-            // onClick={onSubmit}
-          >
-            ส่งพิจารณา
-          </Button>
+
+      <footer className="sticky bottom-0 z-10 rounded-full bg-white px-6 py-4">
+        {status === "ฉบับร่าง" && (
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              variant="outline"
+              type="button"
+              className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
+              onClick={() => onDeleteRequest?.(reqId)}
+              disabled={!reqId}
+            >
+              ลบรายการ
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={mockDataList?.data?.length === 0}
+              onClick={onSubmitConsideration}
+            >
+              ส่งพิจารณา
+            </Button>
+          </div>
+        )}
+
+        <div className="flex items-center justify-end gap-3">
+          {status === "รอพิจารณา" ? (
+            <Button
+              type="submit"
+              disabled={mockDataList?.data?.length === 0}
+              onClick={onSubmitDeliver}
+            >
+              บันทึกนำส่ง
+            </Button>
+          ) : status === "นำส่งเอกสาร" ? (
+            <Button
+              type="submit"
+              disabled={mockDataList?.data?.length === 0}
+              onClick={onSubmitSuccess}
+            >
+              เสร็จสิ้น
+            </Button>
+          ) : null}
         </div>
       </footer>
     </>
