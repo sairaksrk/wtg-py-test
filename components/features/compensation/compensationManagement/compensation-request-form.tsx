@@ -24,6 +24,14 @@ import {
 import { CreditManagementModal } from "./credit-management-modal";
 import { CreditTable } from "./credit-table";
 import { ApprovalDetailAccordion } from "./approval-detail-accordion";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverClose,
+} from "@/components/ui/popover";
 
 interface RequestFormProps {
   reqId?: any;
@@ -55,30 +63,30 @@ const mockDataList: any = {
     },
   ],
   mockupAppprove: [
-    { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
-    { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    {
-      id: 6,
-      text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
-      status: "done",
-    },
-    { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
-    { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
-    {
-      id: 9,
-      text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
-      status: "done",
-    },
-    { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    {
-      id: 12,
-      text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
-      status: "pending",
-    },
+    // { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
+    // { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // {
+    //   id: 6,
+    //   text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
+    //   status: "done",
+    // },
+    // { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
+    // { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
+    // {
+    //   id: 9,
+    //   text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
+    //   status: "done",
+    // },
+    // { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+    // { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+    // {
+    //   id: 12,
+    //   text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
+    //   status: "pending",
+    // },
   ],
   meta: {
     page: 1,
@@ -101,6 +109,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     id: null,
     state: false,
   });
+
+  const [exportCompensationOpen, setExportCompensationOpen] = useState(false);
 
   const [status, setStatus] = useState<string>("ฉบับร่าง");
   // const status = data?.status;
@@ -201,6 +211,14 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         show: true,
       },
     });
+  };
+
+  const onExport1 = async () => {
+    setExportCompensationOpen(false);
+  };
+
+  const onExport2 = async () => {
+    setExportCompensationOpen(false);
   };
 
   const statusConfig: Record<string, { label: string; color: string }> = {
@@ -375,7 +393,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                           </Button>
                         )}
 
-                        <Button
+                        {/* <Button
                           type="button"
                           className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
                           // onClick={onExport}
@@ -383,16 +401,46 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                           <Icon icon="solar:download-minimalistic-linear" />
                           ออกรายงาน
                           <Icon icon="solar:alt-arrow-down-linear" />
-                        </Button>
+                        </Button> */}
 
-                        {/* <Button
-                        type="button"
-                        className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                        onClick={() => setFilterCompensationOpen(true)}
-                      >
-                        <Icon icon="solar:sort-linear" />
-                        {c("filter")}
-                      </Button> */}
+                        <Popover
+                          open={exportCompensationOpen}
+                          onOpenChange={setExportCompensationOpen}
+                        >
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
+                            >
+                              <Icon icon="solar:download-minimalistic-linear" />
+                              ออกรายงาน
+                              <Icon icon="solar:alt-arrow-down-linear" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            align="end"
+                            className="w-[230px] overflow-hidden rounded-2xl border-none shadow-2xl mt-2"
+                          >
+                            <div className="flex flex-col gap-4 p-2 text-black w-full cursor-pointer">
+                              <div className="flex gap-4" onClick={onExport1}>
+                                <Icon
+                                  className="w-4 h-4"
+                                  icon="solar:download-minimalistic-linear"
+                                />
+                                บัญชีรายละเอียดการเลื่อนเงิน <br />
+                                เดือนข้าราชการ
+                              </div>
+                              <div className="flex gap-4" onClick={onExport2}>
+                                <Icon
+                                  className="w-4 h-4"
+                                  icon="solar:download-minimalistic-linear"
+                                />
+                                รายชื่อข้าราชการผู้มีผล <br />
+                                ประเมินระดับดีเด่นและดีมาก
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </div>
                   </CardHeader>

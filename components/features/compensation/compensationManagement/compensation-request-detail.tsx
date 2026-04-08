@@ -20,11 +20,13 @@ import {
 } from "@/types/compensation";
 
 interface RequestFormProps {
-  itemId?: any;
+  reqId?: string;
+  itemId?: string;
 }
 
 export default function CompensationRequestdetail({
   itemId,
+  reqId,
 }: RequestFormProps) {
   const router = useRouter();
   const alert = useAlert();
@@ -105,7 +107,7 @@ export default function CompensationRequestdetail({
                 size="icon"
                 className="p-3.5"
                 onClick={() => {
-                  router.push("/manage-compensation");
+                  router.push(`/manage-compensation/item-request/${reqId}`);
                 }}
               >
                 <Icon

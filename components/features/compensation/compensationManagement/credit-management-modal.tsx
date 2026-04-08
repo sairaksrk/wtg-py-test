@@ -21,10 +21,10 @@ import { formatApiError } from "@/types/api";
 import {
   useAddPositionItem,
   useCreatePositionItem,
-  useGetPositionItemById,
   useUpdatePositionItem,
 } from "@/libs/query/manpower.queries";
 import { useRouter } from "@/i18n/navigation";
+import { Icon } from "@iconify/react";
 
 const positionFormSchema = z.object({
   itemName: z.string().min(1),
@@ -138,6 +138,8 @@ export function CreditManagementModal({
     const reqId = "5ea31ed3-bff6-4f61-aa34-25144cda2270";
     toastSuccess(c("successfully"), c("successfully-description"));
     router.push(`/manage-compensation/item-request/${reqId}`);
+    
+    onSave();
   };
 
   // const isLoading =
@@ -162,8 +164,6 @@ export function CreditManagementModal({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
-            {/* <p className="text-base font-medium">ข้อมูลรายละเอียดคำขอ</p> */}
-
             <Controller
               name="itemName"
               control={control}
@@ -220,7 +220,13 @@ export function CreditManagementModal({
                   // required
                   error={errors.test2?.message}
                   thousandSeparator
-                  // icon={}
+                  iconPosition="right"
+                  icon={
+                    <Icon
+                      icon="solar:sale-square-linear"
+                      className="w-4 h-4 text-gray-500"
+                    />
+                  }
                 />
               )}
             />
@@ -236,7 +242,13 @@ export function CreditManagementModal({
                   // required
                   error={errors.test3?.message}
                   thousandSeparator
-                  // icon={}
+                  iconPosition="right"
+                  icon={
+                    <Icon
+                      icon="solar:sale-square-linear"
+                      className="w-4 h-4 text-gray-500"
+                    />
+                  }
                 />
               )}
             />
@@ -251,7 +263,13 @@ export function CreditManagementModal({
                   // required
                   error={errors.test4?.message}
                   thousandSeparator
-                  // icon={}
+                  iconPosition="right"
+                  icon={
+                    <Icon
+                      icon="solar:sale-square-linear"
+                      className="w-4 h-4 text-gray-500"
+                    />
+                  }
                 />
               )}
             />
