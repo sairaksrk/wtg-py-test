@@ -1,3 +1,29 @@
+// import * as React from "react"
+
+// import { cn } from "@/utils/helpers"
+
+// function Textarea({ ref, className, ...props }: React.ComponentProps<"textarea"> & { ref?: React.RefObject<HTMLTextAreaElement | null> }) {
+// 	return (
+// 		<textarea
+// 			ref={ref}
+// 			data-slot="textarea"
+// 			className={cn(
+// 				"flex w-full min-h-28 min-w-0 rounded-xl border border-input bg-background px-4 py-3 text-base shadow-xs transition-[color,box-shadow] outline-none",
+// 				"placeholder:text-muted-foreground",
+// 				"disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-bg-disabled disabled:text-text-disabled",
+// 				"focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+// 				"aria-invalid:border-destructive aria-invalid:ring-destructive/20",
+// 				className,
+// 			)}
+// 			{...props}
+// 		/>
+// 	)
+// }
+
+// Textarea.displayName = "Textarea"
+
+// export { Textarea }
+
 import type { JSX } from "react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/helpers";
@@ -139,30 +165,3 @@ function TextArea({
 }
 
 export { TextArea };
-
-
-// import * as React from "react"
-
-// import { cn } from "@/utils/helpers"
-
-// function TextArea({ ref, className, ...props }: React.ComponentProps<"textarea"> & { ref?: React.RefObject<HTMLTextAreaElement | null> }) {
-// 	return (
-// 		<textarea
-// 			ref={ref}
-// 			data-slot="textarea"
-// 			className={cn(
-// 				"flex w-full min-h-28 min-w-0 rounded-xl border border-input bg-background px-4 py-3 text-base shadow-xs transition-[color,box-shadow] outline-none",
-// 				"placeholder:text-muted-foreground",
-// 				"disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-bg-disabled disabled:text-text-disabled",
-// 				"focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-// 				"aria-invalid:border-destructive aria-invalid:ring-destructive/20",
-// 				className,
-// 			)}
-// 			{...props}
-// 		/>
-// 	)
-// }
-
-// TextArea.displayName = "Textarea"
-
-// export { TextArea }
