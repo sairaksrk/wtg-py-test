@@ -2,22 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import Loading from "@/components/common/loading";
 import Modal from "@/components/common/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Combobox } from "@/components/common/combobox";
 import { toastError, toastSuccess } from "@/utils/toast";
-import {
-  usePositionLevelList,
-  usePositionList,
-  usePositionTypeList,
-} from "@/libs/query/master.queries";
-
-import { formatApiError } from "@/types/api";
 import {
   useAddPositionItem,
   useCreatePositionItem,
@@ -25,10 +17,11 @@ import {
 } from "@/libs/query/manpower.queries";
 import { useRouter } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
+import { ComboboxMulti } from "@/components/ui/combobox-multi";
 
 const positionFormSchema = z.object({
   itemName: z.string().min(1),
-  test1: z.string().min(1),
+  test1: z.array(z.string()).min(1),
   test2: z.string(),
   test3: z.string(),
   test4: z.string(),
@@ -64,48 +57,33 @@ export function CreditManagementModal({
     resolver: zodResolver(positionFormSchema),
     defaultValues: {
       itemName: "",
-      test1: "",
+      test1: [],
       test2: "",
       test3: "",
       test4: "",
     },
   });
 
+  // const [selectedId, setSelectedId] = useState<string[]>([]);
+
   // const { data: positionItemData, isLoading: isLoadingPositionItem } =
   //   useGetPositionItemById(editingId!);
-  const { data: positionTypeData, isLoading: isLoadingPositionType } =
-    usePositionTypeList();
-  const { data: positionLevelData, isLoading: isLoadingPositionLevel } =
-    usePositionLevelList();
-  const { data: positionData, isLoading: isLoadingPosition } =
-    usePositionList();
+
+  // const { data: positionTypeData, isLoading: isLoadingPositionType } =
+  //   usePositionTypeList();
 
   const createMutation = useCreatePositionItem();
   const addMutation = useAddPositionItem();
   const updateMutation = useUpdatePositionItem();
 
-  const positionTypeOptions = useMemo(
-    () =>
-      positionTypeData?.map((item) => ({
-        value: item.id,
-        label: item.nameTh,
-      })) || [],
-    [positionTypeData],
-  );
-  const positionLevelOptions = useMemo(
-    () =>
-      positionLevelData?.map((item) => ({
-        value: item.id,
-        label: item.nameTh,
-      })) || [],
-    [positionLevelData],
-  );
-  const positionOptions = useMemo(
-    () =>
-      positionData?.map((item) => ({ value: item.id, label: item.nameTh })) ||
-      [],
-    [positionData],
-  );
+  // const positionTypeOptions = useMemo(
+  //   () =>
+  //     positionTypeData?.map((item) => ({
+  //       value: item.id,
+  //       label: item.nameTh,
+  //     })) || [],
+  //   [positionTypeData],
+  // );
 
   useEffect(() => {
     // กรณี Edit
@@ -116,12 +94,11 @@ export function CreditManagementModal({
     //   });
     //   return;
     // }
-
     // กรณี Create (ไม่มี editingId)
     if (!editingId) {
       reset({
         itemName: "",
-        test1: "",
+        test1: [],
         test2: "",
         test3: "",
         test4: "",
@@ -135,10 +112,12 @@ export function CreditManagementModal({
   ]);
 
   const onSubmit = async (formData: PositionFormValues) => {
+    console.log(formData);
+
     const reqId = "5ea31ed3-bff6-4f61-aa34-25144cda2270";
     toastSuccess(c("successfully"), c("successfully-description"));
     router.push(`/manage-compensation/item-request/${reqId}`);
-    
+
     onSave();
   };
 
@@ -178,12 +157,15 @@ export function CreditManagementModal({
               )}
             />
 
-            <Controller
+            {/* <Controller
               name="test1"
               control={control}
-              render={({ field }) => (
-                <Combobox
-                  // options={test1Options}
+              render={() => (
+                <ComboboxMulti
+                  label="ประเภทและระดับตำแหน่ง"
+                  floatingLabel
+                  required
+                  error={errors.test1?.message}
                   options={[
                     {
                       label: "วิชาการ ชำนาญการพิเศษ",
@@ -194,15 +176,37 @@ export function CreditManagementModal({
                       value: "วิชาการ ปฏิบัติการ",
                     },
                   ]}
-                  value={field.value}
+                  value={selectedId}
+                  onChange={(v) =>
+                    setSelectedId(v.map((item) => item?.toString()))
+                  }
                   valueType="string"
-                  onChange={(value) => {
-                    field.onChange(value);
-                  }}
+                />
+              )}
+            /> */}
+
+            <Controller
+              name="test1"
+              control={control}
+              render={({ field }) => (
+                <ComboboxMulti
                   label="ประเภทและระดับตำแหน่ง"
                   floatingLabel
                   required
                   error={errors.test1?.message}
+                  options={[
+                    {
+                      label: "วิชาการ ชำนาญการพิเศษ",
+                      value: "วิชาการ ชำนาญการพิเศษ",
+                    },
+                    {
+                      label: "วิชาการ ปฏิบัติการ",
+                      value: "วิชาการ ปฏิบัติการ",
+                    },
+                  ]}
+                  value={field.value || []}
+                  onChange={(v) => field.onChange(v)}
+                  valueType="string"
                 />
               )}
             />

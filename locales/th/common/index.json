@@ -18,7 +18,7 @@
   "clear": "ล้างเงื่อนไข",
   "search-data": "ค้นหาข้อมูล",
   "actions": "การดำเนินการ",
-
+  "remove-tag": "Remove Tag",
   "successfully": "ดำเนินการสำเร็จ",
   "successfully-description": "ระบบได้ดำเนินการตามคำสั่งของคุณเรียบร้อยแล้ว",
   "save-data-confirmation": "ยืนยันการบันทึกข้อมูล",
