@@ -28,9 +28,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverClose,
 } from "@/components/ui/popover";
 
 interface RequestFormProps {
@@ -63,30 +60,30 @@ const mockDataList: any = {
     },
   ],
   mockupAppprove: [
-    // { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
-    // { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // {
-    //   id: 6,
-    //   text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
-    //   status: "done",
-    // },
-    // { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
-    // { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
-    // {
-    //   id: 9,
-    //   text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
-    //   status: "done",
-    // },
-    // { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    // { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    // {
-    //   id: 12,
-    //   text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
-    //   status: "pending",
-    // },
+    { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
+    { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    {
+      id: 6,
+      text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
+      status: "done",
+    },
+    { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
+    { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
+    {
+      id: 9,
+      text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
+      status: "done",
+    },
+    { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+    { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+    {
+      id: 12,
+      text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
+      status: "pending",
+    },
   ],
   meta: {
     page: 1,
@@ -195,6 +192,25 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   };
 
   const onDeleteRequest = async (reqId: string) => {
+    alert.fire({
+      type: "delete",
+      title: c("delete-confirmation"),
+      description: c("delete-confirmation-description"),
+      confirmButton: {
+        label: c("button.delete"),
+        variant: "destructive",
+        onClick: async () => {
+          toastSuccess(c("successfully"), c("successfully-description"));
+        },
+      },
+      cancelButton: {
+        label: c("button.secondary-cancel"),
+        show: true,
+      },
+    });
+  };
+
+  const onDeleteItemRequest = async (reqId: string) => {
     alert.fire({
       type: "delete",
       title: c("delete-confirmation"),
@@ -462,7 +478,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                               `/manage-compensation/item-request/${reqId}/${id}`,
                             )
                           }
-                          // onDelete={onDeleteRequest}
+                          onDelete={onDeleteItemRequest}
                         />
                       </>
                     ) : (
