@@ -18,6 +18,13 @@ interface ConsultantTableRowProps {
   onAutoSave: () => void;
 }
 
+// คอมโพเนนต์สำหรับแสดงสัญลักษณ์ในวงกลมสีเทาทางขวาของ Input
+const SymbolBadge = ({ symbol }: { symbol: string }) => (
+  <div className="flex items-center justify-center size-7 rounded-full bg-[#F4F4F5] text-[#71717A] text-xs font-medium">
+    {symbol}
+  </div>
+);
+
 export function ConsultantTableRow({
   row,
   isEditing,
@@ -26,22 +33,34 @@ export function ConsultantTableRow({
   onInputChange,
   onAutoSave,
 }: ConsultantTableRowProps) {
-  // ใช้ข้อมูลชั่วคราวถ้ากำลังแก้ไขอยู่ ถ้าไม่ใช้ข้อมูลจริง
   const displayRow = isEditing ? tempData! : row;
 
-  // ฟังก์ชันช่วยจัดรูปแบบตัวเลข
   const formatNum = (val: number) =>
     val.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
 
+  const safeValue = (val: any) => {
+    if (val === null || val === undefined || Number.isNaN(val)) return "";
+    return val;
+  };
+
+  const handleNumberChange = (field: keyof ConsultantData, value: string) => {
+    if (value === "") {
+      onInputChange(field, 0);
+    } else {
+      const parsed = parseFloat(value);
+      onInputChange(field, isNaN(parsed) ? 0 : parsed);
+    }
+  };
+
   return (
     <TableRow
       onDoubleClick={() => onEditClick(row)}
       className={cn(
-        "border-b text-base",
-        isEditing ? "bg-blue-50/30" : "", // ไฮไลท์แถวที่กำลังแก้ไข
+        "border-b text-base transition-colors",
+        isEditing ? "bg-blue-50/30" : "hover:bg-gray-50/30",
       )}
     >
       <TableCell className="py-5 text-foreground">{row.positionNo}</TableCell>
@@ -67,11 +86,12 @@ export function ConsultantTableRow({
         {isEditing ? (
           <Input
             type="number"
-            value={displayRow.officePercentLimit}
+            value={safeValue(displayRow.officePercentLimit)}
             onChange={(e) =>
-              onInputChange("officePercentLimit", parseFloat(e.target.value))
+              handleNumberChange("officePercentLimit", e.target.value)
             }
-            className="h-11 text-center bg-white border-gray-200 rounded-xl"
+            className="h-11 rounded-xl"
+            iconPosition="right"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
@@ -83,11 +103,12 @@ export function ConsultantTableRow({
         {isEditing ? (
           <Input
             type="number"
-            value={displayRow.deputyPercentLimit}
+            value={safeValue(displayRow.deputyPercentLimit)}
             onChange={(e) =>
-              onInputChange("deputyPercentLimit", parseFloat(e.target.value))
+              handleNumberChange("deputyPercentLimit", e.target.value)
             }
-            className="h-11 text-center bg-white border-gray-200 rounded-xl"
+            className="h-11 rounded-xl"
+            iconPosition="right"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
@@ -99,11 +120,12 @@ export function ConsultantTableRow({
         {isEditing ? (
           <Input
             type="number"
-            value={displayRow.directorPercentLimit}
+            value={safeValue(displayRow.directorPercentLimit)}
             onChange={(e) =>
-              onInputChange("directorPercentLimit", parseFloat(e.target.value))
+              handleNumberChange("directorPercentLimit", e.target.value)
             }
-            className="h-11 text-center bg-white border-gray-200 rounded-xl"
+            className="h-11 rounded-xl"
+            iconPosition="right"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
@@ -137,38 +159,32 @@ export function ConsultantTableRow({
       {/* สำนักประเมิน */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
-          <div className="relative">
-            <Input
-              type="number"
-              value={displayRow.officeEvalPercent}
-              onChange={(e) =>
-                onInputChange("officeEvalPercent", parseFloat(e.target.value))
-              }
-              className="h-11 pr-7 text-center rounded-xl"
-            />
-            <span className="absolute left-3 top-3 text-sm text-subdude">
-              %
-            </span>
-          </div>
+          <Input
+            type="number"
+            value={safeValue(displayRow.officeEvalPercent)}
+            onChange={(e) =>
+              handleNumberChange("officeEvalPercent", e.target.value)
+            }
+            className="h-11 rounded-xl"
+            iconPosition="right"
+            icon={<SymbolBadge symbol="%" />}
+          />
         ) : (
           <div className="text-center">{row.officeEvalPercent} %</div>
         )}
       </TableCell>
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
-          <div className="relative">
-            <Input
-              type="number"
-              value={displayRow.officeEvalBaht}
-              onChange={(e) =>
-                onInputChange("officeEvalBaht", parseFloat(e.target.value))
-              }
-              className="h-11 pr-7 text-center rounded-xl"
-            />
-            <span className="absolute left-3 top-3 text-sm text-subdude">
-              ฿
-            </span>
-          </div>
+          <Input
+            type="number"
+            value={safeValue(displayRow.officeEvalBaht)}
+            onChange={(e) =>
+              handleNumberChange("officeEvalBaht", e.target.value)
+            }
+            className="h-11 rounded-xl"
+            iconPosition="right"
+            icon={<SymbolBadge symbol="฿" />}
+          />
         ) : (
           <div className="text-center">{row.officeEvalBaht.toFixed(2)}</div>
         )}
@@ -177,38 +193,32 @@ export function ConsultantTableRow({
       {/* รองผู้อำนวยการ */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
-          <div className="relative">
-            <Input
-              type="number"
-              value={displayRow.deputyEvalPercent}
-              onChange={(e) =>
-                onInputChange("deputyEvalPercent", parseFloat(e.target.value))
-              }
-              className="h-11 pr-7 text-center rounded-xl"
-            />
-            <span className="absolute left-3 top-3 text-sm text-subdude">
-              %
-            </span>
-          </div>
+          <Input
+            type="number"
+            value={safeValue(displayRow.deputyEvalPercent)}
+            onChange={(e) =>
+              handleNumberChange("deputyEvalPercent", e.target.value)
+            }
+            className="h-11 rounded-xl"
+            iconPosition="right"
+            icon={<SymbolBadge symbol="%" />}
+          />
         ) : (
           <div className="text-center">{row.deputyEvalPercent} %</div>
         )}
       </TableCell>
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
-          <div className="relative">
-            <Input
-              type="number"
-              value={displayRow.deputyEvalBaht}
-              onChange={(e) =>
-                onInputChange("deputyEvalBaht", parseFloat(e.target.value))
-              }
-              className="h-11 pr-7 text-center rounded-xl"
-            />
-            <span className="absolute left-3 top-3 text-sm text-subdude">
-              ฿
-            </span>
-          </div>
+          <Input
+            type="number"
+            value={safeValue(displayRow.deputyEvalBaht)}
+            onChange={(e) =>
+              handleNumberChange("deputyEvalBaht", e.target.value)
+            }
+            className="h-11 rounded-xl"
+            iconPosition="right"
+            icon={<SymbolBadge symbol="฿" />}
+          />
         ) : (
           <div className="text-center">{row.deputyEvalBaht.toFixed(2)}</div>
         )}
@@ -217,38 +227,32 @@ export function ConsultantTableRow({
       {/* ผู้อำนวยการสำนักบริหารหนี้สิน */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
-          <div className="relative">
-            <Input
-              type="number"
-              value={displayRow.directorEvalPercent}
-              onChange={(e) =>
-                onInputChange("directorEvalPercent", parseFloat(e.target.value))
-              }
-              className="h-11 pr-7 text-center rounded-xl"
-            />
-            <span className="absolute left-3 top-3 text-sm text-subdude">
-              %
-            </span>
-          </div>
+          <Input
+            type="number"
+            value={safeValue(displayRow.directorEvalPercent)}
+            onChange={(e) =>
+              handleNumberChange("directorEvalPercent", e.target.value)
+            }
+            className="h-11 rounded-xl"
+            iconPosition="right"
+            icon={<SymbolBadge symbol="%" />}
+          />
         ) : (
           <div className="text-center">{row.directorEvalPercent} %</div>
         )}
       </TableCell>
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
-          <div className="relative">
-            <Input
-              type="number"
-              value={displayRow.directorEvalBaht}
-              onChange={(e) =>
-                onInputChange("directorEvalBaht", parseFloat(e.target.value))
-              }
-              className="h-11 pr-7 text-center rounded-xl"
-            />
-            <span className="absolute left-3 top-3 text-sm text-subdude">
-              ฿
-            </span>
-          </div>
+          <Input
+            type="number"
+            value={safeValue(displayRow.directorEvalBaht)}
+            onChange={(e) =>
+              handleNumberChange("directorEvalBaht", e.target.value)
+            }
+            className="h-11 rounded-xl"
+            iconPosition="right"
+            icon={<SymbolBadge symbol="฿" />}
+          />
         ) : (
           <div className="text-center">{row.directorEvalBaht.toFixed(2)}</div>
         )}

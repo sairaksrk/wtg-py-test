@@ -236,7 +236,8 @@ export function ConsultantTable({
 
   return (
     <div ref={tableRef} className="w-full overflow-x-auto">
-      <Table className="min-w-850 border-collapse">
+      {/* <Table className="min-w-960 border-collapse table-fixed"> */}
+      <Table className="w-full table-fixed">
         <ConsultantTableHeader />
         <TableBody>
           {data.map((row) => (
