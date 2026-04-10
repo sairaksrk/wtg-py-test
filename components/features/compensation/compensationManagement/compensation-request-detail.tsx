@@ -173,7 +173,7 @@ export default function CompensationRequestDetail({
   };
 
   return (
-    <div className="min-h-screen pb-24 bg-[#FAFAFA]">
+    <div className="min-h-screen bg-[#FAFAFA]">
       <div className="max-w-full mx-auto px-4">
         {/* ส่วนหัวของหน้า */}
         <div className="flex items-center gap-4 mb-6 pt-2">
