@@ -40,7 +40,7 @@ export function ConsultantTableHeader() {
         <TableHead className="w-44 font-normal text-subdude py-6 text-center text-sm">
           คะแนนการประเมิน
         </TableHead>
-        <TableHead className="w-32.5 font-normal text-subdude py-6 text-center text-sm">
+        <TableHead className="w-34 font-normal text-subdude py-6 text-center text-sm">
           ผลการประเมิน
         </TableHead>
 
