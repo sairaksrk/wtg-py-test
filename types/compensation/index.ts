@@ -2,6 +2,9 @@ export const MANPOWER_SESSION_KEY = "manpower-table-state";
 
 export const COMPENSATION_SESSION_KEY = "compensation-table-state";
 
+export const COMPENSATION_REQUEST_SESSION_KEY =
+  "compensation-request-table-state";
+
 // RP-01 *************************************************
 
 export interface PositionItems {
@@ -146,8 +149,9 @@ export interface CompensationListParams {
   positionId?: string;
   status?: string;
   responsibleHrId?: string;
+  name?: string;
+  positionLevelId?: string;
 }
-
 
 export interface CompensationList {
   id: string;
