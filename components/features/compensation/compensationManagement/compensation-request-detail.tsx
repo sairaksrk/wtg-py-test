@@ -203,7 +203,7 @@ export default function CompensationRequestDetail({
           ))}
         </div>
 
-        {/* แถบสรุปบริหารวงเงิน - ปรับปรุงให้ Scroll แนวนอนได้ทั้งแถวข้อมูล */}
+        {/* แถบสรุปบริหารวงเงิน - Scrollแนวนอน */}
         <Card className="border rounded-[20px] mb-6 overflow-hidden">
           <div className="overflow-x-auto ">
             <CardContent className="p-5 min-w-max">
@@ -211,8 +211,8 @@ export default function CompensationRequestDetail({
                 บริหารวงเงิน ที่ปรึกษา
               </h3>
 
-              <div className="flex items-center justify-between">
-                <div className="flex gap-44">
+              <div className="flex items-center justify-between gap-20">
+                <div className="flex gap-[306.5px]">
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-subdude">เงินเดือน</p>
                     <p className="text-base font-normal text-[#18181B]">
@@ -234,7 +234,7 @@ export default function CompensationRequestDetail({
                 </div>
 
                 {/* การ์ดคงเหลือ */}
-                <div className="bg-[#F0F7FF] px-12 py-5 rounded-[20px] flex flex-col items-end min-w-[350px]">
+                <div className="bg-[#F0F7FF] px-6 py-5 rounded-[20px] flex flex-col items-end min-w-[350px]">
                   <p className="text-sm text-subdude mb-1">คงเหลือ</p>
                   <p className="text-[28px] font-semibold text-[#18181B]">
                     {MOCKUP_SUMMARY_DATA.balance}
