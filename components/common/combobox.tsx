@@ -34,6 +34,7 @@ interface ComboBoxProps {
   floatingLabel?: boolean;
   required?: boolean;
   error?: string;
+  className?: string;
 }
 
 export function Combobox(props: ComboBoxProps) {
@@ -50,6 +51,7 @@ export function Combobox(props: ComboBoxProps) {
     floatingLabel = false,
     required = false,
     error,
+    className,
   } = props;
   const defaultPlaceholder = placeholder || c("search-placeholder");
   const [open, setOpen] = React.useState(false);
@@ -113,6 +115,7 @@ export function Combobox(props: ComboBoxProps) {
                   : "py-2",
                 selectedOption ? "text-foreground" : "text-muted-foreground",
                 isError || error ? "border-destructive" : "border-input",
+                className,
               )}
               disabled={disabled}
               onFocus={() => setIsFocused(true)}

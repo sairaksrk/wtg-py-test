@@ -190,19 +190,22 @@ export function ConsultantTable({
   const [tempData, setTempData] = useState<ConsultantData | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  // อัปเดตข้อมูลเมื่อ Props เปลี่ยนแปลง
   useEffect(() => {
     if (initialData) setData(initialData);
   }, [initialData]);
 
-  // จัดการการคลิกนอกตารางเพื่อบันทึกข้อมูลอัตโนมัติ
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        editingRowId &&
-        tableRef.current &&
-        !tableRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as HTMLElement;
+
+      // เช็คคลิกข้างนอกตาราง ไม่ได้คลิกใน Portal (ปรับให้ใช้กับ Combobox dropdown)
+      const isOutsideTable =
+        tableRef.current && !tableRef.current.contains(target);
+      const isInsidePortal =
+        target.closest("[data-radix-popper-content-wrapper]") ||
+        target.closest('[role="listbox"]');
+
+      if (editingRowId && isOutsideTable && !isInsidePortal) {
         handleAutoSave();
       }
     };
@@ -217,26 +220,27 @@ export function ConsultantTable({
   };
 
   const handleInputChange = (field: keyof ConsultantData, value: any) => {
-    if (!tempData) return;
-    setTempData({ ...tempData, [field]: value });
+    setTempData((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
   const handleAutoSave = () => {
     if (editingRowId && tempData) {
-      const newData = data.map((item) =>
-        item.id === editingRowId ? tempData : item,
-      );
-      setData(newData);
-      onUpdate?.(newData);
+      setData((prev) => {
+        const newData = prev.map((item) =>
+          item.id === editingRowId ? tempData : item,
+        );
+        onUpdate?.(newData);
+        return newData;
+      });
       setEditingRowId(null);
       setTempData(null);
+      console.log(tempData);
       toastSuccess(c("successfully"), "บันทึกข้อมูลแถวเรียบร้อยแล้ว");
     }
   };
 
   return (
     <div ref={tableRef} className="w-full overflow-x-auto">
-      {/* <Table className="min-w-960 border-collapse table-fixed"> */}
       <Table className="w-full table-fixed">
         <ConsultantTableHeader />
         <TableBody>

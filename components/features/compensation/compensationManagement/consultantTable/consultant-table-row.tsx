@@ -3,11 +3,11 @@
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import { cn } from "@/utils/helpers";
 import { ConsultantData } from "./consultant-table";
+import { Combobox } from "@/components/common/combobox";
 
 interface ConsultantTableRowProps {
   row: ConsultantData;
@@ -139,14 +139,16 @@ export function ConsultantTableRow({
       </TableCell>
       <TableCell className="py-5 px-3">
         {isEditing ? (
-          <Select
+          <Combobox
             value={displayRow.evalResult}
+            valueType="string"
             options={[
+              { label: "เลือก", value: "เลือก" },
               { label: "ดีเด่น", value: "ดีเด่น" },
               { label: "ดีมาก", value: "ดีมาก" },
               { label: "ดี", value: "ดี" },
             ]}
-            onChange={(e) => onInputChange("evalResult", e.target.value)}
+            onChange={(val) => onInputChange("evalResult", val)}
             className="h-11"
           />
         ) : (
@@ -186,7 +188,7 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
-          <div className="text-center">{row.officeEvalBaht.toFixed(2)}</div>
+          <div className="text-center">{formatNum(row.officeEvalBaht)}</div>
         )}
       </TableCell>
 
@@ -220,7 +222,7 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
-          <div className="text-center">{row.deputyEvalBaht.toFixed(2)}</div>
+          <div className="text-center">{formatNum(row.deputyEvalBaht)}</div>
         )}
       </TableCell>
 
@@ -254,7 +256,8 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
-          <div className="text-center">{row.directorEvalBaht.toFixed(2)}</div>
+          <div className="text-center">{formatNum(row.directorEvalBaht)}</div>
+          // <div className="text-center">{row.directorEvalBaht.toFixed(2)}</div>
         )}
       </TableCell>
 
