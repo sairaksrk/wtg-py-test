@@ -1,12 +1,13 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAlert } from "@/components/common/alert-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { toastSuccess } from "@/utils/toast";
 import {
   ConsultantTable,
   ConsultantData,
@@ -27,7 +28,6 @@ import {
 import { getPageSize } from "@/utils/helpers";
 import { PersonnelSearchModal } from "./personnel-search-modal";
 
-// ส่วนประกอบของการ์ดสรุปข้อมูลย่อย 5 ใบด้านบน
 interface SummaryCardProps {
   title: string;
   salary: string;
@@ -57,7 +57,6 @@ const SummaryCard = ({ title, salary, percent, amount }: SummaryCardProps) => (
   </Card>
 );
 
-// ข้อมูลจำลองสำหรับแสดงผล
 const MOCKUP_SUMMARY_CARDS: any[] = [
   {
     title: "ที่ปรึกษาฯ",
@@ -103,6 +102,144 @@ const MOCKUP_PAGINATION: any = {
   displayText: "แสดง 1-10 จาก 41 รายการ",
 };
 
+const INITIAL_CONSULTANTS: ConsultantData[] = [
+  {
+    id: "1",
+    positionNo: "001",
+    name: "นายสมชาย ใจดี",
+    subPosition: "นักวิเคราะห์นโยบายและแผน ชำนาญการพิเศษ",
+    type: "อำนวยการ",
+    department: "กองยุทธศาสตร์",
+    salary: 31610.0,
+    baseCalculation: 60990.0,
+    officePercentLimit: 0.25,
+    deputyPercentLimit: 90,
+    directorPercentLimit: 90,
+    evalScore: 90,
+    evalResult: "เลือก",
+    officeEvalPercent: 100,
+    officeEvalBaht: 0,
+    deputyEvalPercent: 100,
+    deputyEvalBaht: 0,
+    directorEvalPercent: 100,
+    directorEvalBaht: 0,
+    totalPercentIncrease: 4,
+    totalAmountIncrease: 1440.0,
+    specialCompensation: 0,
+    receivedSalary: 36279.0,
+    positionAllowance: 36279.0,
+    totalIncome: 66279.0,
+  },
+  {
+    id: "2",
+    positionNo: "002",
+    name: "นางสาวสมหญิง ดีมาก",
+    subPosition: "นักทรัพยากรบุคคล ชำนาญการ",
+    type: "อำนวยการ",
+    department: "กองบริหารทรัพยากรบุคคล",
+    salary: 18480.0,
+    baseCalculation: 52320.0,
+    officePercentLimit: 0.25,
+    deputyPercentLimit: 0.25,
+    directorPercentLimit: 0.25,
+    evalScore: 90,
+    evalResult: "ดีมาก",
+    officeEvalPercent: 80,
+    officeEvalBaht: 80.0,
+    deputyEvalPercent: 80,
+    deputyEvalBaht: 80.0,
+    directorEvalPercent: 80,
+    directorEvalBaht: 80.0,
+    totalPercentIncrease: 4,
+    totalAmountIncrease: 1440.0,
+    specialCompensation: 0,
+    receivedSalary: 19920.0,
+    positionAllowance: 19920.0,
+    totalIncome: 0.0,
+  },
+  {
+    id: "3",
+    positionNo: "003",
+    name: "นายวิชัย รักษ์ดี",
+    subPosition: "olivia@untitledui.com",
+    type: "อำนวยการ",
+    department: "กองยุทธศาสตร์",
+    salary: 35070.0,
+    baseCalculation: 60990.0,
+    officePercentLimit: 0.15,
+    deputyPercentLimit: 0.15,
+    directorPercentLimit: 0.15,
+    evalScore: 80,
+    evalResult: "ดี",
+    officeEvalPercent: 80,
+    officeEvalBaht: 80.0,
+    deputyEvalPercent: 80,
+    deputyEvalBaht: 80.0,
+    directorEvalPercent: 80,
+    directorEvalBaht: 80.0,
+    totalPercentIncrease: 1,
+    totalAmountIncrease: 120.0,
+    specialCompensation: 0,
+    receivedSalary: 35190.0,
+    positionAllowance: 35190.0,
+    totalIncome: 0.0,
+  },
+  {
+    id: "4",
+    positionNo: "004",
+    name: "นางจินดา สวยงาม",
+    subPosition: "นักวิชาการเงินและบัญชี ชำนาญการพิเศษ",
+    type: "อำนวยการ",
+    department: "กองคลัง",
+    salary: 63840.0,
+    baseCalculation: 60990.0,
+    officePercentLimit: 0.15,
+    deputyPercentLimit: 0.15,
+    directorPercentLimit: 0.15,
+    evalScore: 80,
+    evalResult: "ดีเด่น",
+    officeEvalPercent: 80,
+    officeEvalBaht: 80.0,
+    deputyEvalPercent: 80,
+    deputyEvalBaht: 80.0,
+    directorEvalPercent: 80,
+    directorEvalBaht: 80.0,
+    totalPercentIncrease: 2,
+    totalAmountIncrease: 340.0,
+    specialCompensation: 2000,
+    receivedSalary: 75180.0,
+    positionAllowance: 75180.0,
+    totalIncome: 9000.0,
+  },
+  {
+    id: "5",
+    positionNo: "005",
+    name: "นางจินดา สวยงาม",
+    subPosition: "นักวิชาการเงินและบัญชี ชำนาญการพิเศษ",
+    type: "อำนวยการ",
+    department: "กองคลัง",
+    salary: 23930.0,
+    baseCalculation: 60990.0,
+    officePercentLimit: 0.15,
+    deputyPercentLimit: 0.15,
+    directorPercentLimit: 0.15,
+    evalScore: 80,
+    evalResult: "ดีมาก",
+    officeEvalPercent: 80,
+    officeEvalBaht: 80.0,
+    deputyEvalPercent: 80,
+    deputyEvalBaht: 80.0,
+    directorEvalPercent: 80,
+    directorEvalBaht: 80.0,
+    totalPercentIncrease: 2,
+    totalAmountIncrease: 780.0,
+    specialCompensation: 0,
+    receivedSalary: 24780.0,
+    positionAllowance: 24780.0,
+    totalIncome: 0.0,
+  },
+];
+
 export default function CompensationRequestDetail({
   reqId,
 }: {
@@ -112,12 +249,13 @@ export default function CompensationRequestDetail({
   const alert = useAlert();
   const c = useTranslations("common");
 
-  const [personnelData, setPersonnelData] = useState<ConsultantData[]>([]);
+  const [personnelData, setPersonnelData] =
+    useState<ConsultantData[]>(INITIAL_CONSULTANTS);
   const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
 
-  const handleTableUpdate = (updatedData: ConsultantData[]) => {
+  const handleTableUpdate = useCallback((updatedData: ConsultantData[]) => {
     setPersonnelData(updatedData);
-  };
+  }, []);
 
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_REQUEST_SESSION_KEY,
@@ -133,7 +271,7 @@ export default function CompensationRequestDetail({
     },
   );
 
-  // const { data, isLoading, isError, error } = useCompensationRequestsList({
+    // const { data, isLoading, isError, error } = useCompensationRequestsList({
   //   page: filters.page,
   //   take: filters.take,
   //   requestNo: filters.requestNo,
@@ -144,7 +282,7 @@ export default function CompensationRequestDetail({
   //   departmentId: filters.departmentId,
 
   // });
-
+  
   const onSearch = (formData: any) => {
     setFilters({
       ...filters,
@@ -175,7 +313,6 @@ export default function CompensationRequestDetail({
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="max-w-full mx-auto px-4">
-        {/* ส่วนหัวของหน้า */}
         <div className="flex items-center gap-4 mb-6 pt-2">
           <Button
             variant="secondary"
@@ -190,7 +327,6 @@ export default function CompensationRequestDetail({
           <h1 className="text-xl font-medium text-[#18181B]">ที่ปรึกษาฯ</h1>
         </div>
 
-        {/* การ์ดสรุปข้อมูล 5 ใบด้านบน */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           {MOCKUP_SUMMARY_CARDS.map((card, index) => (
             <SummaryCard
@@ -203,7 +339,6 @@ export default function CompensationRequestDetail({
           ))}
         </div>
 
-        {/* แถบสรุปบริหารวงเงิน - Scrollแนวนอน */}
         <Card className="border rounded-[20px] mb-6 overflow-hidden">
           <div className="overflow-x-auto ">
             <CardContent className="p-5 min-w-max">
@@ -233,7 +368,6 @@ export default function CompensationRequestDetail({
                   </div>
                 </div>
 
-                {/* การ์ดคงเหลือ */}
                 <div className="bg-[#F0F7FF] px-6 py-5 rounded-[20px] flex flex-col items-end min-w-[350px]">
                   <p className="text-sm text-subdude mb-1">คงเหลือ</p>
                   <p className="text-[28px] font-semibold text-[#18181B]">
@@ -245,7 +379,6 @@ export default function CompensationRequestDetail({
           </div>
         </Card>
 
-        {/* ส่วนของตารางรายชื่อบุคลากร */}
         <Card className="border border-gray-100 shadow-none rounded-3xl bg-white overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between p-6 pb-4">
             <div className="flex flex-col gap-1">
@@ -256,13 +389,6 @@ export default function CompensationRequestDetail({
                 ทั้งหมด {MOCKUP_PAGINATION.totalPersonnel} คน
               </p>
             </div>
-            {/* <Button
-              variant="outline"
-              className="bg-white border-gray-200 rounded-xl text-sm h-10"
-            >
-              <Icon icon="solar:sort-linear" className="mr-2 size-4" />
-              ตัวกรอง
-            </Button> */}
             <Popover
               open={searchCompensationOpen}
               onOpenChange={setSearchCompensationOpen}
@@ -300,13 +426,15 @@ export default function CompensationRequestDetail({
             </Popover>
           </CardHeader>
           <CardContent className="p-0">
-            <ConsultantTable onUpdate={handleTableUpdate} />
+            <ConsultantTable
+              data={personnelData}
+              onUpdate={handleTableUpdate}
+            />
           </CardContent>
         </Card>
 
-        {/* ส่วนแสดงสถานะการแบ่งหน้า */}
         <div className="flex justify-end py-4">
-          <p className="text-xs text-subdude">
+          <p className="text-sm text-subdude">
             {MOCKUP_PAGINATION.displayText}
           </p>
         </div>

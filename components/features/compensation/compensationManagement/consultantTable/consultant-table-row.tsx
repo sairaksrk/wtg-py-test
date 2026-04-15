@@ -18,7 +18,7 @@ interface ConsultantTableRowProps {
   onAutoSave: () => void;
 }
 
-// คอมโพเนนต์สำหรับแสดงสัญลักษณ์ในวงกลมสีเทาทางขวาของ Input
+// คอมโพเนนต์สัญลักษณ์ในวงกลมเทาของ Input
 const SymbolBadge = ({ symbol }: { symbol: string }) => (
   <div className="flex items-center justify-center size-7 rounded-full bg-[#F4F4F5] text-[#71717A] text-xs font-medium">
     {symbol}
