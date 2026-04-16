@@ -18,7 +18,6 @@ interface ConsultantTableRowProps {
   onAutoSave: () => void;
 }
 
-// คอมโพเนนต์สัญลักษณ์ในวงกลมเทาของ Input
 const SymbolBadge = ({ symbol }: { symbol: string }) => (
   <div className="flex items-center justify-center size-7 rounded-full bg-[#F4F4F5] text-[#71717A] text-xs font-medium">
     {symbol}
@@ -41,18 +40,9 @@ export function ConsultantTableRow({
       maximumFractionDigits: 2,
     });
 
-  const safeValue = (val: any) => {
-    if (val === null || val === undefined || Number.isNaN(val)) return "";
-    return val;
-  };
-
   const handleNumberChange = (field: keyof ConsultantData, value: string) => {
-    if (value === "") {
-      onInputChange(field, 0);
-    } else {
-      const parsed = parseFloat(value);
-      onInputChange(field, isNaN(parsed) ? 0 : parsed);
-    }
+    const parsed = value === "" ? 0 : parseFloat(value);
+    onInputChange(field, isNaN(parsed) ? 0 : parsed);
   };
 
   return (
@@ -81,17 +71,16 @@ export function ConsultantTableRow({
         {formatNum(row.baseCalculation)}
       </TableCell>
 
-      {/* ส่วนบริหารวงเงิน */}
+      {/* ส่วนบริหารวงเงิน - ใช้ thousandSeparator */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.officePercentLimit)}
+            value={displayRow.officePercentLimit}
             onChange={(e) =>
               handleNumberChange("officePercentLimit", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
-            iconPosition="right"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
@@ -102,13 +91,12 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.deputyPercentLimit)}
+            value={displayRow.deputyPercentLimit}
             onChange={(e) =>
               handleNumberChange("deputyPercentLimit", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
-            iconPosition="right"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
@@ -119,13 +107,12 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.directorPercentLimit)}
+            value={displayRow.directorPercentLimit}
             onChange={(e) =>
               handleNumberChange("directorPercentLimit", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
-            iconPosition="right"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
@@ -162,11 +149,11 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.officeEvalPercent)}
+            value={displayRow.officeEvalPercent}
             onChange={(e) =>
               handleNumberChange("officeEvalPercent", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="%" />}
@@ -178,11 +165,11 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.officeEvalBaht)}
+            value={displayRow.officeEvalBaht}
             onChange={(e) =>
               handleNumberChange("officeEvalBaht", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="฿" />}
@@ -196,11 +183,11 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.deputyEvalPercent)}
+            value={displayRow.deputyEvalPercent}
             onChange={(e) =>
               handleNumberChange("deputyEvalPercent", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="%" />}
@@ -212,11 +199,11 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.deputyEvalBaht)}
+            value={displayRow.deputyEvalBaht}
             onChange={(e) =>
               handleNumberChange("deputyEvalBaht", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="฿" />}
@@ -230,11 +217,11 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.directorEvalPercent)}
+            value={displayRow.directorEvalPercent}
             onChange={(e) =>
               handleNumberChange("directorEvalPercent", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="%" />}
@@ -246,18 +233,17 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            type="number"
-            value={safeValue(displayRow.directorEvalBaht)}
+            value={displayRow.directorEvalBaht}
             onChange={(e) =>
               handleNumberChange("directorEvalBaht", e.target.value)
             }
+            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
           <div className="text-center">{formatNum(row.directorEvalBaht)}</div>
-          // <div className="text-center">{row.directorEvalBaht.toFixed(2)}</div>
         )}
       </TableCell>
 
