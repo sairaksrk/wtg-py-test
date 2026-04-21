@@ -120,10 +120,23 @@ export function ConsultantTableRow({
           </div>
         )}
       </TableCell>
-
-      <TableCell className="py-5 text-center text-foreground">
-        {row.evalScore}
+      <TableCell className="py-5 px-3">
+        {isEditing ? (
+          <Input
+            value={displayRow.evalScore}
+            onChange={(e) => handleNumberChange("evalScore", e.target.value)}
+            thousandSeparator
+            className="h-11 rounded-xl"
+          />
+        ) : (
+          <div className="h-11 flex items-center justify-center">
+            {row.evalScore}
+          </div>
+        )}
       </TableCell>
+      {/* <TableCell className="py-5 text-center text-foreground">
+        {row.evalScore}
+      </TableCell> */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Combobox
