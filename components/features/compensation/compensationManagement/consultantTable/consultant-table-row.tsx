@@ -44,7 +44,49 @@ export function ConsultantTableRow({
     const parsed = value === "" ? 0 : parseFloat(value);
     onInputChange(field, isNaN(parsed) ? 0 : parsed);
   };
+  // ฟังก์ชัน"บริหารวงเงิน"
+  const handleLimitChange = (
+    field: "officePercentLimit" | "deputyPercentLimit" | "directorPercentLimit",
+    value: string,
+  ) => {
+    // 1. อนุญาตให้พิมพ์ตัวเลขและจุดทศนิยมเพียงจุดเดียว
+    const cleanValue = value
+      .replace(/[^0-9.]/g, "")
+      .replace(/(\..*?)\..*/g, "$1");
 
+    if (cleanValue === "" || cleanValue === ".") {
+      onInputChange(field, cleanValue);
+      return;
+    }
+
+    const parsed = parseFloat(cleanValue);
+    if (isNaN(parsed)) return;
+
+    // 2. ตรวจสอบผลรวมของช่องอื่นในกลุ่มเดียวกัน
+    const otherFields = (
+      [
+        "officePercentLimit",
+        "deputyPercentLimit",
+        "directorPercentLimit",
+      ] as const
+    ).filter((f) => f !== field);
+
+    const otherSum = otherFields.reduce(
+      (sum, f) => sum + (parseFloat(String(displayRow[f])) || 0),
+      0,
+    );
+
+    // 3. คำนวณค่าสูงสุดที่ยอมให้กรอกได้ (ต้องไม่เกิน 3 และรวมกับช่องอื่นต้องไม่เกิน 3)
+    const maxAllowed = Math.max(0, 3 - otherSum);
+
+    if (parsed > maxAllowed) {
+      // ถ้าเกิน ให้ปัดลงมาที่ค่าสูงสุดที่ยอมรับได้
+      onInputChange(field, maxAllowed.toString());
+    } else {
+      // ถ้าไม่เกิน ให้เก็บค่าเป็น string ไว้ก่อนเพื่อให้พิมพ์จุดทศนิยมต่อได้
+      onInputChange(field, cleanValue);
+    }
+  };
   return (
     <TableRow
       onDoubleClick={() => onEditClick(row)}
@@ -71,15 +113,14 @@ export function ConsultantTableRow({
         {formatNum(row.baseCalculation)}
       </TableCell>
 
-      {/* ส่วนบริหารวงเงิน - ใช้ thousandSeparator */}
+      {/* บริหารวงเงิน สำนักร้อยละ (%) */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
             value={displayRow.officePercentLimit}
             onChange={(e) =>
-              handleNumberChange("officePercentLimit", e.target.value)
+              handleLimitChange("officePercentLimit", e.target.value)
             }
-            thousandSeparator
             className="h-11 rounded-xl"
           />
         ) : (
@@ -88,14 +129,14 @@ export function ConsultantTableRow({
           </div>
         )}
       </TableCell>
+      {/* บริหารวงเงิน รองร้อยละ (%) */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
             value={displayRow.deputyPercentLimit}
             onChange={(e) =>
-              handleNumberChange("deputyPercentLimit", e.target.value)
+              handleLimitChange("deputyPercentLimit", e.target.value)
             }
-            thousandSeparator
             className="h-11 rounded-xl"
           />
         ) : (
@@ -104,14 +145,14 @@ export function ConsultantTableRow({
           </div>
         )}
       </TableCell>
+      {/* บริหารวงเงิน ผู้อำนวยการร้อยละ (%) */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
             value={displayRow.directorPercentLimit}
             onChange={(e) =>
-              handleNumberChange("directorPercentLimit", e.target.value)
+              handleLimitChange("directorPercentLimit", e.target.value)
             }
-            thousandSeparator
             className="h-11 rounded-xl"
           />
         ) : (
@@ -120,6 +161,7 @@ export function ConsultantTableRow({
           </div>
         )}
       </TableCell>
+
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
