@@ -1,13 +1,13 @@
 import Hydrate from "@/components/common/hydrate";
 import CompensationRequestDetail from "@/components/features/compensation/compensationManagement/compensation-request-detail";
-interface ManpowerRequestManagePageProps {
-  params: Promise<{ reqId: string; itemId: string; locale: string }>;
+interface CompensationRequestDetailPageProps {
+  params: Promise<{ reqId: string; locale: string }>;
 }
 
 export default async function CompensationRequestDetailPage({
   params,
-}: ManpowerRequestManagePageProps) {
-  const { reqId, itemId } = await params;
+}: CompensationRequestDetailPageProps) {
+  const { reqId } = await params;
 
   //   const client = queryClient();
 
@@ -19,7 +19,7 @@ export default async function CompensationRequestDetailPage({
   return (
     // <Hydrate state={dehydrate(client)}>
     <Hydrate state={null}>
-      <CompensationRequestDetail reqId={reqId} itemId={itemId} />
+      <CompensationRequestDetail reqId={reqId} />
     </Hydrate>
   );
 }

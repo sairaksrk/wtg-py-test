@@ -2,13 +2,13 @@ import Hydrate from "@/components/common/hydrate";
 import CompensationRequestForm from "@/components/features/compensation/compensationManagement/compensation-request-form";
 import { queryClient } from "@/libs/query/client";
 
-interface ManpowerRequestManagePageProps {
+interface CompensationRequestPageProps {
   params: Promise<{ reqId: any; locale: string }>;
 }
 
 export default async function CompensationRequestPage({
   params,
-}: ManpowerRequestManagePageProps) {
+}: CompensationRequestPageProps) {
   const { reqId } = await params;
   //   const client = queryClient();
 
