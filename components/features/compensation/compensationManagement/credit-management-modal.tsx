@@ -18,6 +18,7 @@ import {
 import { useRouter } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { ComboboxMulti } from "@/components/ui/combobox-multi";
+import { usePositionTypeLevelList } from "@/libs/query/master.queries";
 
 const positionFormSchema = z.object({
   itemName: z.string().min(1),
@@ -69,32 +70,23 @@ export function CreditManagementModal({
   // const { data: positionItemData, isLoading: isLoadingPositionItem } =
   //   useGetPositionItemById(editingId!);
 
-  // const { data: positionTypeData, isLoading: isLoadingPositionType } =
-  //   usePositionTypeList();
+  const { data: positionTypeLevelData, isLoading: isLoadingPositionTypeLevel } =
+    usePositionTypeLevelList();
 
   const createMutation = useCreatePositionItem();
   const addMutation = useAddPositionItem();
   const updateMutation = useUpdatePositionItem();
 
-  // const positionTypeOptions = useMemo(
-  //   () =>
-  //     positionTypeData?.map((item) => ({
-  //       value: item.id,
-  //       label: item.nameTh,
-  //     })) || [],
-  //   [positionTypeData],
-  // );
+  const positionTypeOptions = useMemo(
+    () =>
+      positionTypeLevelData?.map((item) => ({
+        value: item.id,
+        label: item.typeNameTh + " " + item.levelNameTh,
+      })) || [],
+    [positionTypeLevelData],
+  );
 
   useEffect(() => {
-    // กรณี Edit
-    // if (editingId && positionItemData) {
-    //   reset({
-    // itemName :  positionItemData.itemName
-    //     reason: positionItemData.reason,
-    //   });
-    //   return;
-    // }
-    // กรณี Create (ไม่มี editingId)
     if (!editingId) {
       reset({
         itemName: "",
@@ -157,34 +149,6 @@ export function CreditManagementModal({
               )}
             />
 
-            {/* <Controller
-              name="test1"
-              control={control}
-              render={() => (
-                <ComboboxMulti
-                  label="ประเภทและระดับตำแหน่ง"
-                  floatingLabel
-                  required
-                  error={errors.test1?.message}
-                  options={[
-                    {
-                      label: "วิชาการ ชำนาญการพิเศษ",
-                      value: "วิชาการ ชำนาญการพิเศษ",
-                    },
-                    {
-                      label: "วิชาการ ปฏิบัติการ",
-                      value: "วิชาการ ปฏิบัติการ",
-                    },
-                  ]}
-                  value={selectedId}
-                  onChange={(v) =>
-                    setSelectedId(v.map((item) => item?.toString()))
-                  }
-                  valueType="string"
-                />
-              )}
-            /> */}
-
             <Controller
               name="test1"
               control={control}
@@ -194,16 +158,17 @@ export function CreditManagementModal({
                   floatingLabel
                   required
                   error={errors.test1?.message}
-                  options={[
-                    {
-                      label: "วิชาการ ชำนาญการพิเศษ",
-                      value: "วิชาการ ชำนาญการพิเศษ",
-                    },
-                    {
-                      label: "วิชาการ ปฏิบัติการ",
-                      value: "วิชาการ ปฏิบัติการ",
-                    },
-                  ]}
+                  options={positionTypeOptions}
+                  // options={[
+                  //   {
+                  //     label: "วิชาการ ชำนาญการพิเศษ",
+                  //     value: "วิชาการ ชำนาญการพิเศษ",
+                  //   },
+                  //   {
+                  //     label: "วิชาการ ปฏิบัติการ",
+                  //     value: "วิชาการ ปฏิบัติการ",
+                  //   },
+                  // ]}
                   value={field.value || []}
                   onChange={(v) => field.onChange(v)}
                   valueType="string"

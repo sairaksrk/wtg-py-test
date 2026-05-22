@@ -1,6 +1,12 @@
 import type { ApiError, MasterSelectProps } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
-import { getMasterMasTitleList, getPositionLevelList, getPositionList, getPositionTypeList } from "../api/master.api";
+import {
+  getMasterMasTitleList,
+  getPositionLevelList,
+  getPositionList,
+  getPositionTypeLevelList,
+  getPositionTypeList,
+} from "../api/master.api";
 
 /**
  * Query keys for master-related queries
@@ -29,7 +35,7 @@ export function useMasterTitleList(params?: { lang?: string }) {
 export function usePositionTypeList(params?: { lang?: string }) {
   //   return useQuery<MasterSelectProps[], ApiError>({
   return useQuery<any[], ApiError>({
-    queryKey:["position-type-list"],
+    queryKey: ["position-type-list"],
     queryFn: async () => {
       const response = await getPositionTypeList(params);
       return Array.isArray(response) ? response : [];
@@ -48,13 +54,24 @@ export function usePositionLevelList(params?: { lang?: string }) {
   });
 }
 
-
 export function usePositionList(params?: { lang?: string }) {
   //   return useQuery<MasterSelectProps[], ApiError>({
   return useQuery<any[], ApiError>({
     queryKey: ["positions-list"],
     queryFn: async () => {
       const response = await getPositionList(params);
+      return Array.isArray(response) ? response : [];
+    },
+  });
+}
+
+// ประเภทและระดับตำแหน่ง
+export function usePositionTypeLevelList(params?: { lang?: string }) {
+  //   return useQuery<MasterSelectProps[], ApiError>({
+  return useQuery<any[], ApiError>({
+    queryKey: ["positions-type-and-level-list"],
+    queryFn: async () => {
+      const response = await getPositionTypeLevelList(params);
       return Array.isArray(response) ? response : [];
     },
   });

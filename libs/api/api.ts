@@ -77,7 +77,15 @@ export async function api<T = any>(
   url: string,
   data?: any,
   config: AxiosRequestConfig & {
-    plugin?: "plugin" | "core" | "storage" | "master" | "master-data-rp" | "rp";
+    plugin?:
+      | "plugin"
+      | "core"
+      | "storage"
+      | "master"
+      | "master-data-rp"
+      | "master-data-py"
+      | "rp"
+      | "py";
   } = {},
 ): Promise<T> {
   const isServer = typeof window === "undefined";
@@ -86,8 +94,8 @@ export async function api<T = any>(
     "x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY),
     "x-internal-secret": String(process.env.NEXT_PUBLIC_INTERNAL_SECRET),
     // ในอนาคตควรดึงจาก Session แต่ตอนนี้ใส่เป็นค่าคงที่
-    "x-user-id": "da7a08f9-fe75-4ada-b84a-93ca1c92cf8d",
-    "x-organization-id": "5ede57b4-034e-4af0-82e9-d865b32dd544",
+    "x-user-id": "c2c0caf4-cff0-4287-a23c-bd239625537a",
+    "x-organization-id": "e66b2ede-bb39-4c17-af77-c7bf1efef9dc",
     ...(config.headers || {}),
   };
   const configWithPlugin = { ...config, plugin: config.plugin || "plugin" };
@@ -111,8 +119,14 @@ export async function api<T = any>(
     case "master-data-rp":
       baseUrl = `${BASE_URL}/api/rp/master-data`;
       break;
+    case "master-data-py":
+      baseUrl = `${BASE_URL}/api/py/master-data`;
+      break;
     case "rp":
       baseUrl = `${BASE_URL}/api/rp`;
+      break;
+    case "py":
+      baseUrl = `${BASE_URL}/api/py`;
       break;
     default:
       baseUrl = `${BASE_URL}/api`;

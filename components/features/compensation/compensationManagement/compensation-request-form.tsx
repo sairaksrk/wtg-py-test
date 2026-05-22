@@ -29,6 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useGetCompensationRequestById } from "@/libs/query/compensation.queries";
 
 interface RequestFormProps {
   reqId?: any;
@@ -36,54 +37,54 @@ interface RequestFormProps {
 
 const mockDataList: any = {
   data: [
-    {
-      id: "1ea31ed3-bff6-4f61-aa34-25144cda2275",
-      row1: "ที่ปรึกษาฯ",
-      row2: 76800.0,
-      row3: ["วิชาการทรงคุณวุฒิ"],
-      row4: null,
-      row5: null,
-      row6: 3.0,
-      row7: 2304.0,
-      row8: 1,
-    },
-    {
-      id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
-      row1: "รองผู้อำนวยการสำนัก",
-      row2: 134690.0,
-      row3: ["บริหารต้น"],
-      row4: 3.0,
-      row5: null,
-      row6: null,
-      row7: 4040.7,
-      row8: 2,
-    },
+    // {
+    //   id: "1ea31ed3-bff6-4f61-aa34-25144cda2275",
+    //   row1: "ที่ปรึกษาฯ",
+    //   row2: 76800.0,
+    //   row3: ["วิชาการทรงคุณวุฒิ"],
+    //   row4: null,
+    //   row5: null,
+    //   row6: 3.0,
+    //   row7: 2304.0,
+    //   row8: 1,
+    // },
+    // {
+    //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
+    //   row1: "รองผู้อำนวยการสำนัก",
+    //   row2: 134690.0,
+    //   row3: ["บริหารต้น"],
+    //   row4: 3.0,
+    //   row5: null,
+    //   row6: null,
+    //   row7: 4040.7,
+    //   row8: 2,
+    // },
   ],
   mockupAppprove: [
-    { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
-    { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    {
-      id: 6,
-      text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
-      status: "done",
-    },
-    { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
-    { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
-    {
-      id: 9,
-      text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
-      status: "done",
-    },
-    { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    {
-      id: 12,
-      text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
-      status: "pending",
-    },
+    // { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
+    // { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+    // {
+    //   id: 6,
+    //   text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
+    //   status: "done",
+    // },
+    // { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
+    // { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
+    // {
+    //   id: 9,
+    //   text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
+    //   status: "done",
+    // },
+    // { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+    // { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+    // {
+    //   id: 12,
+    //   text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
+    //   status: "pending",
+    // },
   ],
   meta: {
     page: 1,
@@ -106,12 +107,18 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     id: null,
     state: false,
   });
-
   const [exportCompensationOpen, setExportCompensationOpen] = useState(false);
 
-  const [status, setStatus] = useState<string>("ฉบับร่าง");
-  // const status = data?.status;
+  const {
+    data: compensationRequestData,
+    isLoading: isLoadingCompensationRequest,
+    isError,
+    error,
+  } = useGetCompensationRequestById(reqId || "");
 
+  const status = compensationRequestData?.status;
+
+  console.log("compensationRequestData", compensationRequestData);
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_SESSION_KEY,
     {
@@ -123,10 +130,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
 
   //   const updateMutation = useUpdateManpowerRequest();
   //   const isSaving = updateMutation.isPending;
-  //   const isLoading = reqId ? isLoadingManpower : false;
-
-  const isLoading = false;
-  const isError = false;
+  const isLoading = reqId ? isLoadingCompensationRequest : false;
 
   const onSubmitConsideration = async () => {
     alert.fire({
@@ -138,7 +142,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         variant: "default",
         onClick: async () => {
           toastSuccess(c("successfully"), c("successfully-description"));
-          setStatus("รอพิจารณา");
+          // setStatus("รอพิจารณา");
         },
       },
       cancelButton: {
@@ -159,7 +163,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         variant: "default",
         onClick: async () => {
           toastSuccess(c("successfully"), c("successfully-description"));
-          setStatus("นำส่งเอกสาร");
+          // setStatus("นำส่งเอกสาร");
         },
       },
       cancelButton: {
@@ -180,7 +184,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         variant: "default",
         onClick: async () => {
           toastSuccess(c("successfully"), c("successfully-description"));
-          setStatus("เสร็จสิ้น");
+          // setStatus("เสร็จสิ้น");
         },
       },
       cancelButton: {
@@ -238,7 +242,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   };
 
   const statusConfig: Record<string, { label: string; color: string }> = {
-    ฉบับร่าง: {
+    draft: {
       label: "ฉบับร่าง",
       color: "bg-[#F4F4F5] text-subdude",
     },
@@ -305,9 +309,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                     className="text-base"
                   />
                 </Button>
-                <h1 className="text-xl font-medium">
-                  รายการค่าตอบแทนประจำปี 2/2569
-                </h1>
+                <h1 className="text-xl font-medium">ย้อนกลับ</h1>
               </div>
 
               <div className="flex flex-col gap-6">
@@ -317,7 +319,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                       <div className="flex flex-row items-center justify-between">
                         <CardTitle>
                           <h1 className="text-xl font-medium">
-                            รายการค่าตอบแทนประจำปี 1/2569
+                            {compensationRequestData?.name || "-"}
+                            {/* รายการค่าตอบแทนประจำปี 1/2569 */}
                           </h1>
                         </CardTitle>
                         {status === "ฉบับร่าง" || status === "รอพิจารณา" ? (
@@ -354,7 +357,9 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                         <div className="flex items-center justify-center gap-2 text-subdude">
                           <Icon icon="solar:calendar-linear" />
                           <h1 className="text-sm font-normal text-subdude">
-                            วันที่สร้าง 12 พ.ย. 2568
+                            วันที่สร้าง {""}
+                            {/* 12 พ.ย. 2568 */}
+                            {compensationRequestData?.createDate || "-"}
                             {/* {formatToBuddhist(Number(mockupDetailFormData?.createdAt))} */}
                           </h1>
                         </div>
@@ -364,8 +369,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                         <div className="flex items-center justify-center gap-2 text-subdude">
                           <Icon icon="solar:user-linear" />
                           <h1 className="text-sm font-normal text-subdude">
-                            {/* {mockupDetailFormData?.createBy ?? "-"} */}
-                            ธิดาวารินทร์
+                            {/* ธิดาวารินทร์ */}
+                            {compensationRequestData?.createBy ?? "-"}
                           </h1>
                         </div>
                       </div>

@@ -175,3 +175,8 @@ export interface CompensationList {
   fileUrl?: string;
   items: PositionItems[];
 }
+
+export interface CreateCompensationItem {
+  name: string;
+  remarks: string;
+}

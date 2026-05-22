@@ -14,7 +14,7 @@ interface UseCompensationColumnsProps {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  ฉบับร่าง: {
+  draft: {
     label: "ฉบับร่าง",
     color: "bg-[#F4F4F5] text-subdude",
   },
@@ -46,16 +46,16 @@ export function useCompensationColumns({
       {
         accessorKey: "createdAt",
         header: "วันที่สร้าง",
-        size: 10,
-        // cell: ({ row }) => formatToBuddhist(Number(row.original.createdAt)),
+        size: 12,
+        cell: ({ row }) => formatToBuddhist(Number(row.original.createdAt)),
       },
       {
-        accessorKey: "itemName",
+        accessorKey: "name",
         header: "ชื่อรายการ",
         size: 12,
       },
       {
-        accessorKey: "number",
+        accessorKey: "employeeCount",
         header: "จำนวนบุคลากร",
         size: 12,
       },
@@ -84,11 +84,11 @@ export function useCompensationColumns({
         },
       },
       {
-        accessorKey: "approver",
+        accessorKey: "approvedBy",
         header: "ผู้อนุมัติ / ตรวจสอบ",
         size: 9,
         cell: ({ row }) => {
-          const approver = row.original.approver;
+          const approver = row.original.approvedBy;
           return (
             <>
               {approver ? (

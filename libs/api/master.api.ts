@@ -31,3 +31,12 @@ export async function getPositionList(params?: { lang?: string }): Promise<Maste
 		params,
 	})
 }
+
+
+export async function getPositionTypeLevelList(params?: { lang?: string }): Promise<MasterSelectProps[]> {
+	return api<MasterSelectProps[]>("GET", `/payroll/master/position-levels`, undefined, {
+		plugin: "py",
+		params,
+	})
+}
+

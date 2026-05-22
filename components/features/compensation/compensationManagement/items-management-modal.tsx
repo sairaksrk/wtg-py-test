@@ -11,25 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/common/combobox";
 import { toastError, toastSuccess } from "@/utils/toast";
-import {
-  usePositionLevelList,
-  usePositionList,
-  usePositionTypeList,
-} from "@/libs/query/master.queries";
 import { useLoadingStore } from "@/stores/loading-store";
 import { formatApiError } from "@/types/api";
 import {
   useAddPositionItem,
   useCreatePositionItem,
-  useGetPositionItemById,
-  useUpdatePositionItem,
 } from "@/libs/query/manpower.queries";
 import { useRouter } from "@/i18n/navigation";
 import { TextArea } from "@/components/ui/textarea";
+import { CreateCompensationItem } from "@/types/compensation";
+import { useCreateCompensationItem } from "@/libs/query/compensation.queries";
 
 const positionFormSchema = z.object({
-  itemName: z.string().min(1),
-  reason: z.string().min(0),
+  name: z.string().min(1),
+  remarks: z.string().min(0),
 });
 
 type PositionFormValues = z.infer<typeof positionFormSchema>;
@@ -59,82 +54,55 @@ export function ItemsManagementModal({
   } = useForm<PositionFormValues>({
     resolver: zodResolver(positionFormSchema),
     defaultValues: {
-      itemName: "",
-      reason: "",
+      name: "",
+      remarks: "",
     },
   });
 
-  // const { data: positionItemData, isLoading: isLoadingPositionItem } =
-  //   useGetPositionItemById(editingId!);
-  const { data: positionTypeData, isLoading: isLoadingPositionType } =
-    usePositionTypeList();
-  const { data: positionLevelData, isLoading: isLoadingPositionLevel } =
-    usePositionLevelList();
-  const { data: positionData, isLoading: isLoadingPosition } =
-    usePositionList();
-
-  const createMutation = useCreatePositionItem();
-  const addMutation = useAddPositionItem();
-  const updateMutation = useUpdatePositionItem();
-
-  const positionTypeOptions = useMemo(
-    () =>
-      positionTypeData?.map((item) => ({
-        value: item.id,
-        label: item.nameTh,
-      })) || [],
-    [positionTypeData],
-  );
-  const positionLevelOptions = useMemo(
-    () =>
-      positionLevelData?.map((item) => ({
-        value: item.id,
-        label: item.nameTh,
-      })) || [],
-    [positionLevelData],
-  );
-  const positionOptions = useMemo(
-    () =>
-      positionData?.map((item) => ({ value: item.id, label: item.nameTh })) ||
-      [],
-    [positionData],
-  );
+  const createMutation = useCreateCompensationItem();
 
   useEffect(() => {
-    // กรณี Edit
-    // if (editingId && positionItemData) {
-    //   reset({
-    // itemName :  positionItemData.itemName
-    //     reason: positionItemData.reason,
-    //   });
-    //   return;
-    // }
-
-    // กรณี Create (ไม่มี editingId)
     if (!editingId) {
       reset({
-        itemName: "",
-        reason: "",
+        name: "",
+        remarks: "",
       });
     }
-  }, [
-    open,
-    editingId,
-    // positionItemData,
-    reset,
-  ]);
+  }, [open, editingId, reset]);
 
   const onSubmit = async (formData: PositionFormValues) => {
-    const reqId = "5ea31ed3-bff6-4f61-aa34-25144cda2270";
-    toastSuccess(c("successfully"), c("successfully-description"));
-    router.push(`/manage-compensation/item-request/${reqId}`);
+    try {
+      updateLoading(true);
+
+      const payloadCreate: CreateCompensationItem = {
+        name: formData.name,
+        remarks: formData.remarks || "",
+      };
+
+      const res = await createMutation.mutateAsync(payloadCreate);
+      toastSuccess(c("successfully"), c("successfully-description"));
+      onSave();
+
+      router.push(`/manage-compensation/item-request/${res.id}`);
+    } catch (error) {
+      const { title, description } = formatApiError(error, c("error-occur"));
+
+      toastError(title, description || c("error-detail"));
+    } finally {
+      updateLoading(false);
+    }
   };
+
+  // const reqId = "5ea31ed3-bff6-4f61-aa34-25144cda2270";
+  // toastSuccess(c("successfully"), c("successfully-description"));
+  // router.push(`/manage-compensation/item-request/${reqId}`);
 
   // const isLoading =
   //   isLoadingPositionType ||
   //   isLoadingPositionLevel ||
   //   isLoadingPosition ||
   //   (editingId ? isLoadingPositionItem : false);
+
   const isLoading = false;
 
   return (
@@ -155,7 +123,7 @@ export function ItemsManagementModal({
             <p className="text-base font-medium">ข้อมูลรายละเอียดคำขอ</p>
 
             <Controller
-              name="itemName"
+              name="name"
               control={control}
               render={({ field }) => (
                 <Input
@@ -163,14 +131,14 @@ export function ItemsManagementModal({
                   label="ชื่อรายการ"
                   floatingLabel
                   required
-                  error={errors.itemName?.message}
+                  error={errors.name?.message}
                 />
               )}
             />
 
             {/* เหตุผล */}
             <Controller
-              name="reason"
+              name="remarks"
               control={control}
               render={({ field }) => (
                 <TextArea
@@ -178,7 +146,7 @@ export function ItemsManagementModal({
                   label="หมายเหตุ"
                   // disabled={isSaving}
                   floatingLabel
-                  error={errors.reason?.message}
+                  error={errors.remarks?.message}
                   className="h-36"
                 />
               )}
@@ -189,10 +157,7 @@ export function ItemsManagementModal({
             <Button variant="secondary" type="button" onClick={onClose}>
               ยกเลิก
             </Button>
-            <Button
-              type="submit"
-              disabled={createMutation.isPending || addMutation.isPending}
-            >
+            <Button type="submit" disabled={createMutation.isPending}>
               บันทึก
             </Button>
           </div>
