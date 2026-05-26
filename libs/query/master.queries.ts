@@ -1,6 +1,7 @@
 import type { ApiError, MasterSelectProps } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 import {
+  getAgencyList,
   getMasterMasTitleList,
   getPositionLevelList,
   getPositionList,
@@ -12,10 +13,17 @@ import {
  * Query keys for master-related queries
  * Following TanStack Query best practices for key management
  */
+
 export const masterKeys = {
   all: ["master"] as const,
   titles: (params?: { lang?: string }) =>
     [...masterKeys.all, "titles", params] as const,
+  positionTypes: () => [...masterKeys.all, "position-types"] as const,
+  positionLevels: () => [...masterKeys.all, "position-levels"] as const,
+  positions: () => [...masterKeys.all, "positions"] as const,
+  agencies: () => [...masterKeys.all, "agencies"] as const,
+  positionTypeLevels: () =>
+    [...masterKeys.all, "position-type-levels"] as const,
 };
 
 /**
@@ -32,46 +40,52 @@ export function useMasterTitleList(params?: { lang?: string }) {
   });
 }
 
-export function usePositionTypeList(params?: { lang?: string }) {
-  //   return useQuery<MasterSelectProps[], ApiError>({
-  return useQuery<any[], ApiError>({
-    queryKey: ["position-type-list"],
+export function usePositionTypeList() {
+  return useQuery<MasterSelectProps[], ApiError>({
+    queryKey: masterKeys.positionTypes(),
     queryFn: async () => {
-      const response = await getPositionTypeList(params);
+      const response = await getPositionTypeList();
       return Array.isArray(response) ? response : [];
     },
   });
 }
 
-export function usePositionLevelList(params?: { lang?: string }) {
-  //   return useQuery<MasterSelectProps[], ApiError>({
-  return useQuery<any[], ApiError>({
-    queryKey: ["position-level-list"],
+export function usePositionLevelList() {
+  return useQuery<MasterSelectProps[], ApiError>({
+    queryKey: masterKeys.positionLevels(),
     queryFn: async () => {
-      const response = await getPositionLevelList(params);
+      const response = await getPositionLevelList();
       return Array.isArray(response) ? response : [];
     },
   });
 }
 
-export function usePositionList(params?: { lang?: string }) {
-  //   return useQuery<MasterSelectProps[], ApiError>({
-  return useQuery<any[], ApiError>({
-    queryKey: ["positions-list"],
+export function usePositionList() {
+  return useQuery<MasterSelectProps[], ApiError>({
+    queryKey: masterKeys.positions(),
     queryFn: async () => {
-      const response = await getPositionList(params);
+      const response = await getPositionList();
+      return Array.isArray(response) ? response : [];
+    },
+  });
+}
+
+export function useAgencyList() {
+  return useQuery<MasterSelectProps[], ApiError>({
+    queryKey: masterKeys.agencies(),
+    queryFn: async () => {
+      const response = await getAgencyList();
       return Array.isArray(response) ? response : [];
     },
   });
 }
 
 // ประเภทและระดับตำแหน่ง
-export function usePositionTypeLevelList(params?: { lang?: string }) {
-  //   return useQuery<MasterSelectProps[], ApiError>({
+export function usePositionTypeLevelList() {
   return useQuery<any[], ApiError>({
-    queryKey: ["positions-type-and-level-list"],
+    queryKey: masterKeys.positionTypeLevels(),
     queryFn: async () => {
-      const response = await getPositionTypeLevelList(params);
+      const response = await getPositionTypeLevelList();
       return Array.isArray(response) ? response : [];
     },
   });

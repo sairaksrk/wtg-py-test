@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useDateFormatter } from "@/hooks/use-date-formatter";
 import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/utils/helpers";
 
 interface UseCreditColumnsProps {
   onEdit?: (id: any) => void;
@@ -13,20 +14,13 @@ interface UseCreditColumnsProps {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  ฉบับร่าง: {
-    label: "ฉบับร่าง",
-    color: "bg-[#F4F4F5] text-subdude",
-  },
   รอพิจารณา: {
     label: "รอพิจารณา",
     color: "bg-[#FFF7ED] text-[#F97316]",
   },
-  อยู่ระหว่างดำเนินการ: {
-    label: "อยู่ระหว่างดำเนินการ",
-    color: "bg-[#FEFCE8] text-[#FACC15]",
-  },
-  เสร็จสิ้น: {
-    label: "เสร็จสิ้น",
+
+  สำเร็จ: {
+    label: "สำเร็จ",
     color: "bg-[#F0FDF4] text-[#16A34A]",
   },
 };
@@ -40,14 +34,29 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
   const columns: ColumnDef<any>[] = useMemo(() => {
     return [
       {
-        accessorKey: "row1",
+        accessorKey: "name",
         header: "ชื่อรายการ",
-        size: 12,
+        size: 15,
+      },
+      {
+        accessorKey: "row8",
+        header: "จำนวนบุคลากร",
+        size: 10,
+        cell: ({ row }) => {
+          const data = row.original.row8;
+          return (
+            <h1>
+              {data !== undefined && data !== null
+                ? Number(data).toLocaleString("en-US")
+                : "-"}
+            </h1>
+          );
+        },
       },
       {
         accessorKey: "row2",
-        header: "เงินเดือน",
-        size: 8,
+        header: "เงินเดือนปัจุบันรวม",
+        size: 12,
         cell: ({ row }) => {
           const data = row.original.row2;
           return (
@@ -62,7 +71,6 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
           );
         },
       },
-
       {
         accessorKey: "row3",
         header: "ประเภทและระดับตำแหน่ง",
@@ -88,79 +96,103 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
       },
       {
         accessorKey: "row4",
-        header: "ผู้อำนวยการสำนัก",
+        header: "จัดสรรร้อยละ (%)",
         size: 10,
         cell: ({ row }) => {
           const data = row.original.row4;
           return (
             <h1>
               {data !== undefined && data !== null
-                ? `${Number(data).toFixed(1)} %`
+                ? `${Number(data).toFixed(2)} %`
                 : "-"}
             </h1>
           );
         },
       },
+      //     {
+      //   accessorKey: "row4",
+      //   header: "ผู้อำนวยการสำนัก",
+      //   size: 10,
+      //   cell: ({ row }) => {
+      //     const data = row.original.row4;
+      //     return (
+      //       <h1>
+      //         {data !== undefined && data !== null
+      //           ? `${Number(data).toFixed(1)} %`
+      //           : "-"}
+      //       </h1>
+      //     );
+      //   },
+      // },
+      // {
+      //   accessorKey: "row5",
+      //   header: "รองผู้อำนวยการ",
+      //   size: 10,
+      //   cell: ({ row }) => {
+      //     const data = row.original.row5;
+      //     return (
+      //       <h1>
+      //         {data !== undefined && data !== null
+      //           ? `${Number(data).toFixed(1)} %`
+      //           : "-"}
+      //       </h1>
+      //     );
+      //   },
+      // },
+      // {
+      //   accessorKey: "row6",
+      //   header: "ผู้อำนวยการสำนักบริหารหนี้สิน",
+      //   size: 12,
+      //   cell: ({ row }) => {
+      //     const data = row.original.row6;
+      //     return (
+      //       <h1>
+      //         {data !== undefined && data !== null
+      //           ? `${Number(data).toFixed(1)} %`
+      //           : "-"}
+      //       </h1>
+      //     );
+      //   },
+      // },
       {
-        accessorKey: "row5",
-        header: "รองผู้อำนวยการ",
-        size: 10,
+        accessorKey: "status",
+        header: "สถานะ",
+        size: 5,
         cell: ({ row }) => {
-          const data = row.original.row5;
+          const status = row.original.status;
+          const currentStatus = statusConfig[
+            status as keyof typeof statusConfig
+          ] || { label: "-", color: "bg-gray-100 text-gray-400" };
           return (
-            <h1>
-              {data !== undefined && data !== null
-                ? `${Number(data).toFixed(1)} %`
-                : "-"}
-            </h1>
+            <Badge
+              className={cn(
+                "flex items-center gap-2 text-sm font-normal",
+                currentStatus.color,
+              )}
+              variant="secondary"
+            >
+              <span className="w-2 h-2 rounded-full bg-current" />
+              {currentStatus.label}
+            </Badge>
           );
         },
       },
       {
-        accessorKey: "row6",
-        header: "ผู้อำนวยการสำนักบริหารหนี้สิน",
-        size: 12,
+        accessorKey: "row9",
+        header: "ผู้พิจารณา",
+        size: 8,
         cell: ({ row }) => {
-          const data = row.original.row6;
+          const approver = row.original.row9;
           return (
-            <h1>
-              {data !== undefined && data !== null
-                ? `${Number(data).toFixed(1)} %`
-                : "-"}
-            </h1>
-          );
-        },
-      },
-      {
-        accessorKey: "row7",
-        header: "วงเงิน",
-        size: 10,
-        cell: ({ row }) => {
-          const data = row.original.row7;
-          return (
-            <h1>
-              {data !== undefined && data !== null
-                ? Number(data).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
-                : "-"}
-            </h1>
-          );
-        },
-      },
-      {
-        accessorKey: "row8",
-        header: "จำนวนบุคลากร",
-        size: 10,
-        cell: ({ row }) => {
-          const data = row.original.row8;
-          return (
-            <h1>
-              {data !== undefined && data !== null
-                ? Number(data).toLocaleString("en-US")
-                : "-"}
-            </h1>
+            <>
+              {approver ? (
+                <Badge className="text-sm font-normal" variant="secondary">
+                  {approver}
+                </Badge>
+              ) : (
+                "-"
+              )}
+            </>
           );
         },
       },

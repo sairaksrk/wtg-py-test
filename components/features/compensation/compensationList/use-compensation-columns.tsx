@@ -18,13 +18,13 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     label: "ฉบับร่าง",
     color: "bg-[#F4F4F5] text-subdude",
   },
-  รอพิจารณา: {
-    label: "รอพิจารณา",
-    color: "bg-[#FFF7ED] text-[#F97316]",
-  },
-  อยู่ระหว่างดำเนินการ: {
-    label: "อยู่ระหว่างดำเนินการ",
+  อยู่ระหว่างการพิจารณา: {
+    label: "อยู่ระหว่างการพิจารณา",
     color: "bg-[#FEFCE8] text-[#FACC15]",
+  },
+  นำส่งเอกสาร: {
+    label: "นำส่งเอกสาร",
+    color: "bg-[#F0F9FF] text-[#0EA5E9]",
   },
   เสร็จสิ้น: {
     label: "เสร็จสิ้น",
@@ -47,7 +47,11 @@ export function useCompensationColumns({
         accessorKey: "createdAt",
         header: "วันที่สร้าง",
         size: 12,
-        cell: ({ row }) => formatToBuddhist(Number(row.original.createdAt)),
+        cell: ({ row }) =>
+          formatToBuddhist(
+            Number(row.original.createdAt),
+            "dd MMM yyyy HH:mm ",
+          ),
       },
       {
         accessorKey: "name",
@@ -59,7 +63,6 @@ export function useCompensationColumns({
         header: "จำนวนบุคลากร",
         size: 12,
       },
-
       {
         accessorKey: "status",
         header: "สถานะ",
@@ -102,7 +105,6 @@ export function useCompensationColumns({
           );
         },
       },
-
       {
         id: "tools",
         header: c("tools"),

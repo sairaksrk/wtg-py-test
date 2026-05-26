@@ -30,6 +30,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useGetCompensationRequestById } from "@/libs/query/compensation.queries";
+import { useDateFormatter } from "@/hooks/use-date-formatter";
 
 interface RequestFormProps {
   reqId?: any;
@@ -41,23 +42,40 @@ const mockDataList: any = {
     //   id: "1ea31ed3-bff6-4f61-aa34-25144cda2275",
     //   row1: "ที่ปรึกษาฯ",
     //   row2: 76800.0,
-    //   row3: ["วิชาการทรงคุณวุฒิ"],
-    //   row4: null,
+    //   row3: ["วิชาการชำนาญการพิเศษ"],
+    //   row4: 2.75,
     //   row5: null,
-    //   row6: 3.0,
+    //   row6: 2.75,
     //   row7: 2304.0,
     //   row8: 1,
+    //   status: "รอพิจารณา",
+    //   row9: "อาทิตย์ เฉลิมประเสริฐ",
     // },
     // {
     //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
     //   row1: "รองผู้อำนวยการสำนัก",
     //   row2: 134690.0,
-    //   row3: ["บริหารต้น"],
-    //   row4: 3.0,
+    //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
+    //   row4: 2.75,
     //   row5: null,
-    //   row6: null,
+    //   row6: 2.75,
     //   row7: 4040.7,
     //   row8: 2,
+    //   status: "รอพิจารณา",
+    //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
+    // },
+    // {
+    //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
+    //   row1: "รองผู้อำนวยการสำนัก",
+    //   row2: 134690.0,
+    //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
+    //   row4: 2.75,
+    //   row5: null,
+    //   row6: 2.75,
+    //   row7: 4040.7,
+    //   row8: 2,
+    //   status: "สำเร็จ",
+    //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
     // },
   ],
   mockupAppprove: [
@@ -100,6 +118,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   const c = useTranslations("common");
   const updateLoading = useLoadingStore((state) => state.updateLoading);
   //   useSetBreadcrumb([{ name: m("add-request-information") }]);
+  const { formatToBuddhist } = useDateFormatter();
 
   const [creditManagementModalOpen, setCreditManagementModalOpen] =
     useState<ModalStateProps>({ id: null, state: false });
@@ -116,9 +135,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     error,
   } = useGetCompensationRequestById(reqId || "");
 
-  const status = compensationRequestData?.status;
+  const status = compensationRequestData?.period?.status;
 
-  console.log("compensationRequestData", compensationRequestData);
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_SESSION_KEY,
     {
@@ -246,12 +264,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       label: "ฉบับร่าง",
       color: "bg-[#F4F4F5] text-subdude",
     },
-    รอพิจารณา: {
-      label: "รอพิจารณา",
-      color: "bg-[#FFF7ED] text-[#F97316]",
-    },
-    อยู่ระหว่างดำเนินการ: {
-      label: "อยู่ระหว่างดำเนินการ",
+    อยู่ระหว่างพิจาราณา: {
+      label: "อยู่ระหว่างพิจาราณา",
       color: "bg-[#FEFCE8] text-[#FACC15]",
     },
     นำส่งเอกสาร: {
@@ -276,6 +290,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       </div>
     );
   }
+
   //   if (isError) {
   //     const { description, statusCode } = formatApiError(error, c("error-occur"));
   //     return (
@@ -319,7 +334,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                       <div className="flex flex-row items-center justify-between">
                         <CardTitle>
                           <h1 className="text-xl font-medium">
-                            {compensationRequestData?.name || "-"}
+                            {compensationRequestData?.period?.name ?? "-"}
                             {/* รายการค่าตอบแทนประจำปี 1/2569 */}
                           </h1>
                         </CardTitle>
@@ -359,8 +374,12 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                           <h1 className="text-sm font-normal text-subdude">
                             วันที่สร้าง {""}
                             {/* 12 พ.ย. 2568 */}
-                            {compensationRequestData?.createDate || "-"}
-                            {/* {formatToBuddhist(Number(mockupDetailFormData?.createdAt))} */}
+                            {formatToBuddhist(
+                              Number(
+                                compensationRequestData?.period?.createdAt,
+                              ),
+                              "dd MMM yyyy",
+                            )}
                           </h1>
                         </div>
 
@@ -370,7 +389,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                           <Icon icon="solar:user-linear" />
                           <h1 className="text-sm font-normal text-subdude">
                             {/* ธิดาวารินทร์ */}
-                            {compensationRequestData?.createBy ?? "-"}
+                            {compensationRequestData?.period?.creatorName ??
+                              "-"}
                           </h1>
                         </div>
                       </div>
@@ -414,16 +434,6 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                           </Button>
                         )}
 
-                        {/* <Button
-                          type="button"
-                          className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                          // onClick={onExport}
-                        >
-                          <Icon icon="solar:download-minimalistic-linear" />
-                          ออกรายงาน
-                          <Icon icon="solar:alt-arrow-down-linear" />
-                        </Button> */}
-
                         <Popover
                           open={exportCompensationOpen}
                           onOpenChange={setExportCompensationOpen}
@@ -466,13 +476,13 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    {mockDataList?.data?.length > 0 ? (
+                    {compensationRequestData?.groups?.length > 0 ? (
                       <>
                         <CreditTable
-                          data={mockDataList?.data || []}
+                          // data={mockDataList?.data || []}
+                          // totalRows={mockDataList?.meta.itemCount || 0}
+                          data={compensationRequestData?.groups || []}
                           totalRows={mockDataList?.meta.itemCount || 0}
-                          // data={data?.data || []}
-                          // totalRows={data?.meta.itemCount || 0}
                           currentPage={filters.page || 1}
                           onPageChange={(page) =>
                             setFilters({ ...filters, page })
@@ -528,6 +538,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onSave={() =>
                   setCreditManagementModalOpen({ id: null, state: false })
                 }
+                 listGroupsData={compensationRequestData?.groups || []}
               />
 
               {/* <RequestSearchModal
