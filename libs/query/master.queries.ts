@@ -2,6 +2,7 @@ import type { ApiError, MasterSelectProps } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 import {
   getPositionTypeLevelList,
+  getReviewerList,
   getStructureUnitList,
 } from "../api/master.api";
 
@@ -20,6 +21,7 @@ export const masterKeys = {
   agencies: () => [...masterKeys.all, "agencies"] as const,
   positionTypeLevels: () =>
     [...masterKeys.all, "position-type-levels"] as const,
+  reviewer: () => [...masterKeys.all, "reviewer"] as const,
 };
 
 /**
@@ -43,6 +45,17 @@ export function useGetStructureUnitList() {
     queryKey: masterKeys.agencies(),
     queryFn: async () => {
       const response = await getStructureUnitList();
+      return Array.isArray(response) ? response : [];
+    },
+  });
+}
+
+// ผู้พิจารณา PY
+export function useGetReviewerList() {
+  return useQuery<MasterSelectProps[], ApiError>({
+    queryKey: masterKeys.reviewer(),
+    queryFn: async () => {
+      const response = await getReviewerList();
       return Array.isArray(response) ? response : [];
     },
   });

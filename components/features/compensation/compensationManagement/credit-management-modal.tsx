@@ -14,6 +14,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { ComboboxMulti } from "@/components/ui/combobox-multi";
 import {
+  useGetReviewerList,
   useGetStructureUnitList,
   usePositionTypeLevelList,
 } from "@/libs/query/master.queries";
@@ -118,6 +119,9 @@ export function CreditManagementModal({
 
   const { data: positionTypeLevelData, isLoading: isLoadingPositionTypeLevel } =
     usePositionTypeLevelList();
+
+  const { data: reviewerListData, isLoading: isLoadingReviewer } =
+    useGetReviewerList();
 
   const positionTypeData = useMemo(
     () =>
@@ -297,13 +301,7 @@ export function CreditManagementModal({
                   floatingLabel
                   required
                   error={errors.reviewerId?.message}
-                  // options={positionTypeOptions}
-                  options={[
-                    {
-                      label: "อนันตญา สิริประภาชัย",
-                      value: "99c0dae8-765f-4a31-b8d9-fa70af66f5f5",
-                    },
-                  ]}
+                  options={reviewerListData || []}
                   value={field.value}
                   onChange={(v) => field.onChange(v)}
                   valueType="string"
@@ -360,7 +358,7 @@ export function CreditManagementModal({
                     label="ประเภทและระดับตำแหน่ง"
                     floatingLabel
                     error={errors.positionLevelIds?.message}
-                    options={positionTypeData}
+                    options={positionTypeData || []}
                     value={field.value || []}
                     onChange={(v) => field.onChange(v)}
                     valueType="string"
@@ -375,13 +373,7 @@ export function CreditManagementModal({
                 control={control}
                 render={({ field }) => (
                   <ComboboxMulti
-                    // options={[
-                    //   {
-                    //     label: "กองจัดการหนี้ 1",
-                    //     value: "68bf808b-4ffb-45a7-b4ae-d5dc53f4eaa7",
-                    //   },
-                    // ]}
-                    options={structureUnitData}
+                    options={structureUnitData || []}
                     value={field.value || []}
                     valueType="string"
                     onChange={(value) => {

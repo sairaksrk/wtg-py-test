@@ -29,3 +29,19 @@ export async function getStructureUnitList(params?: {
     params,
   });
 }
+
+// ผู้พิจารณา PY
+
+export async function getReviewerList(params?: {
+  lang?: string;
+}): Promise<MasterSelectProps[]> {
+  return api<MasterSelectProps[]>(
+    "GET",
+    `/master-data/reviewers/options`,
+    undefined,
+    {
+      plugin: "py",
+      params,
+    },
+  );
+}
