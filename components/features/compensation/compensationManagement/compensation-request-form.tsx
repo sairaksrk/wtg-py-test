@@ -236,15 +236,6 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       },
     });
   };
-  const param = {
-    page: filters.page ?? 1,
-    take: filters.take ?? 10,
-  };
-
-  // const deleteCreditLimitListMutation = useDeleteCreditLimitList(
-  //   reqId || "",
-  //   param,
-  // );
 
   const deleteCreditLimitListMutation = useDeleteCreditLimitList();
 
@@ -591,7 +582,6 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onSave={() =>
                   setCreditManagementModalOpen({ id: null, state: false })
                 }
-                param={param}
               />
             </div>
           </div>

@@ -289,8 +289,10 @@ const statusConfig: Record<
 };
 export default function CompensationRequestDetail({
   reqId,
+  groupsId,
 }: {
   reqId?: string;
+  groupsId?: string;
 }) {
   const router = useRouter();
   const alert = useAlert();

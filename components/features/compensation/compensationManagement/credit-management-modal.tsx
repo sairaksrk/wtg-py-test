@@ -79,7 +79,6 @@ interface PositionManageModalProps {
   editingId?: string | null;
   onClose: () => void;
   onSave: () => void;
-  param?: { page: number; take: number };
 }
 
 export function CreditManagementModal({
@@ -88,7 +87,6 @@ export function CreditManagementModal({
   editingId,
   onClose,
   onSave,
-  param,
 }: PositionManageModalProps) {
   const router = useRouter();
   const c = useTranslations("common");
@@ -142,8 +140,6 @@ export function CreditManagementModal({
   const listGroupsData: any[] = useMemo(() => {
     return groupsData?.items || [];
   }, [groupsData]);
-
-  // const createMutation = useCreateCreditLimitList(reqId || "", param);
 
   const createMutation = useCreateCreditLimitList();
 

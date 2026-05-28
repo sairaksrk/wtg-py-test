@@ -1,13 +1,13 @@
 import Hydrate from "@/components/common/hydrate";
 import CompensationRequestDetail from "@/components/features/compensation/compensationManagement/compensation-request-detail";
 interface CompensationRequestDetailPageProps {
-  params: Promise<{ reqId: string; locale: string }>;
+  params: Promise<{ reqId: string; itemId: string; locale: string }>;
 }
 
 export default async function CompensationRequestDetailPage({
   params,
 }: CompensationRequestDetailPageProps) {
-  const { reqId } = await params;
+  const { reqId, itemId } = await params;
 
   //   const client = queryClient();
 
@@ -19,7 +19,7 @@ export default async function CompensationRequestDetailPage({
   return (
     // <Hydrate state={dehydrate(client)}>
     <Hydrate state={null}>
-      <CompensationRequestDetail reqId={reqId} />
+      <CompensationRequestDetail reqId={reqId} groupsId={itemId} />
     </Hydrate>
   );
 }
