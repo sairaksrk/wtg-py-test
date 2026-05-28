@@ -113,55 +113,6 @@ export function ConsultantTableRow({
         {formatNum(row.baseCalculation)}
       </TableCell>
 
-      {/* บริหารวงเงิน สำนักร้อยละ (%) */}
-      <TableCell className="py-5 px-3">
-        {isEditing ? (
-          <Input
-            value={displayRow.officePercentLimit}
-            onChange={(e) =>
-              handleLimitChange("officePercentLimit", e.target.value)
-            }
-            className="h-11 rounded-xl"
-          />
-        ) : (
-          <div className="h-11 flex items-center justify-center">
-            {row.officePercentLimit}
-          </div>
-        )}
-      </TableCell>
-      {/* บริหารวงเงิน รองร้อยละ (%) */}
-      <TableCell className="py-5 px-3">
-        {isEditing ? (
-          <Input
-            value={displayRow.deputyPercentLimit}
-            onChange={(e) =>
-              handleLimitChange("deputyPercentLimit", e.target.value)
-            }
-            className="h-11 rounded-xl"
-          />
-        ) : (
-          <div className="h-11 flex items-center justify-center">
-            {row.deputyPercentLimit}
-          </div>
-        )}
-      </TableCell>
-      {/* บริหารวงเงิน ผู้อำนวยการร้อยละ (%) */}
-      <TableCell className="py-5 px-3">
-        {isEditing ? (
-          <Input
-            value={displayRow.directorPercentLimit}
-            onChange={(e) =>
-              handleLimitChange("directorPercentLimit", e.target.value)
-            }
-            className="h-11 rounded-xl"
-          />
-        ) : (
-          <div className="h-11 flex items-center justify-center">
-            {row.directorPercentLimit}
-          </div>
-        )}
-      </TableCell>
-
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
@@ -200,7 +151,56 @@ export function ConsultantTableRow({
         )}
       </TableCell>
 
-      {/* สำนักประเมิน */}
+      {/* บริหารวงเงิน สำนักร้อยละ (%)  จัดสรรร้อยละรอบที่ 1 (%)  */}
+      <TableCell className="py-5 px-3">
+        {isEditing ? (
+          <Input
+            value={displayRow.officePercentLimit}
+            onChange={(e) =>
+              handleLimitChange("officePercentLimit", e.target.value)
+            }
+            className="h-11 rounded-xl"
+          />
+        ) : (
+          <div className="h-11 flex items-center justify-center">
+            {row.officePercentLimit}
+          </div>
+        )}
+      </TableCell>
+      {/* บริหารวงเงิน รองร้อยละ (%) จัดสรรร้อยละรอบที่ 2 (%)  */}
+      <TableCell className="py-5 px-3">
+        {isEditing ? (
+          <Input
+            value={displayRow.deputyPercentLimit}
+            onChange={(e) =>
+              handleLimitChange("deputyPercentLimit", e.target.value)
+            }
+            className="h-11 rounded-xl"
+          />
+        ) : (
+          <div className="h-11 flex items-center justify-center">
+            {row.deputyPercentLimit}
+          </div>
+        )}
+      </TableCell>
+      {/* บริหารวงเงิน ผู้อำนวยการร้อยละ (%) จัดสรรร้อยละรอบที่ 3 (%)  */}
+      <TableCell className="py-5 px-3">
+        {isEditing ? (
+          <Input
+            value={displayRow.directorPercentLimit}
+            onChange={(e) =>
+              handleLimitChange("directorPercentLimit", e.target.value)
+            }
+            className="h-11 rounded-xl"
+          />
+        ) : (
+          <div className="h-11 flex items-center justify-center">
+            {row.directorPercentLimit}
+          </div>
+        )}
+      </TableCell>
+
+      {/* สำนักประเมิน  ผมพิจารณารอบที่ 1*/}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
@@ -234,7 +234,7 @@ export function ConsultantTableRow({
         )}
       </TableCell>
 
-      {/* รองผู้อำนวยการ */}
+      {/* รองผู้อำนวยการ ผมพิจารณารอบที่ 2 */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
@@ -268,7 +268,7 @@ export function ConsultantTableRow({
         )}
       </TableCell>
 
-      {/* ผู้อำนวยการสำนักบริหารหนี้สิน */}
+      {/* ผู้อำนวยการสำนักบริหารหนี้สิน ผมพิจารณารอบที่ 3 */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input

@@ -26,17 +26,6 @@ export function ConsultantTableHeader() {
           ฐานในการคำนวณ
         </TableHead>
 
-        {/* ส่วนบริหารวงเงิน */}
-        <TableHead className="w-39 font-normal text-subdude py-6 text-center text-sm">
-          บริหารวงเงิน <br></br> สำนักร้อยละ (%)
-        </TableHead>
-        <TableHead className="w-39 font-normal text-subdude py-6 text-center text-sm">
-          บริหารวงเงิน <br></br> รองร้อยละ (%)
-        </TableHead>
-        <TableHead className="w-44 font-normal text-subdude py-6 text-center text-sm">
-          บริหารวงเงิน <br></br> ผู้อำนวยการร้อยละ (%)
-        </TableHead>
-
         <TableHead className="w-44 font-normal text-subdude py-6 text-center text-sm">
           คะแนนการประเมิน
         </TableHead>
@@ -44,24 +33,35 @@ export function ConsultantTableHeader() {
           ผลการประเมิน
         </TableHead>
 
+        {/* ส่วนบริหารวงเงิน */}
+        <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
+          จัดสรรร้อยละรอบที่ 1 (%)
+        </TableHead>
+        <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
+          จัดสรรร้อยละรอบที่ 2 (%)
+        </TableHead>
+        <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
+          จัดสรรร้อยละรอบที่ 3 (%)
+        </TableHead>
+
         {/* ส่วนการประเมินของแต่ละระดับ */}
         <TableHead
           className="w-68 font-normal text-subdude py-6 text-center text-sm"
           colSpan={2}
         >
-          สำนักประเมิน
+          ผมพิจารณารอบที่ 1
         </TableHead>
         <TableHead
           className="w-72 font-normal text-subdude py-6 text-center text-sm"
           colSpan={2}
         >
-          รองผู้อำนวยการ
+          ผมพิจารณารอบที่ 2
         </TableHead>
         <TableHead
           className="w-72 font-normal text-subdude py-6 text-center text-sm"
           colSpan={2}
         >
-          ผู้อำนวยการสำนักบริหารหนี้สิน
+          ผมพิจารณารอบที่ 3
         </TableHead>
 
         <TableHead className="w-51 font-normal text-subdude py-6 text-center text-sm">
