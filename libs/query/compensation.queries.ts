@@ -12,6 +12,7 @@ import {
   getCompensationList,
   getCompensationRequestById,
   getGroupsListCheckBox,
+  getCompensationGroupDetail,
 } from "../api/compensation.api";
 
 /**
@@ -106,5 +107,14 @@ export function useDeleteCreditLimitList() {
         queryKey: compensationKeys.requestDetails(),
       });
     },
+  });
+}
+
+// ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
+export function useGetCompensationGroupDetail(groupsId: string) {
+  return useQuery<any, ApiError>({
+    queryKey: ["compensation-group-detail", groupsId],
+    queryFn: () => getCompensationGroupDetail(groupsId),
+    enabled: !!groupsId,
   });
 }

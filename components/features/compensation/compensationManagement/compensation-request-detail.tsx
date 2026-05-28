@@ -8,6 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { toastSuccess } from "@/utils/toast";
+import Loading from "@/components/common/loading";
+import ErrorComponent from "@/components/common/error";
+import { formatApiError } from "@/types/api";
+import { useGetCompensationGroupDetail } from "@/libs/query/compensation.queries";
 import {
   ConsultantTable,
   ConsultantData,
@@ -302,6 +306,14 @@ export default function CompensationRequestDetail({
     useState<ConsultantData[]>(INITIAL_CONSULTANTS);
   const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
 
+  // API
+  const {
+    data: groupDetail,
+    isLoading,
+    isError,
+    error,
+  } = useGetCompensationGroupDetail(groupsId || "");
+
   const handleTableUpdate = useCallback((updatedData: ConsultantData[]) => {
     setPersonnelData(updatedData);
   }, []);
@@ -362,9 +374,33 @@ export default function CompensationRequestDetail({
     setSearchCompensationOpen(false);
   };
 
-  const mainBalance = "-2,581.60";
+  if (isLoading) {
+    return (
+      <div className="py-80">
+        <Loading fullscreen={false} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    const { title, description, statusCode } = formatApiError(
+      error,
+      c("error-occur"),
+    );
+    return (
+      <div className="py-20">
+        <ErrorComponent
+          statusCode={statusCode}
+          title={title}
+          message={description}
+        />
+      </div>
+    );
+  }
+
+  // ดึงข้อมูลสรุปวงเงินจัดสรรจาก API จริง
+  const mainBalance = groupDetail?.remainingAmount?.toString() || "-";
   const isMainBalanceNegative = mainBalance.trim().startsWith("-");
-  // ดึงค่า config ของสถานะปัจจุบัน statusConfig
   const currentStatus = statusConfig[status] || statusConfig["รอพิจารณา"];
   const isCompleted = status === "สำเร็จ";
 
@@ -425,7 +461,7 @@ export default function CompensationRequestDetail({
                 การจัดสรรวงเงิน
               </h3>
               <p className="text-sm text-subdude mt-1">
-                กลุ่มผอ.สำนัก (ผอ.สบน.)
+                {groupDetail?.name || "-"}
               </p>
             </div>
 
@@ -436,25 +472,33 @@ export default function CompensationRequestDetail({
                     เงินเดือนปัจจุบันรวม
                   </span>
                   <span className="text-base font-normal text-[#18181B]">
-                    463,720.00
+                    {groupDetail?.totalSalary?.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    }) || "-"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-sm text-subdude">จัดสรรร้อยละ (%)</span>
                   <span className="text-base font-normal text-[#18181B]">
-                    0.25/3.00
+                    {groupDetail?.budgetPercent?.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    }) || "-"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-sm text-subdude">วงเงินจัดสรร</span>
                   <span className="text-base font-normal text-[#18181B]">
-                    2,581.60
+                    {groupDetail?.budgetAmount?.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    }) || "-"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-sm text-subdude">ใช้ไป</span>
                   <span className="text-base font-normal text-[#18181B]">
-                    0.00
+                    {groupDetail?.spentAmount?.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    }) || "-"}
                   </span>
                 </div>
               </div>
