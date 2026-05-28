@@ -22,8 +22,6 @@ export function PersonnelSearchModal({
 }: ManpowerSearchModalProps) {
   const c = useTranslations("common");
 
-  // const { data: positionData, isLoading } = usePositionList();
-
   // const positionOptions = useMemo(
   //   () =>
   //     positionData?.map((item) => ({ value: item.id, label: item.nameTh })) ||

@@ -4,56 +4,8 @@ import { api } from "./api";
 /**
  * Get a master list of mas_titles
  */
-export async function getMasterMasTitleList(params?: {
-  lang?: string;
-}): Promise<MasterSelectProps[]> {
-  return api<MasterSelectProps[]>("GET", `/mas-title`, undefined, {
-    plugin: "master",
-    params,
-  });
-}
 
-export async function getPositionTypeList(params?: {
-  lang?: string;
-}): Promise<MasterSelectProps[]> {
-  return api<MasterSelectProps[]>("GET", `/position-types`, undefined, {
-    plugin: "master-data-rp",
-    params,
-  });
-}
-
-export async function getPositionLevelList(params?: {
-  lang?: string;
-}): Promise<MasterSelectProps[]> {
-  return api<MasterSelectProps[]>("GET", `/position-levels`, undefined, {
-    plugin: "master-data-rp",
-    params,
-  });
-}
-
-export async function getPositionList(params?: {
-  lang?: string;
-}): Promise<MasterSelectProps[]> {
-  return api<MasterSelectProps[]>("GET", `/positions`, undefined, {
-    plugin: "master-data-rp",
-    params,
-  });
-}
-
-export async function getAgencyList(params?: {
-  lang?: string;
-}): Promise<MasterSelectProps[]> {
-  return api<MasterSelectProps[]>(
-    "GET",
-    `/or-structure-units/options`,
-    undefined,
-    {
-      plugin: "master-data-rp",
-      params,
-    },
-  );
-}
-
+// ประเภทและระดับตำแหน่ง PY
 export async function getPositionTypeLevelList(params?: {
   lang?: string;
 }): Promise<MasterSelectProps[]> {
@@ -66,4 +18,14 @@ export async function getPositionTypeLevelList(params?: {
       params,
     },
   );
+}
+
+// หน่วยงาน PY
+export async function getStructureUnitList(params?: {
+  lang?: string;
+}): Promise<MasterSelectProps[]> {
+  return api<MasterSelectProps[]>("GET", `/payroll/master/units`, undefined, {
+    plugin: "py",
+    params,
+  });
 }

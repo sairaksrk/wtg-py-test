@@ -30,10 +30,6 @@ import {
   CompensationListParams,
 } from "@/types/compensation";
 
-import {
-  useManpowerRequestsList,
-  useDeleteManpowerRequest,
-} from "@/libs/query/manpower.queries";
 import { formatApiError } from "@/types/api";
 import { ItemsManagementModal } from "../compensationManagement/items-management-modal";
 import { useGetCompensationList } from "@/libs/query/compensation.queries";
@@ -55,6 +51,7 @@ export default function CompensationList() {
     id: null,
     state: false,
   });
+
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_SESSION_KEY,
     {
@@ -107,7 +104,6 @@ export default function CompensationList() {
         label: c("button.delete"),
         variant: "destructive",
         onClick: async () => {
-          toastSuccess(c("successfully"), c("successfully-description"));
           // updateLoading(true);
           // try {
           //   await deleteManpowerMutation.mutateAsync(id);

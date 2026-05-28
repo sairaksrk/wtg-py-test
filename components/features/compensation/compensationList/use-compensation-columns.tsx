@@ -18,7 +18,7 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     label: "ฉบับร่าง",
     color: "bg-[#F4F4F5] text-subdude",
   },
-  อยู่ระหว่างการพิจารณา: {
+  reviewing: {
     label: "อยู่ระหว่างการพิจารณา",
     color: "bg-[#FEFCE8] text-[#FACC15]",
   },

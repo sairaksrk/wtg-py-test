@@ -2,16 +2,14 @@
 
 import type { PaginatedResponse } from "@/types/api";
 import type {
-  ManpowerRequestList,
   CompensationListParams,
   CompensationList,
   CreateCompensationItem,
 } from "@/types/compensation";
 import { api } from "./api";
 
-/**
- * RP-01 Get paginated list
- */
+// ดึงข้อมูล จัดการค่าตอบแทน Get All
+
 export async function getCompensationList(
   params?: CompensationListParams,
 ): Promise<PaginatedResponse<CompensationList>> {
@@ -31,6 +29,8 @@ export async function getCompensationList(
   );
 }
 
+// เพิ่ม รายการค่าตอบแทน
+
 export async function createCompensationItem(
   payload: CreateCompensationItem,
 ): Promise<{ id: string }> {
@@ -39,13 +39,59 @@ export async function createCompensationItem(
   });
 }
 
-export async function getCompensationRequestById(reqId: string): Promise<any> {
+// ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน Get ById
+
+export async function getCompensationRequestById(
+  reqId: string,
+  params?: CompensationListParams,
+): Promise<any> {
   return api<any>(
     "GET",
     `/payroll/master/increment-groups/${reqId}`,
     undefined,
     {
+      params: {
+        page: params?.page,
+        take: params?.take,
+      },
+
       plugin: "py",
     },
   );
+}
+
+// ดึง รายการกลุ่มที่สร้างไว้แล้ว (checkbox)
+
+export async function getGroupsListCheckBox(
+  reqId: string,
+): Promise<PaginatedResponse<CompensationList>> {
+  return api<PaginatedResponse<CompensationList>>(
+    "GET",
+    `/payroll/master/groups/options`,
+    undefined,
+    {
+      params: {
+        excludePeriodId: reqId,
+      },
+      plugin: "py",
+    },
+  );
+}
+
+// เพิ่ม รายการบริหารวงเงิน
+
+export async function createCreditLimitList(
+  payload: any,
+): Promise<{ payrollPeriodId: string }> {
+  return api("POST", `/payroll/increment/groups`, payload, {
+    plugin: "py",
+  });
+}
+
+// ลบ รายการบริหารวงเงิน
+
+export async function deleteCreditLimitList(id: string): Promise<void> {
+  return api<void>("DELETE", `/payroll/increment/groups/${id}`, undefined, {
+    plugin: "py",
+  });
 }

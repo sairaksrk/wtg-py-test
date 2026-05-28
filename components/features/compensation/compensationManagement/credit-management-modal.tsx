@@ -10,55 +10,60 @@ import Modal from "@/components/common/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toastError, toastSuccess } from "@/utils/toast";
-import {
-  useCreatePositionItem,
-  useUpdatePositionItem,
-} from "@/libs/query/manpower.queries";
 import { useRouter } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { ComboboxMulti } from "@/components/ui/combobox-multi";
-import { usePositionTypeLevelList } from "@/libs/query/master.queries";
+import {
+  useGetStructureUnitList,
+  usePositionTypeLevelList,
+} from "@/libs/query/master.queries";
 import { Combobox } from "@/components/common/combobox";
-import { useAgencyList } from "@/libs/query/master.queries";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { cn } from "@/utils/helpers";
 // import { set } from "lodash";
 import { Badge } from "@/components/ui/badge";
+import { formatApiError } from "@/types/api";
+import { useLoadingStore } from "@/stores/loading-store";
+import {
+  useCreateCreditLimitList,
+  useGetGroupsListCheckBox,
+} from "@/libs/query/compensation.queries";
+import { useUpdatePositionItem } from "@/libs/query/manpower.queries";
 
 // const positionFormSchema = z.object({
-//   itemName: z.string().min(1),
-//   test1: z.string().min(1),
-//   test2: z.string().min(1),
-//   test5: z.array(z.string()).min(1),
-//   departmentId: z.array(z.string()).min(1),
+//   name: z.string().min(1),
+//   reviewerId: z.string().min(1),
+//   allocPercent: z.string().min(1),
+//   positionLevelIds: z.array(z.string()).min(1),
+//   structureUnitIds: z.array(z.string()).min(1),
 // });
 
 const positionFormSchema = z
   .object({
-    itemName: z.string().min(1),
-    test1: z.string().min(1),
-    test2: z.string().min(1),
-    test5: z.array(z.string()).optional(),
-    departmentId: z.array(z.string()).optional(),
+    name: z.string().min(1),
+    reviewerId: z.string().min(1),
+    allocPercent: z.string().min(1),
+    positionLevelIds: z.array(z.string()).optional(),
+    structureUnitIds: z.array(z.string()).optional(),
 
     isGroupSelected: z.boolean(),
   })
   .superRefine((data, ctx) => {
-    // ถ้าไม่ได้เลือกจากกลุ่ม บังคับกรอก test5 และ departmentId
+    // ถ้าไม่ได้เลือกจากกลุ่ม บังคับกรอก positionLevelIds และ structureUnitIds
     if (!data.isGroupSelected) {
-      if (!data.test5 || data.test5.length === 0) {
+      if (!data.positionLevelIds || data.positionLevelIds.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ["test5"],
+          path: ["positionLevelIds"],
           message: "กรุณาณาระบุ",
         });
       }
 
-      if (!data.departmentId || data.departmentId.length === 0) {
+      if (!data.structureUnitIds || data.structureUnitIds.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ["departmentId"],
+          path: ["structureUnitIds"],
           message: "กรุณาณาระบุ",
         });
       }
@@ -73,7 +78,7 @@ interface PositionManageModalProps {
   editingId?: string | null;
   onClose: () => void;
   onSave: () => void;
-  listGroupsData: any[];
+  param?: { page: number; take: number };
 }
 
 export function CreditManagementModal({
@@ -82,11 +87,11 @@ export function CreditManagementModal({
   editingId,
   onClose,
   onSave,
-  listGroupsData
+  param,
 }: PositionManageModalProps) {
   const router = useRouter();
   const c = useTranslations("common");
-  // const updateLoading = useLoadingStore((state) => state.updateLoading);
+  const updateLoading = useLoadingStore((state) => state.updateLoading);
 
   const [isGroupSelected, setIsGroupSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -99,16 +104,17 @@ export function CreditManagementModal({
   } = useForm<PositionFormValues>({
     resolver: zodResolver(positionFormSchema),
     defaultValues: {
-      itemName: "",
-      test1: "",
-      test2: "",
-      test5: [],
-      departmentId: [],
+      name: "",
+      reviewerId: "",
+      allocPercent: "",
+      positionLevelIds: [],
+      structureUnitIds: [],
       isGroupSelected: false,
     },
   });
 
-  const { data: agencyData, isLoading: isLoadingAgency } = useAgencyList();
+  const { data: structureUnitData, isLoading: isLoadingAgency } =
+    useGetStructureUnitList();
 
   const { data: positionTypeLevelData, isLoading: isLoadingPositionTypeLevel } =
     usePositionTypeLevelList();
@@ -116,23 +122,37 @@ export function CreditManagementModal({
   const positionTypeData = useMemo(
     () =>
       positionTypeLevelData?.map((item) => ({
-        value: item.id,
-        label: item.typeNameTh + " " + item.levelNameTh,
+        value: item.value,
+        label: item.positionTypeName + " " + item.label,
       })) || [],
     [positionTypeLevelData],
   );
 
-  const createMutation = useCreatePositionItem();
+  const {
+    data: groupsData,
+    isLoading: isLoadingGroups,
+    isError,
+    error,
+  } = useGetGroupsListCheckBox(reqId || "");
+
+  const listGroupsData: any[] = useMemo(() => {
+    return groupsData?.items || [];
+  }, [groupsData]);
+
+  // const createMutation = useCreateCreditLimitList(reqId || "", param);
+
+  const createMutation = useCreateCreditLimitList();
+
   const updateMutation = useUpdatePositionItem();
 
   useEffect(() => {
     if (!editingId) {
       reset({
-        itemName: "",
-        test1: "",
-        test2: "",
-        test5: [],
-        departmentId: [],
+        name: "",
+        reviewerId: "",
+        allocPercent: "",
+        positionLevelIds: [],
+        structureUnitIds: [],
         isGroupSelected: false,
       });
       setIsGroupSelected(false);
@@ -142,29 +162,39 @@ export function CreditManagementModal({
   }, [open, editingId, reset]);
 
   const onSubmit = async (formData: PositionFormValues) => {
-    const payloadCreate: any = {
-      itemName: formData.itemName,
-      test1: formData.test1,
-      test2: formData.test2,
+    try {
+      updateLoading(true);
 
-      ...(isGroupSelected && {
-        // requestIds: selectedIds,
-        requestIds: Array.from(selectedIds),
-      }),
+      const payloadCreate: any = {
+        payrollPeriodId: reqId,
+        name: formData.name,
 
-      ...(!isGroupSelected && {
-        test5: formData.test5,
-        departmentId: formData.departmentId,
-      }),
-    };
+        reviewerId: formData.reviewerId,
+        allocPercent: Number(formData.allocPercent),
 
-    console.log(payloadCreate);
+        ...(isGroupSelected && {
+          // requestIds: Array.from(selectedIds),
+          id: Array.from(selectedIds),
+        }),
 
-    const reqId = "5ea31ed3-bff6-4f61-aa34-25144cda2270";
-    toastSuccess(c("successfully"), c("successfully-description"));
-    // router.push(`/manage-compensation/item-request/${reqId}`);
+        ...(!isGroupSelected && {
+          positionLevelIds: formData.positionLevelIds,
+          structureUnitIds: formData.structureUnitIds,
+        }),
+      };
 
-    onSave();
+      const res = await createMutation.mutateAsync(payloadCreate);
+      toastSuccess(c("successfully"), c("successfully-description"));
+      onSave();
+
+      router.push(`/manage-compensation/item-request/${res?.payrollPeriodId}`);
+    } catch (error) {
+      const { title, description } = formatApiError(error, c("error-occur"));
+
+      toastError(title, description || c("error-detail"));
+    } finally {
+      updateLoading(false);
+    }
   };
 
   const isSaving = false;
@@ -172,19 +202,6 @@ export function CreditManagementModal({
 
   // const isSaving = updateMutation.isPending;
   // const isLoading = isLoadingAgency || (reqId ? isLoadingManpower : false);
-
-  // const mockupGroupData: any[] = [
-  //   {
-  //     id: "1",
-  //     name: "กลุ่มตรวจสอบภายใน",
-  //     user: "อาทิตย์ เฉลิมประเสริฐ",
-  //   },
-  //   {
-  //     id: "2",
-  //     name: "กลุ่มบริหารความเสี่ยงหนี้สาธารณะ 2",
-  //     user: "วิสาข์ จิตราพรชัยวัฒน์",
-  //   },
-  // ];
 
   const handleGroupCheckboxChange = (id: string, checked: boolean) => {
     setSelectedIds((prev) => {
@@ -232,7 +249,7 @@ export function CreditManagementModal({
             icon="solar:check-circle-linear"
             className="h-3 w-3 text-[#16A34A]"
           />
-          {group.user ?? "-"}
+          {group.reviewerName ?? "-"}
         </Badge>
       </label>
     );
@@ -254,7 +271,7 @@ export function CreditManagementModal({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
             <Controller
-              name="itemName"
+              name="name"
               control={control}
               render={({ field }) => (
                 <Input
@@ -262,7 +279,7 @@ export function CreditManagementModal({
                   label="ชื่อกลุ่ม"
                   floatingLabel
                   required
-                  error={errors.itemName?.message}
+                  error={errors.name?.message}
                   disabled={isSaving}
                 />
               )}
@@ -272,23 +289,19 @@ export function CreditManagementModal({
           </div>
           <div className="grid grid-cols-2 gap-6 border-b border-dashed pb-6 border-[#D4D4D8]">
             <Controller
-              name="test1"
+              name="reviewerId"
               control={control}
               render={({ field }) => (
                 <Combobox
                   label="ผู้พิจารณา"
                   floatingLabel
                   required
-                  error={errors.test1?.message}
+                  error={errors.reviewerId?.message}
                   // options={positionTypeOptions}
                   options={[
                     {
                       label: "อนันตญา สิริประภาชัย",
-                      value: "อนันตญา สิริประภาชัย",
-                    },
-                    {
-                      label: "สมชาย ปฏิบัติการ",
-                      value: "สมชาย ปฏิบัติการ",
+                      value: "99c0dae8-765f-4a31-b8d9-fa70af66f5f5",
                     },
                   ]}
                   value={field.value}
@@ -300,7 +313,7 @@ export function CreditManagementModal({
             />
 
             <Controller
-              name="test2"
+              name="allocPercent"
               control={control}
               render={({ field }) => (
                 <Input
@@ -308,7 +321,7 @@ export function CreditManagementModal({
                   label="จัดสรรร้อยละ"
                   floatingLabel
                   required
-                  error={errors.test2?.message}
+                  error={errors.allocPercent?.message}
                   thousandSeparator
                   iconPosition="right"
                   icon={
@@ -340,13 +353,13 @@ export function CreditManagementModal({
           {!isGroupSelected ? (
             <div className="grid grid-cols-1 gap-6">
               <Controller
-                name="test5"
+                name="positionLevelIds"
                 control={control}
                 render={({ field }) => (
                   <ComboboxMulti
                     label="ประเภทและระดับตำแหน่ง"
                     floatingLabel
-                    error={errors.test5?.message}
+                    error={errors.positionLevelIds?.message}
                     options={positionTypeData}
                     value={field.value || []}
                     onChange={(v) => field.onChange(v)}
@@ -358,28 +371,25 @@ export function CreditManagementModal({
               />
 
               <Controller
-                name="departmentId"
+                name="structureUnitIds"
                 control={control}
                 render={({ field }) => (
                   <ComboboxMulti
-                    options={[
-                      {
-                        label: "กองจัดการหนี้ 1",
-                        value: "กองจัดการหนี้ 1",
-                      },
-                      {
-                        label: "กองจัดการหนี้ 2",
-                        value: "กองจัดการหนี้ 2",
-                      },
-                    ]}
+                    // options={[
+                    //   {
+                    //     label: "กองจัดการหนี้ 1",
+                    //     value: "68bf808b-4ffb-45a7-b4ae-d5dc53f4eaa7",
+                    //   },
+                    // ]}
+                    options={structureUnitData}
                     value={field.value || []}
                     valueType="string"
                     onChange={(value) => {
                       field.onChange(value);
                     }}
-                    label="เลือกหน่วยงาน"
+                    label="หน่วยงาน"
                     floatingLabel
-                    error={errors.departmentId?.message}
+                    error={errors.structureUnitIds?.message}
                     disabled={isSaving}
                     required={!isGroupSelected}
                   />

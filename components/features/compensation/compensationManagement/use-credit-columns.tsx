@@ -14,7 +14,11 @@ interface UseCreditColumnsProps {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  รอพิจารณา: {
+  draft: {
+    label: "ฉบับร่าง",
+    color: "bg-[#F4F4F5] text-subdude",
+  },
+  reviewing: {
     label: "รอพิจารณา",
     color: "bg-[#FFF7ED] text-[#F97316]",
   },
@@ -39,11 +43,11 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
         size: 15,
       },
       {
-        accessorKey: "row8",
+        accessorKey: "employeeCount",
         header: "จำนวนบุคลากร",
         size: 10,
         cell: ({ row }) => {
-          const data = row.original.row8;
+          const data = row.original.employeeCount;
           return (
             <h1>
               {data !== undefined && data !== null
@@ -54,11 +58,11 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
         },
       },
       {
-        accessorKey: "row2",
+        accessorKey: "totalSalary",
         header: "เงินเดือนปัจุบันรวม",
         size: 12,
         cell: ({ row }) => {
-          const data = row.original.row2;
+          const data = row.original.totalSalary;
           return (
             <h1>
               {data !== undefined && data !== null
@@ -72,11 +76,11 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
         },
       },
       {
-        accessorKey: "row3",
+        accessorKey: "positionLevelNames",
         header: "ประเภทและระดับตำแหน่ง",
         size: 10,
         cell: ({ row }) => {
-          const approver = row.original.row3;
+          const approver = row.original.positionLevelNames;
           return (
             <div className="flex flex-wrap items-center justify-start gap-2">
               {approver && approver.length > 0
@@ -95,11 +99,11 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
         },
       },
       {
-        accessorKey: "row4",
+        accessorKey: "allocPercent",
         header: "จัดสรรร้อยละ (%)",
         size: 10,
         cell: ({ row }) => {
-          const data = row.original.row4;
+          const data = row.original.allocPercent;
           return (
             <h1>
               {data !== undefined && data !== null
@@ -178,11 +182,11 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
         },
       },
       {
-        accessorKey: "row9",
+        accessorKey: "reviewerName",
         header: "ผู้พิจารณา",
         size: 8,
         cell: ({ row }) => {
-          const approver = row.original.row9;
+          const approver = row.original.reviewerName;
           return (
             <>
               {approver ? (

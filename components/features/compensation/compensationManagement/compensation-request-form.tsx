@@ -6,7 +6,7 @@ import { useAlert } from "@/components/common/alert-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "@/i18n/navigation";
-import { ModalStateProps } from "@/types/api";
+import { formatApiError, ModalStateProps } from "@/types/api";
 import Image from "next/image";
 import { cn } from "@/utils/helpers";
 import Loading from "@/components/common/loading";
@@ -18,99 +18,102 @@ import { ItemsManagementModal } from "./items-management-modal";
 import { getPageSize } from "@/utils/helpers";
 import { useTableState } from "@/hooks/use-session";
 import {
-  COMPENSATION_SESSION_KEY,
   CompensationListParams,
+  CREDIT_LIMIT_LIST_SESSION_KEY,
 } from "@/types/compensation";
 import { CreditManagementModal } from "./credit-management-modal";
 import { CreditTable } from "./credit-table";
-import { ApprovalDetailAccordion } from "./approval-detail-accordion";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useGetCompensationRequestById } from "@/libs/query/compensation.queries";
+import {
+  useDeleteCreditLimitList,
+  useGetCompensationRequestById,
+} from "@/libs/query/compensation.queries";
 import { useDateFormatter } from "@/hooks/use-date-formatter";
+import ErrorComponent from "@/components/common/error";
 
 interface RequestFormProps {
   reqId?: any;
 }
 
-const mockDataList: any = {
-  data: [
-    // {
-    //   id: "1ea31ed3-bff6-4f61-aa34-25144cda2275",
-    //   row1: "ที่ปรึกษาฯ",
-    //   row2: 76800.0,
-    //   row3: ["วิชาการชำนาญการพิเศษ"],
-    //   row4: 2.75,
-    //   row5: null,
-    //   row6: 2.75,
-    //   row7: 2304.0,
-    //   row8: 1,
-    //   status: "รอพิจารณา",
-    //   row9: "อาทิตย์ เฉลิมประเสริฐ",
-    // },
-    // {
-    //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
-    //   row1: "รองผู้อำนวยการสำนัก",
-    //   row2: 134690.0,
-    //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
-    //   row4: 2.75,
-    //   row5: null,
-    //   row6: 2.75,
-    //   row7: 4040.7,
-    //   row8: 2,
-    //   status: "รอพิจารณา",
-    //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
-    // },
-    // {
-    //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
-    //   row1: "รองผู้อำนวยการสำนัก",
-    //   row2: 134690.0,
-    //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
-    //   row4: 2.75,
-    //   row5: null,
-    //   row6: 2.75,
-    //   row7: 4040.7,
-    //   row8: 2,
-    //   status: "สำเร็จ",
-    //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
-    // },
-  ],
-  mockupAppprove: [
-    // { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
-    // { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-    // {
-    //   id: 6,
-    //   text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
-    //   status: "done",
-    // },
-    // { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
-    // { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
-    // {
-    //   id: 9,
-    //   text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
-    //   status: "done",
-    // },
-    // { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    // { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-    // {
-    //   id: 12,
-    //   text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
-    //   status: "pending",
-    // },
-  ],
-  meta: {
-    page: 1,
-    take: 5,
-    itemCount: 100,
-    pageCount: 20,
-  },
-};
+// const mockDataList: any = {
+//   data: [
+//     // {
+//     //   id: "1ea31ed3-bff6-4f61-aa34-25144cda2275",
+//     //   row1: "ที่ปรึกษาฯ",
+//     //   row2: 76800.0,
+//     //   row3: ["วิชาการชำนาญการพิเศษ"],
+//     //   row4: 2.75,
+//     //   row5: null,
+//     //   row6: 2.75,
+//     //   row7: 2304.0,
+//     //   row8: 1,
+//     //   status: "รอพิจารณา",
+//     //   row9: "อาทิตย์ เฉลิมประเสริฐ",
+//     // },
+//     // {
+//     //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
+//     //   row1: "รองผู้อำนวยการสำนัก",
+//     //   row2: 134690.0,
+//     //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
+//     //   row4: 2.75,
+//     //   row5: null,
+//     //   row6: 2.75,
+//     //   row7: 4040.7,
+//     //   row8: 2,
+//     //   status: "รอพิจารณา",
+//     //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
+//     // },
+//     // {
+//     //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
+//     //   row1: "รองผู้อำนวยการสำนัก",
+//     //   row2: 134690.0,
+//     //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
+//     //   row4: 2.75,
+//     //   row5: null,
+//     //   row6: 2.75,
+//     //   row7: 4040.7,
+//     //   row8: 2,
+//     //   status: "สำเร็จ",
+//     //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
+//     // },
+//   ],
+//   mockupAppprove: [
+//     // { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
+//     // { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+//     // { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+//     // { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+//     // { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
+//     // {
+//     //   id: 6,
+//     //   text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
+//     //   status: "done",
+//     // },
+//     // { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
+//     // { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
+//     // {
+//     //   id: 9,
+//     //   text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
+//     //   status: "done",
+//     // },
+//     // { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+//     // { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
+//     // {
+//     //   id: 12,
+//     //   text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
+//     //   status: "pending",
+//     // },
+//   ],
+//   meta: {
+//     page: 1,
+//     take: 5,
+//     itemCount: 100,
+//     pageCount: 20,
+//   },
+// };
 
 export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   const router = useRouter();
@@ -118,6 +121,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   const c = useTranslations("common");
   const updateLoading = useLoadingStore((state) => state.updateLoading);
   //   useSetBreadcrumb([{ name: m("add-request-information") }]);
+
   const { formatToBuddhist } = useDateFormatter();
 
   const [creditManagementModalOpen, setCreditManagementModalOpen] =
@@ -128,23 +132,25 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   });
   const [exportCompensationOpen, setExportCompensationOpen] = useState(false);
 
+  const [filters, setFilters] = useTableState<CompensationListParams>(
+    CREDIT_LIMIT_LIST_SESSION_KEY,
+    {
+      page: 1,
+      take: getPageSize(),
+    },
+  );
+
   const {
     data: compensationRequestData,
     isLoading: isLoadingCompensationRequest,
     isError,
     error,
-  } = useGetCompensationRequestById(reqId || "");
+  } = useGetCompensationRequestById(reqId || "", {
+    page: filters.page,
+    take: filters.take,
+  });
 
   const status = compensationRequestData?.period?.status;
-
-  const [filters, setFilters] = useTableState<CompensationListParams>(
-    COMPENSATION_SESSION_KEY,
-    {
-      page: 1,
-      take: getPageSize(),
-      // startDate : ""
-    },
-  );
 
   //   const updateMutation = useUpdateManpowerRequest();
   //   const isSaving = updateMutation.isPending;
@@ -160,7 +166,6 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         variant: "default",
         onClick: async () => {
           toastSuccess(c("successfully"), c("successfully-description"));
-          // setStatus("รอพิจารณา");
         },
       },
       cancelButton: {
@@ -231,8 +236,19 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       },
     });
   };
+  const param = {
+    page: filters.page ?? 1,
+    take: filters.take ?? 10,
+  };
 
-  const onDeleteItemRequest = async (reqId: string) => {
+  // const deleteCreditLimitListMutation = useDeleteCreditLimitList(
+  //   reqId || "",
+  //   param,
+  // );
+
+  const deleteCreditLimitListMutation = useDeleteCreditLimitList();
+
+  const onDeleteCreditLimitList = (id: string) => {
     alert.fire({
       type: "delete",
       title: c("delete-confirmation"),
@@ -241,7 +257,25 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         label: c("button.delete"),
         variant: "destructive",
         onClick: async () => {
-          toastSuccess(c("successfully"), c("successfully-description"));
+          updateLoading(true);
+          try {
+            await deleteCreditLimitListMutation.mutateAsync(id);
+            if (
+              filters.page! > 1 &&
+              compensationRequestData?.groups.length === 1
+            ) {
+              setFilters({ ...filters, page: filters.page! - 1 });
+            }
+            toastSuccess(c("successfully"), c("successfully-description"));
+          } catch (error) {
+            const { title, description } = formatApiError(
+              error,
+              c("error-occur"),
+            );
+            toastError(title, description || c("error-detail"));
+          } finally {
+            updateLoading(false);
+          }
         },
       },
       cancelButton: {
@@ -264,7 +298,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       label: "ฉบับร่าง",
       color: "bg-[#F4F4F5] text-subdude",
     },
-    อยู่ระหว่างพิจาราณา: {
+    reviewing: {
       label: "อยู่ระหว่างพิจาราณา",
       color: "bg-[#FEFCE8] text-[#FACC15]",
     },
@@ -283,6 +317,24 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     color: "bg-gray-100 text-gray-400",
   };
 
+  const isDisabled = compensationRequestData?.groups?.length === 0;
+
+  const actionButton =
+    status === "draft" || status === "reviewing" ? (
+      <Button
+        variant="secondary"
+        type="button"
+        disabled={isDisabled}
+        onClick={onSubmitDeliver}
+      >
+        บันทึกการนำส่ง
+      </Button>
+    ) : status === "นำส่งเอกสาร" ? (
+      <Button type="button" disabled={isDisabled} onClick={onSubmitSuccess}>
+        เสร็จสิ้น
+      </Button>
+    ) : null;
+
   if (isLoading) {
     return (
       <div className="py-80">
@@ -291,18 +343,18 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     );
   }
 
-  //   if (isError) {
-  //     const { description, statusCode } = formatApiError(error, c("error-occur"));
-  //     return (
-  //       <div className="py-0">
-  //         <div className="bg-card rounded-3xl p-6">
-  //           <div className="flex flex-col items-center justify-center my-52">
-  //             <ErrorComponent statusCode={statusCode} message={description} />
-  //           </div>
-  //         </div>
-  //       </div>
-  //     );
-  //   }
+  if (isError) {
+    const { description, statusCode } = formatApiError(error, c("error-occur"));
+    return (
+      <div className="py-0">
+        <div className="bg-card rounded-3xl p-6">
+          <div className="flex flex-col items-center justify-center my-52">
+            <ErrorComponent statusCode={statusCode} message={description} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -335,10 +387,11 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                         <CardTitle>
                           <h1 className="text-xl font-medium">
                             {compensationRequestData?.period?.name ?? "-"}
-                            {/* รายการค่าตอบแทนประจำปี 1/2569 */}
                           </h1>
                         </CardTitle>
-                        {status === "ฉบับร่าง" || status === "รอพิจารณา" ? (
+
+                        {/* {status === "ฉบับร่าง" || status === "รอพิจารณา" ? ( */}
+                        {status === "draft" || status === "reviewing" ? (
                           <Button
                             type="button"
                             className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
@@ -373,7 +426,6 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                           <Icon icon="solar:calendar-linear" />
                           <h1 className="text-sm font-normal text-subdude">
                             วันที่สร้าง {""}
-                            {/* 12 พ.ย. 2568 */}
                             {formatToBuddhist(
                               Number(
                                 compensationRequestData?.period?.createdAt,
@@ -398,12 +450,13 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                   </CardHeader>
                 </Card>
 
+                {/* 
                 {mockDataList.mockupAppprove &&
                   mockDataList.mockupAppprove.length > 0 && (
                     <ApprovalDetailAccordion
                       data={mockDataList?.mockupAppprove}
                     />
-                  )}
+                  )} */}
 
                 <Card>
                   <CardHeader>
@@ -417,7 +470,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                       </CardTitle>
 
                       <div className="flex items-center gap-2">
-                        {status !== "เสร็จสิ้น" && (
+                        {status == "draft" || status == "reviewing" ? (
                           <Button
                             type="button"
                             onClick={() =>
@@ -432,46 +485,46 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                             {c("button.add-item")}
                             {/* เพิ่มรายการ */}
                           </Button>
-                        )}
-
-                        <Popover
-                          open={exportCompensationOpen}
-                          onOpenChange={setExportCompensationOpen}
-                        >
-                          <PopoverTrigger asChild>
-                            <Button
-                              type="button"
-                              className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                            >
-                              <Icon icon="solar:download-minimalistic-linear" />
-                              ออกรายงาน
-                              <Icon icon="solar:alt-arrow-down-linear" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            align="end"
-                            className="w-[230px] overflow-hidden rounded-2xl border-none shadow-2xl mt-2"
+                        ) : (
+                          <Popover
+                            open={exportCompensationOpen}
+                            onOpenChange={setExportCompensationOpen}
                           >
-                            <div className="flex flex-col gap-4 p-2 text-black w-full cursor-pointer">
-                              <div className="flex gap-4" onClick={onExport1}>
-                                <Icon
-                                  className="w-4 h-4"
-                                  icon="solar:download-minimalistic-linear"
-                                />
-                                บัญชีรายละเอียดการเลื่อนเงิน <br />
-                                เดือนข้าราชการ
+                            <PopoverTrigger asChild>
+                              <Button
+                                type="button"
+                                className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
+                              >
+                                <Icon icon="solar:download-minimalistic-linear" />
+                                ออกรายงาน
+                                <Icon icon="solar:alt-arrow-down-linear" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              align="end"
+                              className="w-[230px] overflow-hidden rounded-2xl border-none shadow-2xl mt-2"
+                            >
+                              <div className="flex flex-col gap-4 p-2 text-black w-full cursor-pointer">
+                                <div className="flex gap-4" onClick={onExport1}>
+                                  <Icon
+                                    className="w-4 h-4"
+                                    icon="solar:download-minimalistic-linear"
+                                  />
+                                  บัญชีรายละเอียดการเลื่อนเงิน <br />
+                                  เดือนข้าราชการ
+                                </div>
+                                <div className="flex gap-4" onClick={onExport2}>
+                                  <Icon
+                                    className="w-4 h-4"
+                                    icon="solar:download-minimalistic-linear"
+                                  />
+                                  รายชื่อข้าราชการผู้มีผล <br />
+                                  ประเมินระดับดีเด่นและดีมาก
+                                </div>
                               </div>
-                              <div className="flex gap-4" onClick={onExport2}>
-                                <Icon
-                                  className="w-4 h-4"
-                                  icon="solar:download-minimalistic-linear"
-                                />
-                                รายชื่อข้าราชการผู้มีผล <br />
-                                ประเมินระดับดีเด่นและดีมาก
-                              </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
+                            </PopoverContent>
+                          </Popover>
+                        )}
                       </div>
                     </div>
                   </CardHeader>
@@ -479,10 +532,10 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                     {compensationRequestData?.groups?.length > 0 ? (
                       <>
                         <CreditTable
-                          // data={mockDataList?.data || []}
-                          // totalRows={mockDataList?.meta.itemCount || 0}
                           data={compensationRequestData?.groups || []}
-                          totalRows={mockDataList?.meta.itemCount || 0}
+                          totalRows={
+                            compensationRequestData?.meta.itemCount || 0
+                          }
                           currentPage={filters.page || 1}
                           onPageChange={(page) =>
                             setFilters({ ...filters, page })
@@ -493,7 +546,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                               `/manage-compensation/item-request/${reqId}/${id}`,
                             )
                           }
-                          onDelete={onDeleteItemRequest}
+                          onDelete={onDeleteCreditLimitList}
                         />
                       </>
                     ) : (
@@ -538,60 +591,30 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onSave={() =>
                   setCreditManagementModalOpen({ id: null, state: false })
                 }
-                 listGroupsData={compensationRequestData?.groups || []}
+                param={param}
               />
-
-              {/* <RequestSearchModal
-              open={filterCompensationOpen}
-              onClose={() => setFilterCompensationOpen(false)}
-              onSearch={onSearch}
-            /> */}
             </div>
           </div>
         </main>
       </div>
 
       <footer className="sticky bottom-0 z-10 rounded-full bg-white px-6 py-4">
-        {status === "ฉบับร่าง" && (
-          <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3">
+          {status === "draft" || status === "reviewing" ? (
             <Button
-              variant="outline"
+              variant="secondary"
               type="button"
-              className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
+              className="border-[#F4F4F5] bg-[#F4F4F5] text-red-500 hover:text-red-500"
               onClick={() => onDeleteRequest?.(reqId)}
               disabled={!reqId}
             >
               ลบรายการ
             </Button>
+          ) : (
+            <div />
+          )}
 
-            <Button
-              type="submit"
-              disabled={mockDataList?.data?.length === 0}
-              onClick={onSubmitConsideration}
-            >
-              ส่งพิจารณา
-            </Button>
-          </div>
-        )}
-
-        <div className="flex items-center justify-end gap-3">
-          {status === "รอพิจารณา" ? (
-            <Button
-              type="submit"
-              disabled={mockDataList?.data?.length === 0}
-              onClick={onSubmitDeliver}
-            >
-              บันทึกนำส่ง
-            </Button>
-          ) : status === "นำส่งเอกสาร" ? (
-            <Button
-              type="submit"
-              disabled={mockDataList?.data?.length === 0}
-              onClick={onSubmitSuccess}
-            >
-              เสร็จสิ้น
-            </Button>
-          ) : null}
+          {actionButton}
         </div>
       </footer>
     </>
