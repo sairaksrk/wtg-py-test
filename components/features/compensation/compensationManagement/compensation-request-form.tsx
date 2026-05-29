@@ -36,91 +36,14 @@ import { useDateFormatter } from "@/hooks/use-date-formatter";
 import ErrorComponent from "@/components/common/error";
 
 interface RequestFormProps {
-  reqId?: any;
+  reqId?: string;
 }
-
-// const mockDataList: any = {
-//   data: [
-//     // {
-//     //   id: "1ea31ed3-bff6-4f61-aa34-25144cda2275",
-//     //   row1: "ที่ปรึกษาฯ",
-//     //   row2: 76800.0,
-//     //   row3: ["วิชาการชำนาญการพิเศษ"],
-//     //   row4: 2.75,
-//     //   row5: null,
-//     //   row6: 2.75,
-//     //   row7: 2304.0,
-//     //   row8: 1,
-//     //   status: "รอพิจารณา",
-//     //   row9: "อาทิตย์ เฉลิมประเสริฐ",
-//     // },
-//     // {
-//     //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
-//     //   row1: "รองผู้อำนวยการสำนัก",
-//     //   row2: 134690.0,
-//     //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
-//     //   row4: 2.75,
-//     //   row5: null,
-//     //   row6: 2.75,
-//     //   row7: 4040.7,
-//     //   row8: 2,
-//     //   status: "รอพิจารณา",
-//     //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
-//     // },
-//     // {
-//     //   id: "2ea31ed3-bff6-4f61-aa34-25144cda2278",
-//     //   row1: "รองผู้อำนวยการสำนัก",
-//     //   row2: 134690.0,
-//     //   row3: ["วิชาการชำนาญการพิเศษ", "วิชาการปฏิบัติการ"],
-//     //   row4: 2.75,
-//     //   row5: null,
-//     //   row6: 2.75,
-//     //   row7: 4040.7,
-//     //   row8: 2,
-//     //   status: "สำเร็จ",
-//     //   row9: "เจิมจันทร์ ศรีทรัพย์โกศล",
-//     // },
-//   ],
-//   mockupAppprove: [
-//     // { id: 1, text: "ผู้อำนวยการสำนักเลขานุการกรม", status: "done" },
-//     // { id: 2, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-//     // { id: 3, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-//     // { id: 4, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-//     // { id: 5, text: "ผู้อำนวยการกลุ่มตรวจสอบภายใน", status: "done" },
-//     // {
-//     //   id: 6,
-//     //   text: "ผู้อำนวยการกองนโยบายและแผนการบริหารหนี้สาธารณะ",
-//     //   status: "done",
-//     // },
-//     // { id: 7, text: "ผู้อำนวยการกองจัดการหนี้ 1", status: "done" },
-//     // { id: 8, text: "ผู้อำนวยการกลุ่มกฎหมาย", status: "done" },
-//     // {
-//     //   id: 9,
-//     //   text: "ผู้อำนวยการกลุ่มบริหารและพัฒนาทรัพยากรบุคคล",
-//     //   status: "done",
-//     // },
-//     // { id: 10, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-//     // { id: 11, text: "ผู้อำนวยการกองประเมินผลโครงการ", status: "pending" },
-//     // {
-//     //   id: 12,
-//     //   text: "ผู้อำนวยการศูนย์ข้อมูลที่ปรึกษาและเทคโนโลยีสารสนเทศ",
-//     //   status: "pending",
-//     // },
-//   ],
-//   meta: {
-//     page: 1,
-//     take: 5,
-//     itemCount: 100,
-//     pageCount: 20,
-//   },
-// };
 
 export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   const router = useRouter();
   const alert = useAlert();
   const c = useTranslations("common");
   const updateLoading = useLoadingStore((state) => state.updateLoading);
-  //   useSetBreadcrumb([{ name: m("add-request-information") }]);
 
   const { formatToBuddhist } = useDateFormatter();
 
@@ -152,29 +75,29 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
 
   const status = compensationRequestData?.period?.status;
 
-  //   const updateMutation = useUpdateManpowerRequest();
-  //   const isSaving = updateMutation.isPending;
   const isLoading = reqId ? isLoadingCompensationRequest : false;
 
-  const onSubmitConsideration = async () => {
-    alert.fire({
-      type: "warning",
-      title: c("save-data-confirmation"),
-      description: c("save-data-confirmation-description"),
-      confirmButton: {
-        label: c("button.confirm"),
-        variant: "default",
-        onClick: async () => {
-          toastSuccess(c("successfully"), c("successfully-description"));
-        },
-      },
-      cancelButton: {
-        label: c("button.secondary-cancel"),
-        variant: "secondary",
-        show: true,
-      },
-    });
-  };
+  // const updateMutation = useUpdateManpowerRequest();
+  // const isSaving = updateMutation.isPending;
+  // const onSubmitConsideration = async () => {
+  //   alert.fire({
+  //     type: "warning",
+  //     title: c("save-data-confirmation"),
+  //     description: c("save-data-confirmation-description"),
+  //     confirmButton: {
+  //       label: c("button.confirm"),
+  //       variant: "default",
+  //       onClick: async () => {
+  //         toastSuccess(c("successfully"), c("successfully-description"));
+  //       },
+  //     },
+  //     cancelButton: {
+  //       label: c("button.secondary-cancel"),
+  //       variant: "secondary",
+  //       show: true,
+  //     },
+  //   });
+  // };
 
   const onSubmitDeliver = async () => {
     alert.fire({
@@ -207,7 +130,6 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         variant: "default",
         onClick: async () => {
           toastSuccess(c("successfully"), c("successfully-description"));
-          // setStatus("เสร็จสิ้น");
         },
       },
       cancelButton: {
@@ -297,7 +219,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       label: "นำส่งเอกสาร",
       color: "bg-[#F0F9FF] text-[#0EA5E9]",
     },
-    เสร็จสิ้น: {
+    success: {
       label: "เสร็จสิ้น",
       color: "bg-[#F0FDF4] text-[#16A34A]",
     },
@@ -595,7 +517,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
               variant="secondary"
               type="button"
               className="border-[#F4F4F5] bg-[#F4F4F5] text-red-500 hover:text-red-500"
-              onClick={() => onDeleteRequest?.(reqId)}
+              // onClick={() => onDeleteRequest?.(reqId)}
               disabled={!reqId}
             >
               ลบรายการ

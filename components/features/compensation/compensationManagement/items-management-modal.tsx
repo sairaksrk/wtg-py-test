@@ -2,21 +2,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import Loading from "@/components/common/loading";
 import Modal from "@/components/common/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Combobox } from "@/components/common/combobox";
 import { toastError, toastSuccess } from "@/utils/toast";
 import { useLoadingStore } from "@/stores/loading-store";
 import { formatApiError } from "@/types/api";
-import {
-  useAddPositionItem,
-  useCreatePositionItem,
-} from "@/libs/query/manpower.queries";
 import { useRouter } from "@/i18n/navigation";
 import { TextArea } from "@/components/ui/textarea";
 import { CreateCompensationItem } from "@/types/compensation";
@@ -60,6 +55,7 @@ export function ItemsManagementModal({
   });
 
   const createMutation = useCreateCompensationItem();
+  // const updateMutation = useUpdateCompensationItem();
 
   useEffect(() => {
     if (!editingId) {
@@ -73,12 +69,10 @@ export function ItemsManagementModal({
   const onSubmit = async (formData: PositionFormValues) => {
     try {
       updateLoading(true);
-
       const payloadCreate: CreateCompensationItem = {
         name: formData.name,
         remarks: formData.remarks || "",
       };
-
       const res = await createMutation.mutateAsync(payloadCreate);
       toastSuccess(c("successfully"), c("successfully-description"));
       onSave();
@@ -93,16 +87,8 @@ export function ItemsManagementModal({
     }
   };
 
-  // const reqId = "5ea31ed3-bff6-4f61-aa34-25144cda2270";
-  // toastSuccess(c("successfully"), c("successfully-description"));
-  // router.push(`/manage-compensation/item-request/${reqId}`);
-
-  // const isLoading =
-  //   isLoadingPositionType ||
-  //   isLoadingPositionLevel ||
-  //   isLoadingPosition ||
-  //   (editingId ? isLoadingPositionItem : false);
-
+  // const isSaving = createMutation.isPending || updateMutation.isPending;
+  const isSaving = createMutation.isPending;
   const isLoading = false;
 
   return (
@@ -132,6 +118,7 @@ export function ItemsManagementModal({
                   floatingLabel
                   required
                   error={errors.name?.message}
+                  disabled={isSaving}
                 />
               )}
             />
@@ -144,20 +131,25 @@ export function ItemsManagementModal({
                 <TextArea
                   {...field}
                   label="หมายเหตุ"
-                  // disabled={isSaving}
                   floatingLabel
-                  error={errors.remarks?.message}
                   className="h-36"
+                  error={errors.remarks?.message}
+                  disabled={isSaving}
                 />
               )}
             />
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4">
-            <Button variant="secondary" type="button" onClick={onClose}>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={onClose}
+              disabled={isSaving}
+            >
               ยกเลิก
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button type="submit" disabled={isSaving}>
               บันทึก
             </Button>
           </div>

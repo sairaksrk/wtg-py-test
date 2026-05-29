@@ -34,17 +34,13 @@ import { formatApiError } from "@/types/api";
 import { ItemsManagementModal } from "../compensationManagement/items-management-modal";
 import { useGetCompensationList } from "@/libs/query/compensation.queries";
 
-/**
- * Client Component - Compensation Lis
- * Manpower Request prefetched data from the server and can refetch on the client
- */
-
 export default function CompensationList() {
   const router = useRouter();
   const menuName = useCurrentMenuName() || "จัดการค่าตอบแทน";
   const c = useTranslations("common");
   const alert = useAlert();
   const updateLoading = useLoadingStore((state) => state.updateLoading);
+  //   useSetBreadcrumb([{ name: m("add-request-information") }]);
 
   const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
   const [itemManagementModalOpen, setItemManagementModalOpen] = useState({
@@ -156,49 +152,6 @@ export default function CompensationList() {
       </div>
     );
   }
-
-  // const mockDataList: any = {
-  //   data: [
-  //     {
-  //       id: "5ea31ed3-bff6-4f61-aa34-25144cda2270",
-  //       itemName: "รายการค่าตอบแทนประจำปี 1/2569",
-  //       createdAt: "3 ส.ค. 2569 09:40",
-  //       number: 240,
-  //       status: "ฉบับร่าง",
-  //       approver: "มาลีฮานัว",
-  //     },
-  //     {
-  //       id: "6ea31ed3-bff6-4f61-aa34-25144cda2270",
-  //       itemName: "รายการค่าตอบแทนประจำปี 2/2568",
-  //       createdAt: "1 ม.ค. 2569 09:40",
-  //       number: 10,
-  //       status: "รอพิจารณา",
-  //       approver: "มาลีฮานัว",
-  //     },
-  //     {
-  //       id: "7ea31ed3-bff6-4f61-aa34-25144cda2270",
-  //       itemName: "รายการค่าตอบแทนประจำปี 1/2568",
-  //       createdAt: "24 มิ.ย. 2568 09:40",
-  //       number: 240,
-  //       status: "อยู่ระหว่างดำเนินการ",
-  //       approver: "มาลีฮานัว",
-  //     },
-  //     {
-  //       id: "8ea31ed3-bff6-4f61-aa34-25144cda2270",
-  //       itemName: "รายการค่าตอบแทนประจำปี 2/2567",
-  //       createdAt: "20 ธ.ค. 2567 09:40",
-  //       number: 240,
-  //       status: "เสร็จสิ้น",
-  //       approver: "มาลีฮานัว",
-  //     },
-  //   ],
-  //   meta: {
-  //     page: 1,
-  //     take: 5,
-  //     itemCount: 100,
-  //     pageCount: 20,
-  //   },
-  // };
 
   return (
     <>

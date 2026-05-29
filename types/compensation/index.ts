@@ -5,7 +5,6 @@ export const COMPENSATION_SESSION_KEY = "compensation-table-state";
 export const COMPENSATION_REQUEST_SESSION_KEY =
   "compensation-request-table-state";
 
-
 export const CREDIT_LIMIT_LIST_SESSION_KEY = "credit-limit-list-table-state";
 
 // RP-01 *************************************************
@@ -141,6 +140,8 @@ export interface DashboardManPowerList {
 
 // PY ---------------------------------------------------------------------------------
 
+// Params Search List ค่าตอบแทน
+
 export interface CompensationListParams {
   page?: number;
   take?: number;
@@ -155,31 +156,43 @@ export interface CompensationListParams {
   name?: string;
   positionLevelId?: string;
 }
-
+// ตาราง จัดการค่าตอบแทน
 export interface CompensationList {
   id: string;
-  requestNumber: string;
-  submissionDate: string;
-  agency: string;
-  numberOfAmount: number;
+  createdAt: string;
+  name: string;
+  employeeCount: number;
   status: string;
-  responsiblePerson: string;
-  createdAt?: string;
-  updatedAt?: string;
-  userStatus?: string;
-  totalAmount: number;
-  departmentId?: string | null;
-  departmentName?: string | null;
-  reason: string;
-  existingMission: string;
-  additionalMission: string;
-  jdDocUrl?: string;
-  fileName?: string;
-  fileUrl?: string;
-  items: PositionItems[];
+  approvedBy: string | null;
 }
 
+// สร้าง จัดการค่าตอบแทน
 export interface CreateCompensationItem {
   name: string;
   remarks: string;
+}
+
+
+// ตาราง รายการบริหารวงเงิน
+export interface CreditLimitList {
+  id: string;
+  name: string;
+  employeeCount: number;
+  totalSalary: number;
+  positionLevelNames: string[];
+  allocPercent: number;
+  status: string;
+  reviewerName: string | null;
+}
+
+// สร้าง รายการบริหารวงเงิน 
+
+export interface CreateCreditLimitPayload {
+  payrollPeriodId?: string;
+  name: string;
+  reviewerId: string;
+  allocPercent: number;
+  id?: string[];
+  positionLevelIds?: string[];
+  structureUnitIds?: string[];
 }

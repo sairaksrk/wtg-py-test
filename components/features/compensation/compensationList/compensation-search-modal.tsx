@@ -105,23 +105,23 @@ export function CompensationSearchModal({
           control={control}
           render={({ field }) => (
             <Combobox
-              // options={positionOfRequestOptions}
+              // options={statasData}
               options={[
                 {
                   label: "ฉบับร่าง",
-                  value: "ฉบับร่าง",
+                  value: "draft",
                 },
                 {
-                  label: "รอพิจารณา",
-                  value: "รอพิจารณา",
+                  label: "อยู่ระหว่างการพิจารณา",
+                  value: "reviewing",
                 },
                 {
-                  label: "อยู่ระหว่างดำเนินการ",
-                  value: "อยู่ระหว่างดำเนินการ",
+                  label: "นำส่งเอกสาร",
+                  value: "นำส่งเอกสาร",
                 },
                 {
                   label: "เสร็จสิ้น",
-                  value: "เสร็จสิ้น",
+                  value: "success",
                 },
               ]}
               value={field.value}

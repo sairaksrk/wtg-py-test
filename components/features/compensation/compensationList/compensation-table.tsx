@@ -8,7 +8,7 @@ interface CompensationTableProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   rowsPerPage?: number;
-  onEdit?: (id: any) => void;
+  onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }
 

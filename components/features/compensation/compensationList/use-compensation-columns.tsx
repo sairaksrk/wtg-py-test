@@ -7,9 +7,10 @@ import { useDateFormatter } from "@/hooks/use-date-formatter";
 import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
+import { CompensationList } from "@/types/compensation";
 
 interface UseCompensationColumnsProps {
-  onEdit?: (id: any) => void;
+  onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }
 
@@ -26,7 +27,7 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     label: "นำส่งเอกสาร",
     color: "bg-[#F0F9FF] text-[#0EA5E9]",
   },
-  เสร็จสิ้น: {
+  success: {
     label: "เสร็จสิ้น",
     color: "bg-[#F0FDF4] text-[#16A34A]",
   },
@@ -40,8 +41,7 @@ export function useCompensationColumns({
   const router = useRouter();
   const c = useTranslations("common");
 
-  // const columns: ColumnDef<CompensationList>[] = useMemo(() => {
-  const columns: ColumnDef<any>[] = useMemo(() => {
+  const columns: ColumnDef<CompensationList>[] = useMemo(() => {
     return [
       {
         accessorKey: "createdAt",
@@ -114,7 +114,7 @@ export function useCompensationColumns({
 
           return (
             <div className="flex items-center gap-2">
-              {status === "เสร็จสิ้น" ? (
+              {status === "success" ? (
                 <Button
                   variant="ghost"
                   size="icon"

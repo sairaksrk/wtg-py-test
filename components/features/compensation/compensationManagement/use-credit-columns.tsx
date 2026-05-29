@@ -7,9 +7,10 @@ import { useDateFormatter } from "@/hooks/use-date-formatter";
 import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
+import { CreditLimitList } from "@/types/compensation";
 
 interface UseCreditColumnsProps {
-  onEdit?: (id: any) => void;
+  onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }
 
@@ -34,8 +35,7 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
   const router = useRouter();
   const c = useTranslations("common");
 
-  // const columns: ColumnDef<CompensationList>[] = useMemo(() => {
-  const columns: ColumnDef<any>[] = useMemo(() => {
+  const columns: ColumnDef<CreditLimitList>[] = useMemo(() => {
     return [
       {
         accessorKey: "name",
@@ -84,7 +84,7 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
           return (
             <div className="flex flex-wrap items-center justify-start gap-2">
               {approver && approver.length > 0
-                ? approver.map((item: any, index: number) => (
+                ? approver.map((item: string, index: number) => (
                     <Badge
                       key={index}
                       className="text-sm font-normal"

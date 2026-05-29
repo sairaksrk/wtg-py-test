@@ -31,6 +31,11 @@ import {
   useGetGroupsListCheckBox,
 } from "@/libs/query/compensation.queries";
 import { useUpdatePositionItem } from "@/libs/query/manpower.queries";
+import {
+  CreateCreditLimitPayload,
+  CreditLimitList,
+} from "@/types/compensation";
+import { is } from "date-fns/locale";
 
 // const positionFormSchema = z.object({
 //   name: z.string().min(1),
@@ -137,13 +142,11 @@ export function CreditManagementModal({
     error,
   } = useGetGroupsListCheckBox(reqId || "");
 
-  const listGroupsData: any[] = useMemo(() => {
+  const listGroupsData: CreditLimitList[] = useMemo(() => {
     return groupsData?.items || [];
   }, [groupsData]);
 
   const createMutation = useCreateCreditLimitList();
-
-  const updateMutation = useUpdatePositionItem();
 
   useEffect(() => {
     if (!editingId) {
@@ -156,7 +159,6 @@ export function CreditManagementModal({
         isGroupSelected: false,
       });
       setIsGroupSelected(false);
-      // setSelectedIds([]);
       setSelectedIds(new Set());
     }
   }, [open, editingId, reset]);
@@ -165,18 +167,16 @@ export function CreditManagementModal({
     try {
       updateLoading(true);
 
-      const payloadCreate: any = {
-        payrollPeriodId: reqId,
+      const payloadCreate: CreateCreditLimitPayload = {
+        payrollPeriodId: reqId || "",
         name: formData.name,
-
         reviewerId: formData.reviewerId,
         allocPercent: Number(formData.allocPercent),
-
+        // กรณีเลือกจากกลุ่ม
         ...(isGroupSelected && {
-          // requestIds: Array.from(selectedIds),
           id: Array.from(selectedIds),
         }),
-
+        // กรณีเลือกเอง
         ...(!isGroupSelected && {
           positionLevelIds: formData.positionLevelIds,
           structureUnitIds: formData.structureUnitIds,
@@ -197,11 +197,12 @@ export function CreditManagementModal({
     }
   };
 
-  const isSaving = false;
-  const isLoading = false;
-
-  // const isSaving = updateMutation.isPending;
-  // const isLoading = isLoadingAgency || (reqId ? isLoadingManpower : false);
+  const isSaving = createMutation.isPending;
+  const isLoading =
+    isLoadingAgency ||
+    isLoadingPositionTypeLevel ||
+    isLoadingReviewer ||
+    isLoadingGroups;
 
   const handleGroupCheckboxChange = (id: string, checked: boolean) => {
     setSelectedIds((prev) => {
@@ -215,9 +216,8 @@ export function CreditManagementModal({
     });
   };
 
-  const renderGroupItem = (group: any) => {
+  const renderGroupItem = (group: CreditLimitList) => {
     const isSelected = selectedIds.has(group.id);
-
     return (
       <label
         key={group.id}
@@ -432,6 +432,7 @@ export function CreditManagementModal({
                 type="button"
                 onClick={onClose}
                 className="bg-secondary border-none font-normal"
+                disabled={isSaving}
               >
                 ยกเลิก
               </Button>
@@ -443,7 +444,7 @@ export function CreditManagementModal({
                 //     ? true
                 //     : false
                 // }
-                disabled={createMutation.isPending || createMutation.isPending}
+                disabled={isSaving}
               >
                 บันทึก
               </Button>
