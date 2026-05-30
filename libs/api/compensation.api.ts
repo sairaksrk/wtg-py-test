@@ -109,3 +109,37 @@ export async function getCompensationGroupDetail(
     },
   );
 }
+
+export interface PreviewDataItem {
+  employeeId: string;
+  allocPercent?: number;
+  allocAmount?: number;
+}
+
+export interface GetCompensationPersonnelParams {
+  page: number;
+  take: number;
+  previewData?: PreviewDataItem[];
+  search?: string;
+  requestNo?: string;
+  name?: string;
+  positionId?: string;
+  positionLevelId?: string;
+  departmentId?: string;
+}
+
+// ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
+export async function getCompensationPersonnelList(
+  reqId: string,
+  groupsId: string,
+  body: GetCompensationPersonnelParams,
+): Promise<any> {
+  return api<any>(
+    "POST",
+    `/payroll/increment/list/${reqId}/${groupsId}`,
+    body,
+    {
+      plugin: "py",
+    },
+  );
+}

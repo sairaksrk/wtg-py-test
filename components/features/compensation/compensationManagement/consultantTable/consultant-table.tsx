@@ -9,6 +9,7 @@ import { ConsultantTableRow } from "./consultant-table-row";
 
 export interface ConsultantData {
   id: string;
+  employeeId?: string;
   positionNo: string;
   name: string;
   subPosition: string;

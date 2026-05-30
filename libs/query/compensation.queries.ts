@@ -13,6 +13,8 @@ import {
   getCompensationRequestById,
   getGroupsListCheckBox,
   getCompensationGroupDetail,
+  getCompensationPersonnelList,
+  GetCompensationPersonnelParams,
 } from "../api/compensation.api";
 
 /**
@@ -33,6 +35,9 @@ export const compensationKeys = {
     [...compensationKeys.all, "groups-list-checkbox"] as const,
   groupsListCheckBox: (reqId: string, params?: CompensationListParams) =>
     [...compensationKeys.groupsListCheckBoxes(), reqId, params] as const,
+  personnelLists: () => [...compensationKeys.all, "personnel-list"] as const,
+  personnelList: (reqId: string, groupsId: string, body: GetCompensationPersonnelParams) =>
+    [...compensationKeys.personnelLists(), reqId, groupsId, body] as const,
 };
 // ดึงรายการ จัดการค่าตอบแทน Get All
 
@@ -116,5 +121,19 @@ export function useGetCompensationGroupDetail(groupsId: string) {
     queryKey: ["compensation-group-detail", groupsId],
     queryFn: () => getCompensationGroupDetail(groupsId),
     enabled: !!groupsId,
+  });
+}
+
+// ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
+export function useGetCompensationPersonnelList(
+  reqId: string,
+  groupsId: string,
+  body: GetCompensationPersonnelParams,
+  options?: { enabled?: boolean },
+) {
+  return useQuery<any, ApiError>({
+    queryKey: compensationKeys.personnelList(reqId, groupsId, body),
+    queryFn: () => getCompensationPersonnelList(reqId, groupsId, body),
+    enabled: !!reqId && !!groupsId && (options?.enabled ?? true),
   });
 }

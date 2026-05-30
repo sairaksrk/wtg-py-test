@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useAlert } from "@/components/common/alert-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,10 @@ import { toastSuccess } from "@/utils/toast";
 import Loading from "@/components/common/loading";
 import ErrorComponent from "@/components/common/error";
 import { formatApiError } from "@/types/api";
-import { useGetCompensationGroupDetail } from "@/libs/query/compensation.queries";
+import {
+  useGetCompensationGroupDetail,
+  useGetCompensationPersonnelList,
+} from "@/libs/query/compensation.queries";
 import {
   ConsultantTable,
   ConsultantData,
@@ -33,6 +36,7 @@ import { getPageSize } from "@/utils/helpers";
 import { PersonnelSearchModal } from "./personnel-search-modal";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
+import { Pagination } from "@/components/common/pagination";
 
 interface AllocationCardProps {
   title: string;
@@ -133,148 +137,7 @@ const MOCKUP_ALLOCATION_CARDS: AllocationCardProps[] = [
   },
 ];
 
-const MOCKUP_PAGINATION: any = {
-  totalPersonnel: 5,
-  displayText: "แสดง 1-10 จาก 41 รายการ",
-};
-
-const INITIAL_CONSULTANTS: ConsultantData[] = [
-  {
-    id: "1",
-    positionNo: "001",
-    name: "นายสมชาย ใจดี",
-    subPosition: "นักวิเคราะห์นโยบายและแผน ชำนาญการพิเศษ",
-    type: "อำนวยการ",
-    department: "กองยุทธศาสตร์",
-    salary: 31610.0,
-    baseCalculation: 60990.0,
-    officePercentLimit: 0.25,
-    deputyPercentLimit: 0.25,
-    directorPercentLimit: 0.25,
-    evalScore: 90,
-    evalResult: "เลือก",
-    officeEvalPercent: 100,
-    officeEvalBaht: 0,
-    deputyEvalPercent: 100,
-    deputyEvalBaht: 0,
-    directorEvalPercent: 100,
-    directorEvalBaht: 0,
-    totalPercentIncrease: 4,
-    totalAmountIncrease: 1440.0,
-    specialCompensation: 0,
-    receivedSalary: 36279.0,
-    positionAllowance: 36279.0,
-    totalIncome: 66279.0,
-  },
-  {
-    id: "2",
-    positionNo: "002",
-    name: "นางสาวสมหญิง ดีมาก",
-    subPosition: "นักทรัพยากรบุคคล ชำนาญการ",
-    type: "อำนวยการ",
-    department: "กองบริหารทรัพยากรบุคคล",
-    salary: 18480.0,
-    baseCalculation: 52320.0,
-    officePercentLimit: 0.25,
-    deputyPercentLimit: 0.25,
-    directorPercentLimit: 0.25,
-    evalScore: 90,
-    evalResult: "ดีมาก",
-    officeEvalPercent: 80,
-    officeEvalBaht: 80.0,
-    deputyEvalPercent: 80,
-    deputyEvalBaht: 80.0,
-    directorEvalPercent: 80,
-    directorEvalBaht: 80.0,
-    totalPercentIncrease: 4,
-    totalAmountIncrease: 1440.0,
-    specialCompensation: 0,
-    receivedSalary: 19920.0,
-    positionAllowance: 19920.0,
-    totalIncome: 0.0,
-  },
-  {
-    id: "3",
-    positionNo: "003",
-    name: "นายวิชัย รักษ์ดี",
-    subPosition: "olivia@untitledui.com",
-    type: "อำนวยการ",
-    department: "กองยุทธศาสตร์",
-    salary: 35070.0,
-    baseCalculation: 60990.0,
-    officePercentLimit: 0.15,
-    deputyPercentLimit: 0.15,
-    directorPercentLimit: 0.15,
-    evalScore: 80,
-    evalResult: "ดี",
-    officeEvalPercent: 80,
-    officeEvalBaht: 80.0,
-    deputyEvalPercent: 80,
-    deputyEvalBaht: 80.0,
-    directorEvalPercent: 80,
-    directorEvalBaht: 80.0,
-    totalPercentIncrease: 1,
-    totalAmountIncrease: 120.0,
-    specialCompensation: 0,
-    receivedSalary: 35190.0,
-    positionAllowance: 35190.0,
-    totalIncome: 0.0,
-  },
-  {
-    id: "4",
-    positionNo: "004",
-    name: "นางจินดา สวยงาม",
-    subPosition: "นักวิชาการเงินและบัญชี ชำนาญการพิเศษ",
-    type: "อำนวยการ",
-    department: "กองคลัง",
-    salary: 63840.0,
-    baseCalculation: 60990.0,
-    officePercentLimit: 0.15,
-    deputyPercentLimit: 0.15,
-    directorPercentLimit: 0.15,
-    evalScore: 80,
-    evalResult: "ดีเด่น",
-    officeEvalPercent: 80,
-    officeEvalBaht: 80.0,
-    deputyEvalPercent: 80,
-    deputyEvalBaht: 80.0,
-    directorEvalPercent: 80,
-    directorEvalBaht: 80.0,
-    totalPercentIncrease: 2,
-    totalAmountIncrease: 340.0,
-    specialCompensation: 2000,
-    receivedSalary: 75180.0,
-    positionAllowance: 75180.0,
-    totalIncome: 9000.0,
-  },
-  {
-    id: "5",
-    positionNo: "005",
-    name: "นางจินดา สวยงาม",
-    subPosition: "นักวิชาการเงินและบัญชี ชำนาญการพิเศษ",
-    type: "อำนวยการ",
-    department: "กองคลัง",
-    salary: 23930.0,
-    baseCalculation: 60990.0,
-    officePercentLimit: 0.15,
-    deputyPercentLimit: 0.15,
-    directorPercentLimit: 0.15,
-    evalScore: 80,
-    evalResult: "ดีมาก",
-    officeEvalPercent: 80,
-    officeEvalBaht: 80.0,
-    deputyEvalPercent: 80,
-    deputyEvalBaht: 80.0,
-    directorEvalPercent: 80,
-    directorEvalBaht: 80.0,
-    totalPercentIncrease: 2,
-    totalAmountIncrease: 780.0,
-    specialCompensation: 0,
-    receivedSalary: 24780.0,
-    positionAllowance: 24780.0,
-    totalIncome: 0.0,
-  },
-];
+const INITIAL_CONSULTANTS: ConsultantData[] = [];
 
 const statusConfig: Record<
   string,
@@ -291,6 +154,7 @@ const statusConfig: Record<
     dotColor: "bg-[#16A34A]",
   },
 };
+
 export default function CompensationRequestDetail({
   reqId,
   groupsId,
@@ -305,33 +169,9 @@ export default function CompensationRequestDetail({
   const [personnelData, setPersonnelData] =
     useState<ConsultantData[]>(INITIAL_CONSULTANTS);
   const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
-
-  // API
-  const {
-    data: groupDetail,
-    isLoading,
-    isError,
-    error,
-  } = useGetCompensationGroupDetail(groupsId || "");
-
-  const handleTableUpdate = useCallback((updatedData: ConsultantData[]) => {
-    setPersonnelData(updatedData);
-  }, []);
-
-  // status (ถ้ามี API เปลี่ยน const status = data?.status)
-  const [status, setStatus] = useState<string>("รอพิจารณา");
-  const onSubmit = async () => {
-    alert.fire({
-      type: "warning",
-      title: "ยืนยันการพิจารณา",
-      description: "โปรดตรวจสอบความถูกต้องของข้อมูล",
-      confirmButton: {
-        label: c("button.confirm"),
-        onClick: () => toastSuccess(c("successfully")),
-      },
-      cancelButton: { label: c("button.secondary-cancel"), show: true },
-    });
-  };
+  const [previewMap, setPreviewMap] = useState<
+    Record<string, { allocPercent?: number; allocAmount?: number }>
+  >({});
 
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_REQUEST_SESSION_KEY,
@@ -347,9 +187,112 @@ export default function CompensationRequestDetail({
     },
   );
 
+  // Construct previewData array from previewMap
+  const previewData = useMemo(() => {
+    return Object.entries(previewMap).map(([employeeId, val]) => ({
+      employeeId,
+      ...val,
+    }));
+  }, [previewMap]);
+
+  // API for Group Detail
+  const {
+    data: groupDetail,
+    isLoading: isLoadingGroupDetail,
+    isError: isErrorGroupDetail,
+    error: errorGroupDetail,
+  } = useGetCompensationGroupDetail(groupsId || "");
+
+  // API for Personnel List
+  const {
+    data: personnelListResponse,
+    isLoading: isLoadingPersonnel,
+    isError: isErrorPersonnel,
+    error: errorPersonnel,
+  } = useGetCompensationPersonnelList(reqId || "", groupsId || "", {
+    page: filters.page || 1,
+    take: filters.take || 10,
+    previewData,
+    requestNo: filters.requestNo || undefined,
+    name: filters.name || undefined,
+    positionId: filters.positionId || undefined,
+    positionLevelId: filters.positionLevelId || undefined,
+    departmentId: filters.departmentId || undefined,
+  });
+
+  useEffect(() => {
+    if (personnelListResponse?.data) {
+      const mapped = personnelListResponse.data.map((item: any) => ({
+        id: item.id,
+        employeeId: item.employeeId,
+        positionNo: String(item.positionNumber || "-"),
+        name: item.fullNameTh || "-",
+        subPosition: item.positionName || "-",
+        type: item.type || "-",
+        department: item.unitName || "-",
+        salary: Number(item.currentSalary || 0),
+        baseCalculation: Number(item.calculationBase || 0),
+        officePercentLimit: Number(item.evaluationResultRound1 || 0),
+        deputyPercentLimit: Number(item.evaluationResultRound2 || 0),
+        directorPercentLimit: Number(item.evaluationResultRound3 || 0),
+        evalScore:
+          item.evaluationScore !== null ? Number(item.evaluationScore) : 0,
+        evalResult: item.evaluationResult || "เลือก",
+        officeEvalPercent: Number(item.incrementPercent || 0),
+        officeEvalBaht: Number(item.incrementAmount || 0),
+        deputyEvalPercent: Number(item.deputyEvalPercent || 0),
+        deputyEvalBaht: Number(item.deputyEvalBaht || 0),
+        directorEvalPercent: Number(item.directorEvalPercent || 0),
+        directorEvalBaht: Number(item.directorEvalBaht || 0),
+        totalPercentIncrease: Number(item.totalIncrementPercent || 0),
+        totalAmountIncrease: Number(item.totalIncrementAmount || 0),
+        specialCompensation: Number(item.specialCompensation || 0),
+        receivedSalary: Number(item.newSalary || 0),
+        positionAllowance: Number(item.positionAllowance || 0),
+        totalIncome: Number(item.totalIncome || item.newSalary || 0),
+      }));
+      setPersonnelData(mapped);
+    }
+  }, [personnelListResponse]);
+
+  const handleTableUpdate = useCallback((updatedData: ConsultantData[]) => {
+    setPersonnelData(updatedData);
+
+    // Update previewMap with changes
+    const newPreviewMap: Record<
+      string,
+      { allocPercent?: number; allocAmount?: number }
+    > = {};
+    updatedData.forEach((item) => {
+      if (item.employeeId) {
+        newPreviewMap[item.employeeId] = {
+          allocPercent: item.officeEvalPercent,
+          allocAmount: item.officeEvalBaht,
+        };
+      }
+    });
+    setPreviewMap(newPreviewMap);
+  }, []);
+
+  // status (ถ้ามี API เปลี่ยน const status = data?.status)
+  const [status, setStatus] = useState<string>("รอพิจารณา");
+  const onSubmit = async () => {
+    alert.fire({
+      type: "warning",
+      title: c("save-data-confirmation"),
+      description: c("save-data-confirmation-description"),
+      confirmButton: {
+        label: c("button.confirm"),
+        onClick: () => toastSuccess(c("successfully")),
+      },
+      cancelButton: { label: c("button.secondary-cancel"), show: true },
+    });
+  };
+
   const onSearch = (formData: any) => {
     setFilters({
       ...filters,
+      page: 1, // Reset to page 1 on search
       requestNo: formData?.requestNo,
       name: formData?.name,
       startDate: formData.startDate
@@ -364,6 +307,7 @@ export default function CompensationRequestDetail({
   const onClearFilters = () => {
     setFilters({
       ...filters,
+      page: 1,
       requestNo: "",
       name: "",
       startDate: null,
@@ -374,13 +318,17 @@ export default function CompensationRequestDetail({
     setSearchCompensationOpen(false);
   };
 
-  if (isLoading) {
-    return (
-      <div className="py-80">
-        <Loading fullscreen={false} />
-      </div>
-    );
-  }
+  const isLoading = isLoadingGroupDetail || isLoadingPersonnel;
+  const isError = isErrorGroupDetail || isErrorPersonnel;
+  const error = errorGroupDetail || errorPersonnel;
+
+  // if (isLoading) {
+  //   return (
+  //     <div className="py-80">
+  //       <Loading fullscreen={false} />
+  //     </div>
+  //   );
+  // }
 
   if (isError) {
     const { title, description, statusCode } = formatApiError(
@@ -399,10 +347,16 @@ export default function CompensationRequestDetail({
   }
 
   // ดึงข้อมูลสรุปวงเงินจัดสรรจาก API จริง
-  const mainBalance = groupDetail?.remainingAmount?.toString() || "-";
+  const mainBalance =
+    groupDetail?.remainingAmount?.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+    }) || "-";
   const isMainBalanceNegative = mainBalance.trim().startsWith("-");
   const currentStatus = statusConfig[status] || statusConfig["รอพิจารณา"];
   const isCompleted = status === "สำเร็จ";
+
+  const totalPersonnel =
+    personnelListResponse?.meta?.itemCount ?? personnelData.length;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -533,7 +487,7 @@ export default function CompensationRequestDetail({
                 รายชื่อบุคลากร
               </CardTitle>
               <p className="text-sm text-subdude">
-                ทั้งหมด {MOCKUP_PAGINATION.totalPersonnel} คน
+                ทั้งหมด {totalPersonnel} คน
               </p>
             </div>
             <Popover
@@ -580,10 +534,14 @@ export default function CompensationRequestDetail({
           </CardContent>
         </Card>
 
-        <div className="flex justify-end py-4">
-          <p className="text-sm text-subdude">
-            {MOCKUP_PAGINATION.displayText}
-          </p>
+        <div className="py-4 w-full">
+          <Pagination
+            currentPage={filters.page || 1}
+            totalPages={personnelListResponse?.meta?.pageCount || 1}
+            totalRows={totalPersonnel}
+            rowsPerPage={filters.take || 10}
+            onPageChange={(page) => setFilters({ ...filters, page })}
+          />
         </div>
       </div>
 
