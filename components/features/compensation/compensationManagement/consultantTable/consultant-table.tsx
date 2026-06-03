@@ -23,11 +23,11 @@ export interface ConsultantData {
   allocQuotaPercentRound2: string | number;
   allocQuotaPercentRound3: string | number;
   allocPercentRound1: string | number;
-  allocAmountRound1: number;
+  allocAmountRound1: number | string;
   allocPercentRound2: string | number;
-  allocAmountRound2: number;
+  allocAmountRound2: number | string;
   allocPercentRound3: string | number;
-  allocAmountRound3: number;
+  allocAmountRound3: number | string;
   totalIncrementPercent: number;
   totalIncrementAmount: number;
   extraCompensation: number;
@@ -114,19 +114,26 @@ export function ConsultantTable({ data, onUpdate }: ConsultantTableProps) {
     let updatedRow = tempData ? { ...tempData, [field]: value } : null;
 
     if (updatedRow) {
-      // เคลียร์ค่าคู่ตรงข้ามแบบเรียลไทม์ เพื่อไม่ให้ค่าเก่าค้างส่งไปยัง API
-      if (field === "allocPercentRound1") {
-        updatedRow.allocAmountRound1 = 0;
+      // เคลียร์ค่า เพื่อไม่ให้ค่าเก่าค้างส่งไปยัง API
+      if (field === "allocPercentRound1" || field === "allocQuotaPercentRound1") {
+        updatedRow.allocAmountRound1 = "";
       } else if (field === "allocAmountRound1") {
         updatedRow.allocPercentRound1 = "";
-      } else if (field === "allocPercentRound2") {
-        updatedRow.allocAmountRound2 = 0;
+        updatedRow.allocQuotaPercentRound1 = "";
+      }
+
+      if (field === "allocPercentRound2" || field === "allocQuotaPercentRound2") {
+        updatedRow.allocAmountRound2 = "";
       } else if (field === "allocAmountRound2") {
         updatedRow.allocPercentRound2 = "";
-      } else if (field === "allocPercentRound3") {
-        updatedRow.allocAmountRound3 = 0;
+        updatedRow.allocQuotaPercentRound2 = "";
+      }
+
+      if (field === "allocPercentRound3" || field === "allocQuotaPercentRound3") {
+        updatedRow.allocAmountRound3 = "";
       } else if (field === "allocAmountRound3") {
         updatedRow.allocPercentRound3 = "";
+        updatedRow.allocQuotaPercentRound3 = "";
       }
 
       setTempData(updatedRow);

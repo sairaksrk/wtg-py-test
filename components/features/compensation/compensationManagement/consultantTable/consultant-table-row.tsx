@@ -36,7 +36,7 @@ export function ConsultantTableRow({
 
   // จัดรูปแบบจำนวนเงิน (ทศนิยม 2 ตำแหน่ง)
   const formatNum = (val: any) => {
-    if (val === undefined || val === null || isNaN(Number(val))) return "0.00";
+    if (val === undefined || val === null || val === "" || isNaN(Number(val))) return "0.00";
     return Number(val).toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -45,15 +45,14 @@ export function ConsultantTableRow({
 
   // จัดรูปแบบเปอร์เซ็นต์
   const formatPercent = (val: any) => {
-    if (val === undefined || val === null || isNaN(Number(val))) return "0";
+    if (val === undefined || val === null || val === "" || isNaN(Number(val))) return "0";
     const num = Number(val);
     return num % 1 === 0 ? num.toString() : num.toFixed(2);
   };
 
-  // ฟังก์ชันจัดการการเปลี่ยนค่าตัวเลข
+  // ฟังก์ชันจัดการการเปลี่ยนค่าตัวเลขที่รับมาจาก Input (ซึ่งล้างคอมม่ามาให้แล้ว)
   const handleNumberChange = (field: keyof ConsultantData, value: string) => {
-    const parsed = value === "" ? 0 : parseFloat(value);
-    onInputChange(field, isNaN(parsed) ? 0 : parsed);
+    onInputChange(field, value);
   };
 
   // ฟังก์ชันจัดการการเปลี่ยนค่าเปอร์เซ็นต์ (เก็บเป็น string เพื่อให้พิมพ์จุดทศนิยมได้สะดวก)

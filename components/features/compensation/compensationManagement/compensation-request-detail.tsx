@@ -137,8 +137,6 @@ const MOCKUP_ALLOCATION_CARDS: AllocationCardProps[] = [
   },
 ];
 
-const INITIAL_CONSULTANTS: ConsultantData[] = [];
-
 const statusConfig: Record<
   string,
   { label: string; color: string; dotColor: string }
@@ -166,34 +164,33 @@ export default function CompensationRequestDetail({
   const alert = useAlert();
   const c = useTranslations("common");
 
-  const [personnelData, setPersonnelData] =
-    useState<ConsultantData[]>(INITIAL_CONSULTANTS);
+  const [personnelData, setPersonnelData] = useState<ConsultantData[]>([]);
   const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
   const [previewMap, setPreviewMap] = useState<
     Record<
       string,
       {
         round1?: {
-          allocPercent?: number;
-          allocPercentString?: string;
-          allocAmount?: number;
+          allocPercent?: number | null;
+          allocPercentString?: string | null;
+          allocAmount?: number | null;
         };
         round2?: {
-          allocPercent?: number;
-          allocPercentString?: string;
-          allocAmount?: number;
+          allocPercent?: number | null;
+          allocPercentString?: string | null;
+          allocAmount?: number | null;
         };
         round3?: {
-          allocPercent?: number;
-          allocPercentString?: string;
-          allocAmount?: number;
+          allocPercent?: number | null;
+          allocPercentString?: string | null;
+          allocAmount?: number | null;
         };
       }
     >
   >({});
 
-  // status (ถ้ามี API เปลี่ยน const status = data?.status)
-  const [status, setStatus] = useState<string>("รอพิจารณา");
+  const [status] = useState<string>("รอพิจารณา");
+
   const onSubmit = async () => {
     alert.fire({
       type: "warning",
@@ -212,16 +209,15 @@ export default function CompensationRequestDetail({
     {
       page: 1,
       take: getPageSize(),
-      requestNo: "",
-      name: "",
+      // requestNo: "",
+      // name: "",
       startDate: null,
-      positionId: "",
-      positionLevelId: "",
-      departmentId: "",
+      // positionId: "",
+      // positionLevelId: "",
+      // departmentId: "",
     },
   );
 
-  // Construct previewData array from previewMap
   const previewData = useMemo(() => {
     return Object.entries(previewMap).map(([employeeId, val]) => ({
       employeeId,
@@ -229,7 +225,6 @@ export default function CompensationRequestDetail({
     }));
   }, [previewMap]);
 
-  // API for Group Detail
   const {
     data: groupDetail,
     isLoading: isLoadingGroupDetail,
@@ -237,31 +232,20 @@ export default function CompensationRequestDetail({
     error: errorGroupDetail,
   } = useGetCompensationGroupDetail(groupsId || "");
 
-  // Memoize the query body to prevent infinite query key changes and refetches
   const queryBody = useMemo(
     () => ({
       page: filters.page || 1,
       take: filters.take || 10,
       previewData,
-      requestNo: filters.requestNo || undefined,
-      name: filters.name || undefined,
-      positionId: filters.positionId || undefined,
-      positionLevelId: filters.positionLevelId || undefined,
-      departmentId: filters.departmentId || undefined,
+      // requestNo: filters.requestNo || undefined,
+      // name: filters.name || undefined,
+      // positionId: filters.positionId || undefined,
+      // positionLevelId: filters.positionLevelId || undefined,
+      // departmentId: filters.departmentId || undefined,
     }),
-    [
-      filters.page,
-      filters.take,
-      previewData,
-      filters.requestNo,
-      filters.name,
-      filters.positionId,
-      filters.positionLevelId,
-      filters.departmentId,
-    ],
+    [filters, previewData],
   );
 
-  // API for Personnel List
   const {
     data: personnelListResponse,
     isLoading: isLoadingPersonnel,
@@ -326,169 +310,92 @@ export default function CompensationRequestDetail({
     (updatedData: ConsultantData[]) => {
       setPersonnelData(updatedData);
 
-      // Update previewMap with changes
-      const newPreviewMap: Record<
-        string,
-        {
-          round1?: {
-            allocPercent?: number;
-            allocPercentString?: string;
-            allocAmount?: number;
-          };
-          round2?: {
-            allocPercent?: number;
-            allocPercentString?: string;
-            allocAmount?: number;
-          };
-          round3?: {
-            allocPercent?: number;
-            allocPercentString?: string;
-            allocAmount?: number;
-          };
-        }
-      > = {};
+      const newPreviewMap: Record<string, any> = {};
 
       updatedData.forEach((item) => {
-        if (item.employeeId) {
-          // ค้นหาข้อมูลตั้งต้นจากเซิร์ฟเวอร์เพื่อเปรียบเทียบ
-          const orig = personnelListResponse?.data?.find(
-            (o: any) => o.employeeId === item.employeeId,
-          );
+        if (!item.employeeId) return;
 
-          if (orig) {
-            // ตรวจสอบว่าฟิลด์ที่แก้ไขได้มีการเปลี่ยนแปลงจากค่าตั้งต้นหรือไม่
-            const q1Changed =
-              String(item.allocQuotaPercentRound1 || "") !==
-              String(
-                orig.allocQuotaPercentRound1 !== null
-                  ? orig.allocQuotaPercentRound1
-                  : "",
-              );
-            const q2Changed =
-              String(item.allocQuotaPercentRound2 || "") !==
-              String(
-                orig.allocQuotaPercentRound2 !== null
-                  ? orig.allocQuotaPercentRound2
-                  : "",
-              );
-            const q3Changed =
-              String(item.allocQuotaPercentRound3 || "") !==
-              String(
-                orig.allocQuotaPercentRound3 !== null
-                  ? orig.allocQuotaPercentRound3
-                  : "",
-              );
+        const orig = personnelListResponse?.data?.find(
+          (o: any) => o.employeeId === item.employeeId,
+        );
+        if (!orig) return;
 
-            const p1Changed =
-              String(item.allocPercentRound1 || "") !==
-              String(
-                orig.allocPercentRound1 !== null ? orig.allocPercentRound1 : "",
-              );
-            const a1Changed =
-              Number(item.allocAmountRound1 || 0) !==
-              Number(orig.allocAmountRound1 || 0);
+        // Helper to parse and normalize values for comparison
+        const parseNum = (val: any) => {
+          if (val === undefined || val === null || val === "") return 0;
+          const parsed = parseFloat(String(val).replace(/[^0-9.-]/g, ""));
+          return isNaN(parsed) ? 0 : parsed;
+        };
 
-            const p2Changed =
-              String(item.allocPercentRound2 || "") !==
-              String(
-                orig.allocPercentRound2 !== null ? orig.allocPercentRound2 : "",
-              );
-            const a2Changed =
-              Number(item.allocAmountRound2 || 0) !==
-              Number(orig.allocAmountRound2 || 0);
+        // Compare values robustly by normalizing them to numbers or clean strings
+        const isModified =
+          parseNum(item.allocQuotaPercentRound1) !==
+            parseNum(orig.allocQuotaPercentRound1) ||
+          parseNum(item.allocQuotaPercentRound2) !==
+            parseNum(orig.allocQuotaPercentRound2) ||
+          parseNum(item.allocQuotaPercentRound3) !==
+            parseNum(orig.allocQuotaPercentRound3) ||
+          parseNum(item.allocPercentRound1) !==
+            parseNum(orig.allocPercentRound1) ||
+          parseNum(item.allocAmountRound1) !==
+            parseNum(orig.allocAmountRound1) ||
+          parseNum(item.allocPercentRound2) !==
+            parseNum(orig.allocPercentRound2) ||
+          parseNum(item.allocAmountRound2) !==
+            parseNum(orig.allocAmountRound2) ||
+          parseNum(item.allocPercentRound3) !==
+            parseNum(orig.allocPercentRound3) ||
+          parseNum(item.allocAmountRound3) !==
+            parseNum(orig.allocAmountRound3) ||
+          parseNum(item.evalScore) !== parseNum(orig.evaluationScore) ||
+          String(item.evalResult ?? "เลือก") !==
+            String(orig.evaluationResult ?? "เลือก");
 
-            const p3Changed =
-              String(item.allocPercentRound3 || "") !==
-              String(
-                orig.allocPercentRound3 !== null ? orig.allocPercentRound3 : "",
-              );
-            const a3Changed =
-              Number(item.allocAmountRound3 || 0) !==
-              Number(orig.allocAmountRound3 || 0);
+        if (isModified) {
+          const buildRound = (quota: any, percent: any, amount: any) => {
+            const qStr =
+              quota !== undefined && quota !== null ? String(quota).trim() : "";
+            const pStr =
+              percent !== undefined && percent !== null
+                ? String(percent).trim()
+                : "";
+            const aStr =
+              amount !== undefined && amount !== null
+                ? String(amount).trim()
+                : "";
 
-            const scoreChanged =
-              Number(item.evalScore || 0) !== Number(orig.evaluationScore || 0);
-            const resultChanged =
-              String(item.evalResult || "เลือก") !==
-              String(orig.evaluationResult || "เลือก");
+            return {
+              allocPercent: qStr !== "" ? parseFloat(qStr) : null,
+              allocPercentString:
+                pStr !== "" && pStr !== "0" && pStr !== "0%"
+                  ? pStr.endsWith("%")
+                    ? pStr
+                    : pStr + "%"
+                  : null,
+              allocAmount: aStr !== "" && aStr !== "0" ? Number(aStr) : null,
+            };
+          };
 
-            const isModified =
-              q1Changed ||
-              q2Changed ||
-              q3Changed ||
-              p1Changed ||
-              a1Changed ||
-              p2Changed ||
-              a2Changed ||
-              p3Changed ||
-              a3Changed ||
-              scoreChanged ||
-              resultChanged;
-
-            // ส่งเฉพาะแถวที่มีการแก้ไขจริงเท่านั้น
-            if (isModified) {
-              const q1 = parseFloat(String(item.allocQuotaPercentRound1 || ""));
-              const q2 = parseFloat(String(item.allocQuotaPercentRound2 || ""));
-              const q3 = parseFloat(String(item.allocQuotaPercentRound3 || ""));
-
-              const p1 = String(item.allocPercentRound1 || "").trim();
-              const p2 = String(item.allocPercentRound2 || "").trim();
-              const p3 = String(item.allocPercentRound3 || "").trim();
-
-              const round1: any = {};
-              if (!isNaN(q1)) {
-                round1.allocPercent = q1;
-              }
-              if (p1 !== "" && p1 !== "0" && p1 !== "0%") {
-                round1.allocPercentString = p1.endsWith("%") ? p1 : p1 + "%";
-              } else {
-                round1.allocPercentString = null;
-              }
-              if (item.allocAmountRound1) {
-                round1.allocAmount = Number(item.allocAmountRound1);
-              } else {
-                round1.allocAmount = null;
-              }
-
-              const round2: any = {};
-              if (!isNaN(q2)) {
-                round2.allocPercent = q2;
-              }
-              if (p2 !== "" && p2 !== "0" && p2 !== "0%") {
-                round2.allocPercentString = p2.endsWith("%") ? p2 : p2 + "%";
-              } else {
-                round2.allocPercentString = null;
-              }
-              if (item.allocAmountRound2) {
-                round2.allocAmount = Number(item.allocAmountRound2);
-              } else {
-                round2.allocAmount = null;
-              }
-
-              const round3: any = {};
-              if (!isNaN(q3)) {
-                round3.allocPercent = q3;
-              }
-              if (p3 !== "" && p3 !== "0" && p3 !== "0%") {
-                round3.allocPercentString = p3.endsWith("%") ? p3 : p3 + "%";
-              } else {
-                round3.allocPercentString = null;
-              }
-              if (item.allocAmountRound3) {
-                round3.allocAmount = Number(item.allocAmountRound3);
-              } else {
-                round3.allocAmount = null;
-              }
-
-              newPreviewMap[item.employeeId] = {
-                round1,
-                round2,
-                round3,
-              };
-            }
-          }
+          newPreviewMap[item.employeeId] = {
+            round1: buildRound(
+              item.allocQuotaPercentRound1,
+              item.allocPercentRound1,
+              item.allocAmountRound1,
+            ),
+            round2: buildRound(
+              item.allocQuotaPercentRound2,
+              item.allocPercentRound2,
+              item.allocAmountRound2,
+            ),
+            round3: buildRound(
+              item.allocQuotaPercentRound3,
+              item.allocPercentRound3,
+              item.allocAmountRound3,
+            ),
+          };
         }
       });
+
       setPreviewMap(newPreviewMap);
     },
     [personnelListResponse],
@@ -497,7 +404,7 @@ export default function CompensationRequestDetail({
   const onSearch = (formData: any) => {
     setFilters({
       ...filters,
-      page: 1, // Reset to page 1 on search
+      page: 1,
       requestNo: formData?.requestNo,
       name: formData?.name,
       startDate: formData.startDate
@@ -527,6 +434,14 @@ export default function CompensationRequestDetail({
   const isError = isErrorGroupDetail || isErrorPersonnel;
   const error = errorGroupDetail || errorPersonnel;
 
+  // if (isLoading) {
+  //   return (
+  //     <div className="py-80">
+  //       <Loading fullscreen={false} />
+  //     </div>
+  //   );
+  // }
+
   if (isError) {
     const { title, description, statusCode } = formatApiError(
       error,
@@ -543,7 +458,6 @@ export default function CompensationRequestDetail({
     );
   }
 
-  // ดึงข้อมูลสรุปวงเงินจัดสรรจาก API จริง
   const mainBalance =
     groupDetail?.remainingAmount?.toLocaleString(undefined, {
       minimumFractionDigits: 2,
@@ -551,7 +465,6 @@ export default function CompensationRequestDetail({
   const isMainBalanceNegative = mainBalance.trim().startsWith("-");
   const currentStatus = statusConfig[status] || statusConfig["รอพิจารณา"];
   const isCompleted = status === "สำเร็จ";
-
   const totalPersonnel =
     personnelListResponse?.meta?.itemCount ?? personnelData.length;
 
@@ -744,16 +657,16 @@ export default function CompensationRequestDetail({
 
       {/* Sticky Footer */}
       {!isCompleted && (
-        <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0 z-10">
+        <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0">
           <div className="flex items-center justify-between gap-3">
             <Button
-              variant="secondary"
-              className="px-8 bg-gray-100 hover:bg-gray-200 text-black border-none rounded-full"
-              onClick={() => {
-                router.push(`/manage-compensation/item-request/${reqId}`);
-              }}
+              variant="outline"
+              type="button"
+              className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
+              // onClick={() => onDeleteRequest?.(reqId)}
+              disabled={!reqId}
             >
-              ย้อนกลับ
+              ลบรายการ
             </Button>
             <Button
               type="submit"
