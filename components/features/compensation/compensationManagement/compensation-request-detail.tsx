@@ -172,17 +172,17 @@ export default function CompensationRequestDetail({
       {
         round1?: {
           allocPercent?: number | null;
-          allocPercentString?: string | null;
+          allocQuotaPercent?: number | null;
           allocAmount?: number | null;
         };
         round2?: {
           allocPercent?: number | null;
-          allocPercentString?: string | null;
+          allocQuotaPercent?: number | null;
           allocAmount?: number | null;
         };
         round3?: {
           allocPercent?: number | null;
-          allocPercentString?: string | null;
+          allocQuotaPercent?: number | null;
           allocAmount?: number | null;
         };
       }
@@ -209,12 +209,12 @@ export default function CompensationRequestDetail({
     {
       page: 1,
       take: getPageSize(),
-      // requestNo: "",
-      // name: "",
+      requestNo: "",
+      name: "",
       startDate: null,
-      // positionId: "",
-      // positionLevelId: "",
-      // departmentId: "",
+      positionId: "",
+      positionLevelId: "",
+      departmentId: "",
     },
   );
 
@@ -237,11 +237,11 @@ export default function CompensationRequestDetail({
       page: filters.page || 1,
       take: filters.take || 10,
       previewData,
-      // requestNo: filters.requestNo || undefined,
-      // name: filters.name || undefined,
-      // positionId: filters.positionId || undefined,
-      // positionLevelId: filters.positionLevelId || undefined,
-      // departmentId: filters.departmentId || undefined,
+      requestNo: filters.requestNo || undefined,
+      name: filters.name || undefined,
+      positionId: filters.positionId || undefined,
+      positionLevelId: filters.positionLevelId || undefined,
+      departmentId: filters.departmentId || undefined,
     }),
     [filters, previewData],
   );
@@ -268,31 +268,31 @@ export default function CompensationRequestDetail({
         evalScore:
           item.evaluationScore !== null ? Number(item.evaluationScore) : 0,
         evalResult: item.evaluationResult || "เลือก",
-        allocQuotaPercentRound1:
-          item.allocQuotaPercentRound1 !== null
-            ? String(item.allocQuotaPercentRound1)
-            : "",
-        allocQuotaPercentRound2:
-          item.allocQuotaPercentRound2 !== null
-            ? String(item.allocQuotaPercentRound2)
-            : "",
-        allocQuotaPercentRound3:
-          item.allocQuotaPercentRound3 !== null
-            ? String(item.allocQuotaPercentRound3)
-            : "",
         allocPercentRound1:
           item.allocPercentRound1 !== null
             ? String(item.allocPercentRound1)
+            : "",
+        allocQuotaPercentRound1:
+          item.allocQuotaPercentRound1 !== null
+            ? String(item.allocQuotaPercentRound1)
             : "",
         allocAmountRound1: Number(item.allocAmountRound1 || 0),
         allocPercentRound2:
           item.allocPercentRound2 !== null
             ? String(item.allocPercentRound2)
             : "",
+        allocQuotaPercentRound2:
+          item.allocQuotaPercentRound2 !== null
+            ? String(item.allocQuotaPercentRound2)
+            : "",
         allocAmountRound2: Number(item.allocAmountRound2 || 0),
         allocPercentRound3:
           item.allocPercentRound3 !== null
             ? String(item.allocPercentRound3)
+            : "",
+        allocQuotaPercentRound3:
+          item.allocQuotaPercentRound3 !== null
+            ? String(item.allocQuotaPercentRound3)
             : "",
         allocAmountRound3: Number(item.allocAmountRound3 || 0),
         totalIncrementPercent: Number(item.totalIncrementPercent || 0),
@@ -308,56 +308,38 @@ export default function CompensationRequestDetail({
 
   const handleTableUpdate = useCallback(
     (updatedData: ConsultantData[]) => {
+      // หาแถวที่มีการเปลี่ยนแปลงค่าเมื่อเทียบกับสถานะล่าสุดใน personnelData
+      const changedItem = updatedData.find((item) => {
+        const prevItem = personnelData.find((p) => p.id === item.id);
+        if (!prevItem) return false;
+        return (
+          item.allocPercentRound1 !== prevItem.allocPercentRound1 ||
+          item.allocQuotaPercentRound1 !== prevItem.allocQuotaPercentRound1 ||
+          item.allocAmountRound1 !== prevItem.allocAmountRound1 ||
+          item.allocPercentRound2 !== prevItem.allocPercentRound2 ||
+          item.allocQuotaPercentRound2 !== prevItem.allocQuotaPercentRound2 ||
+          item.allocAmountRound2 !== prevItem.allocAmountRound2 ||
+          item.allocPercentRound3 !== prevItem.allocPercentRound3 ||
+          item.allocQuotaPercentRound3 !== prevItem.allocQuotaPercentRound3 ||
+          item.allocAmountRound3 !== prevItem.allocAmountRound3 ||
+          item.evalScore !== prevItem.evalScore ||
+          item.evalResult !== prevItem.evalResult
+        );
+      });
+
       setPersonnelData(updatedData);
 
-      const newPreviewMap: Record<string, any> = {};
-
-      updatedData.forEach((item) => {
-        if (!item.employeeId) return;
-
-        const orig = personnelListResponse?.data?.find(
-          (o: any) => o.employeeId === item.employeeId,
-        );
-        if (!orig) return;
-
-        // Helper to parse and normalize values for comparison
-        const parseNum = (val: any) => {
-          if (val === undefined || val === null || val === "") return 0;
-          const parsed = parseFloat(String(val).replace(/[^0-9.-]/g, ""));
-          return isNaN(parsed) ? 0 : parsed;
-        };
-
-        // Compare values robustly by normalizing them to numbers or clean strings
-        const isModified =
-          parseNum(item.allocQuotaPercentRound1) !==
-            parseNum(orig.allocQuotaPercentRound1) ||
-          parseNum(item.allocQuotaPercentRound2) !==
-            parseNum(orig.allocQuotaPercentRound2) ||
-          parseNum(item.allocQuotaPercentRound3) !==
-            parseNum(orig.allocQuotaPercentRound3) ||
-          parseNum(item.allocPercentRound1) !==
-            parseNum(orig.allocPercentRound1) ||
-          parseNum(item.allocAmountRound1) !==
-            parseNum(orig.allocAmountRound1) ||
-          parseNum(item.allocPercentRound2) !==
-            parseNum(orig.allocPercentRound2) ||
-          parseNum(item.allocAmountRound2) !==
-            parseNum(orig.allocAmountRound2) ||
-          parseNum(item.allocPercentRound3) !==
-            parseNum(orig.allocPercentRound3) ||
-          parseNum(item.allocAmountRound3) !==
-            parseNum(orig.allocAmountRound3) ||
-          parseNum(item.evalScore) !== parseNum(orig.evaluationScore) ||
-          String(item.evalResult ?? "เลือก") !==
-            String(orig.evaluationResult ?? "เลือก");
-
-        if (isModified) {
-          const buildRound = (quota: any, percent: any, amount: any) => {
-            const qStr =
-              quota !== undefined && quota !== null ? String(quota).trim() : "";
+      // ถ้ามีแถวที่ถูกแก้ไข ให้บันทึกค่าลงใน previewMap ทันทีโดยไม่มีการกรองค่าซ้ำ
+      if (changedItem && changedItem.employeeId) {
+        setPreviewMap((prev) => {
+          const buildRound = (percent: any, quotaPercent: any, amount: any) => {
             const pStr =
               percent !== undefined && percent !== null
                 ? String(percent).trim()
+                : "";
+            const qStr =
+              quotaPercent !== undefined && quotaPercent !== null
+                ? String(quotaPercent).trim()
                 : "";
             const aStr =
               amount !== undefined && amount !== null
@@ -365,40 +347,36 @@ export default function CompensationRequestDetail({
                 : "";
 
             return {
-              allocPercent: qStr !== "" ? parseFloat(qStr) : null,
-              allocPercentString:
-                pStr !== "" && pStr !== "0" && pStr !== "0%"
-                  ? pStr.endsWith("%")
-                    ? pStr
-                    : pStr + "%"
-                  : null,
+              allocPercent: pStr !== "" ? parseFloat(pStr) : null,
+              allocQuotaPercent: qStr !== "" ? parseFloat(qStr) : null,
               allocAmount: aStr !== "" && aStr !== "0" ? Number(aStr) : null,
             };
           };
 
-          newPreviewMap[item.employeeId] = {
-            round1: buildRound(
-              item.allocQuotaPercentRound1,
-              item.allocPercentRound1,
-              item.allocAmountRound1,
-            ),
-            round2: buildRound(
-              item.allocQuotaPercentRound2,
-              item.allocPercentRound2,
-              item.allocAmountRound2,
-            ),
-            round3: buildRound(
-              item.allocQuotaPercentRound3,
-              item.allocPercentRound3,
-              item.allocAmountRound3,
-            ),
+          return {
+            ...prev,
+            [changedItem.employeeId!]: {
+              round1: buildRound(
+                changedItem.allocPercentRound1,
+                changedItem.allocQuotaPercentRound1,
+                changedItem.allocAmountRound1,
+              ),
+              round2: buildRound(
+                changedItem.allocPercentRound2,
+                changedItem.allocQuotaPercentRound2,
+                changedItem.allocAmountRound2,
+              ),
+              round3: buildRound(
+                changedItem.allocPercentRound3,
+                changedItem.allocQuotaPercentRound3,
+                changedItem.allocAmountRound3,
+              ),
+            },
           };
-        }
-      });
-
-      setPreviewMap(newPreviewMap);
+        });
+      }
     },
-    [personnelListResponse],
+    [personnelData],
   );
 
   const onSearch = (formData: any) => {
@@ -657,16 +635,16 @@ export default function CompensationRequestDetail({
 
       {/* Sticky Footer */}
       {!isCompleted && (
-        <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0">
+        <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0 z-10">
           <div className="flex items-center justify-between gap-3">
             <Button
-              variant="outline"
-              type="button"
-              className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
-              // onClick={() => onDeleteRequest?.(reqId)}
-              disabled={!reqId}
+              variant="secondary"
+              className="px-8 bg-gray-100 hover:bg-gray-200 text-black border-none rounded-full"
+              onClick={() => {
+                router.push(`/manage-compensation/item-request/${reqId}`);
+              }}
             >
-              ลบรายการ
+              ย้อนกลับ
             </Button>
             <Button
               type="submit"

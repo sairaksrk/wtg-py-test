@@ -112,7 +112,7 @@ export async function getCompensationGroupDetail(
 
 export interface PreviewRoundData {
   allocPercent?: number | null;
-  allocPercentString?: string | null;
+  allocQuotaPercent?: number | null;
   allocAmount?: number | null;
 }
 

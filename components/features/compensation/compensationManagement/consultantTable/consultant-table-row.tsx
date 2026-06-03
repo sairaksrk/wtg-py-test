@@ -66,7 +66,7 @@ export function ConsultantTableRow({
 
   // ฟังก์ชันควบคุมโควตาจัดสรรร้อยละ (รวมกัน 3 รอบต้องไม่เกิน 3%)
   const handleLimitChange = (
-    field: "allocQuotaPercentRound1" | "allocQuotaPercentRound2" | "allocQuotaPercentRound3",
+    field: "allocPercentRound1" | "allocPercentRound2" | "allocPercentRound3",
     value: string,
   ) => {
     const cleanValue = value
@@ -83,9 +83,9 @@ export function ConsultantTableRow({
 
     const otherFields = (
       [
-        "allocQuotaPercentRound1",
-        "allocQuotaPercentRound2",
-        "allocQuotaPercentRound3",
+        "allocPercentRound1",
+        "allocPercentRound2",
+        "allocPercentRound3",
       ] as const
     ).filter((f) => f !== field);
 
@@ -164,19 +164,19 @@ export function ConsultantTableRow({
         )}
       </TableCell>
 
-      {/* จัดสรรร้อยละรอบที่ 1 (%) */}
+      {/* จัดสรรร้อยละรอบที่ 1 (%) - คอลัมน์ 9 */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            value={displayRow.allocQuotaPercentRound1 ?? ""}
+            value={displayRow.allocPercentRound1 ?? ""}
             onChange={(e) =>
-              handleLimitChange("allocQuotaPercentRound1", e.target.value)
+              handleLimitChange("allocPercentRound1", e.target.value)
             }
             className="h-11 rounded-xl"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.allocQuotaPercentRound1)}
+            {formatPercent(row.allocPercentRound1)}
           </div>
         )}
       </TableCell>
@@ -184,15 +184,15 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            value={displayRow.allocQuotaPercentRound2 ?? ""}
+            value={displayRow.allocPercentRound2 ?? ""}
             onChange={(e) =>
-              handleLimitChange("allocQuotaPercentRound2", e.target.value)
+              handleLimitChange("allocPercentRound2", e.target.value)
             }
             className="h-11 rounded-xl"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.allocQuotaPercentRound2)}
+            {formatPercent(row.allocPercentRound2)}
           </div>
         )}
       </TableCell>
@@ -200,26 +200,26 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            value={displayRow.allocQuotaPercentRound3 ?? ""}
+            value={displayRow.allocPercentRound3 ?? ""}
             onChange={(e) =>
-              handleLimitChange("allocQuotaPercentRound3", e.target.value)
+              handleLimitChange("allocPercentRound3", e.target.value)
             }
             className="h-11 rounded-xl"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.allocQuotaPercentRound3)}
+            {formatPercent(row.allocPercentRound3)}
           </div>
         )}
       </TableCell>
 
-      {/* ผลพิจารณารอบที่ 1 */}
+      {/* ผลพิจารณารอบที่ 1 - คอลัมน์ 10 */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.allocPercentRound1 ?? ""}
+            value={displayRow.allocQuotaPercentRound1 ?? ""}
             onChange={(e) =>
-              handlePercentStringChange("allocPercentRound1", e.target.value)
+              handlePercentStringChange("allocQuotaPercentRound1", e.target.value)
             }
             className="h-11 rounded-xl"
             iconPosition="right"
@@ -227,7 +227,7 @@ export function ConsultantTableRow({
           />
         ) : (
           <div className="text-center">
-            {formatPercent(row.allocPercentRound1)} %
+            {formatPercent(row.allocQuotaPercentRound1)} %
           </div>
         )}
       </TableCell>
@@ -252,9 +252,9 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.allocPercentRound2 ?? ""}
+            value={displayRow.allocQuotaPercentRound2 ?? ""}
             onChange={(e) =>
-              handlePercentStringChange("allocPercentRound2", e.target.value)
+              handlePercentStringChange("allocQuotaPercentRound2", e.target.value)
             }
             className="h-11 rounded-xl"
             iconPosition="right"
@@ -262,7 +262,7 @@ export function ConsultantTableRow({
           />
         ) : (
           <div className="text-center">
-            {formatPercent(row.allocPercentRound2)} %
+            {formatPercent(row.allocQuotaPercentRound2)} %
           </div>
         )}
       </TableCell>
@@ -287,9 +287,9 @@ export function ConsultantTableRow({
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.allocPercentRound3 ?? ""}
+            value={displayRow.allocQuotaPercentRound3 ?? ""}
             onChange={(e) =>
-              handlePercentStringChange("allocPercentRound3", e.target.value)
+              handlePercentStringChange("allocQuotaPercentRound3", e.target.value)
             }
             className="h-11 rounded-xl"
             iconPosition="right"
@@ -297,7 +297,7 @@ export function ConsultantTableRow({
           />
         ) : (
           <div className="text-center">
-            {formatPercent(row.allocPercentRound3)} %
+            {formatPercent(row.allocQuotaPercentRound3)} %
           </div>
         )}
       </TableCell>
