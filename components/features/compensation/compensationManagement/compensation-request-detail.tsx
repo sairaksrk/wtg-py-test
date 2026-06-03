@@ -638,13 +638,13 @@ export default function CompensationRequestDetail({
         <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0 z-10">
           <div className="flex items-center justify-between gap-3">
             <Button
-              variant="secondary"
-              className="px-8 bg-gray-100 hover:bg-gray-200 text-black border-none rounded-full"
-              onClick={() => {
-                router.push(`/manage-compensation/item-request/${reqId}`);
-              }}
+              variant="outline"
+              type="button"
+              className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
+              // onClick={() => onDeleteRequest?.(reqId)}
+              disabled={!reqId}
             >
-              ย้อนกลับ
+              ลบรายการ
             </Button>
             <Button
               type="submit"
