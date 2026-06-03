@@ -170,8 +170,42 @@ export default function CompensationRequestDetail({
     useState<ConsultantData[]>(INITIAL_CONSULTANTS);
   const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
   const [previewMap, setPreviewMap] = useState<
-    Record<string, { allocPercent?: number; allocAmount?: number }>
+    Record<
+      string,
+      {
+        round1?: {
+          allocPercent?: number;
+          allocPercentString?: string;
+          allocAmount?: number;
+        };
+        round2?: {
+          allocPercent?: number;
+          allocPercentString?: string;
+          allocAmount?: number;
+        };
+        round3?: {
+          allocPercent?: number;
+          allocPercentString?: string;
+          allocAmount?: number;
+        };
+      }
+    >
   >({});
+
+  // status (ถ้ามี API เปลี่ยน const status = data?.status)
+  const [status, setStatus] = useState<string>("รอพิจารณา");
+  const onSubmit = async () => {
+    alert.fire({
+      type: "warning",
+      title: c("save-data-confirmation"),
+      description: c("save-data-confirmation-description"),
+      confirmButton: {
+        label: c("button.confirm"),
+        onClick: () => toastSuccess(c("successfully")),
+      },
+      cancelButton: { label: c("button.secondary-cancel"), show: true },
+    });
+  };
 
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_REQUEST_SESSION_KEY,
@@ -203,22 +237,37 @@ export default function CompensationRequestDetail({
     error: errorGroupDetail,
   } = useGetCompensationGroupDetail(groupsId || "");
 
+  // Memoize the query body to prevent infinite query key changes and refetches
+  const queryBody = useMemo(
+    () => ({
+      page: filters.page || 1,
+      take: filters.take || 10,
+      previewData,
+      requestNo: filters.requestNo || undefined,
+      name: filters.name || undefined,
+      positionId: filters.positionId || undefined,
+      positionLevelId: filters.positionLevelId || undefined,
+      departmentId: filters.departmentId || undefined,
+    }),
+    [
+      filters.page,
+      filters.take,
+      previewData,
+      filters.requestNo,
+      filters.name,
+      filters.positionId,
+      filters.positionLevelId,
+      filters.departmentId,
+    ],
+  );
+
   // API for Personnel List
   const {
     data: personnelListResponse,
     isLoading: isLoadingPersonnel,
     isError: isErrorPersonnel,
     error: errorPersonnel,
-  } = useGetCompensationPersonnelList(reqId || "", groupsId || "", {
-    page: filters.page || 1,
-    take: filters.take || 10,
-    previewData,
-    requestNo: filters.requestNo || undefined,
-    name: filters.name || undefined,
-    positionId: filters.positionId || undefined,
-    positionLevelId: filters.positionLevelId || undefined,
-    departmentId: filters.departmentId || undefined,
-  });
+  } = useGetCompensationPersonnelList(reqId || "", groupsId || "", queryBody);
 
   useEffect(() => {
     if (personnelListResponse?.data) {
@@ -228,66 +277,222 @@ export default function CompensationRequestDetail({
         positionNo: String(item.positionNumber || "-"),
         name: item.fullNameTh || "-",
         subPosition: item.positionName || "-",
-        type: item.type || "-",
+        type: item.employeeTypeName || "-",
         department: item.unitName || "-",
         salary: Number(item.currentSalary || 0),
         baseCalculation: Number(item.calculationBase || 0),
-        officePercentLimit: Number(item.evaluationResultRound1 || 0),
-        deputyPercentLimit: Number(item.evaluationResultRound2 || 0),
-        directorPercentLimit: Number(item.evaluationResultRound3 || 0),
         evalScore:
           item.evaluationScore !== null ? Number(item.evaluationScore) : 0,
         evalResult: item.evaluationResult || "เลือก",
-        officeEvalPercent: Number(item.incrementPercent || 0),
-        officeEvalBaht: Number(item.incrementAmount || 0),
-        deputyEvalPercent: Number(item.deputyEvalPercent || 0),
-        deputyEvalBaht: Number(item.deputyEvalBaht || 0),
-        directorEvalPercent: Number(item.directorEvalPercent || 0),
-        directorEvalBaht: Number(item.directorEvalBaht || 0),
-        totalPercentIncrease: Number(item.totalIncrementPercent || 0),
-        totalAmountIncrease: Number(item.totalIncrementAmount || 0),
-        specialCompensation: Number(item.specialCompensation || 0),
-        receivedSalary: Number(item.newSalary || 0),
+        allocQuotaPercentRound1:
+          item.allocQuotaPercentRound1 !== null
+            ? String(item.allocQuotaPercentRound1)
+            : "",
+        allocQuotaPercentRound2:
+          item.allocQuotaPercentRound2 !== null
+            ? String(item.allocQuotaPercentRound2)
+            : "",
+        allocQuotaPercentRound3:
+          item.allocQuotaPercentRound3 !== null
+            ? String(item.allocQuotaPercentRound3)
+            : "",
+        allocPercentRound1:
+          item.allocPercentRound1 !== null
+            ? String(item.allocPercentRound1)
+            : "",
+        allocAmountRound1: Number(item.allocAmountRound1 || 0),
+        allocPercentRound2:
+          item.allocPercentRound2 !== null
+            ? String(item.allocPercentRound2)
+            : "",
+        allocAmountRound2: Number(item.allocAmountRound2 || 0),
+        allocPercentRound3:
+          item.allocPercentRound3 !== null
+            ? String(item.allocPercentRound3)
+            : "",
+        allocAmountRound3: Number(item.allocAmountRound3 || 0),
+        totalIncrementPercent: Number(item.totalIncrementPercent || 0),
+        totalIncrementAmount: Number(item.totalIncrementAmount || 0),
+        extraCompensation: Number(item.extraCompensation || 0),
+        newSalary: Number(item.newSalary || 0),
         positionAllowance: Number(item.positionAllowance || 0),
-        totalIncome: Number(item.totalIncome || item.newSalary || 0),
+        totalIncome: Number(item.totalIncome || 0),
       }));
       setPersonnelData(mapped);
     }
   }, [personnelListResponse]);
 
-  const handleTableUpdate = useCallback((updatedData: ConsultantData[]) => {
-    setPersonnelData(updatedData);
+  const handleTableUpdate = useCallback(
+    (updatedData: ConsultantData[]) => {
+      setPersonnelData(updatedData);
 
-    // Update previewMap with changes
-    const newPreviewMap: Record<
-      string,
-      { allocPercent?: number; allocAmount?: number }
-    > = {};
-    updatedData.forEach((item) => {
-      if (item.employeeId) {
-        newPreviewMap[item.employeeId] = {
-          allocPercent: item.officeEvalPercent,
-          allocAmount: item.officeEvalBaht,
-        };
-      }
-    });
-    setPreviewMap(newPreviewMap);
-  }, []);
+      // Update previewMap with changes
+      const newPreviewMap: Record<
+        string,
+        {
+          round1?: {
+            allocPercent?: number;
+            allocPercentString?: string;
+            allocAmount?: number;
+          };
+          round2?: {
+            allocPercent?: number;
+            allocPercentString?: string;
+            allocAmount?: number;
+          };
+          round3?: {
+            allocPercent?: number;
+            allocPercentString?: string;
+            allocAmount?: number;
+          };
+        }
+      > = {};
 
-  // status (ถ้ามี API เปลี่ยน const status = data?.status)
-  const [status, setStatus] = useState<string>("รอพิจารณา");
-  const onSubmit = async () => {
-    alert.fire({
-      type: "warning",
-      title: c("save-data-confirmation"),
-      description: c("save-data-confirmation-description"),
-      confirmButton: {
-        label: c("button.confirm"),
-        onClick: () => toastSuccess(c("successfully")),
-      },
-      cancelButton: { label: c("button.secondary-cancel"), show: true },
-    });
-  };
+      updatedData.forEach((item) => {
+        if (item.employeeId) {
+          // ค้นหาข้อมูลตั้งต้นจากเซิร์ฟเวอร์เพื่อเปรียบเทียบ
+          const orig = personnelListResponse?.data?.find(
+            (o: any) => o.employeeId === item.employeeId,
+          );
+
+          if (orig) {
+            // ตรวจสอบว่าฟิลด์ที่แก้ไขได้มีการเปลี่ยนแปลงจากค่าตั้งต้นหรือไม่
+            const q1Changed =
+              String(item.allocQuotaPercentRound1 || "") !==
+              String(
+                orig.allocQuotaPercentRound1 !== null
+                  ? orig.allocQuotaPercentRound1
+                  : "",
+              );
+            const q2Changed =
+              String(item.allocQuotaPercentRound2 || "") !==
+              String(
+                orig.allocQuotaPercentRound2 !== null
+                  ? orig.allocQuotaPercentRound2
+                  : "",
+              );
+            const q3Changed =
+              String(item.allocQuotaPercentRound3 || "") !==
+              String(
+                orig.allocQuotaPercentRound3 !== null
+                  ? orig.allocQuotaPercentRound3
+                  : "",
+              );
+
+            const p1Changed =
+              String(item.allocPercentRound1 || "") !==
+              String(
+                orig.allocPercentRound1 !== null ? orig.allocPercentRound1 : "",
+              );
+            const a1Changed =
+              Number(item.allocAmountRound1 || 0) !==
+              Number(orig.allocAmountRound1 || 0);
+
+            const p2Changed =
+              String(item.allocPercentRound2 || "") !==
+              String(
+                orig.allocPercentRound2 !== null ? orig.allocPercentRound2 : "",
+              );
+            const a2Changed =
+              Number(item.allocAmountRound2 || 0) !==
+              Number(orig.allocAmountRound2 || 0);
+
+            const p3Changed =
+              String(item.allocPercentRound3 || "") !==
+              String(
+                orig.allocPercentRound3 !== null ? orig.allocPercentRound3 : "",
+              );
+            const a3Changed =
+              Number(item.allocAmountRound3 || 0) !==
+              Number(orig.allocAmountRound3 || 0);
+
+            const scoreChanged =
+              Number(item.evalScore || 0) !== Number(orig.evaluationScore || 0);
+            const resultChanged =
+              String(item.evalResult || "เลือก") !==
+              String(orig.evaluationResult || "เลือก");
+
+            const isModified =
+              q1Changed ||
+              q2Changed ||
+              q3Changed ||
+              p1Changed ||
+              a1Changed ||
+              p2Changed ||
+              a2Changed ||
+              p3Changed ||
+              a3Changed ||
+              scoreChanged ||
+              resultChanged;
+
+            // ส่งเฉพาะแถวที่มีการแก้ไขจริงเท่านั้น
+            if (isModified) {
+              const q1 = parseFloat(String(item.allocQuotaPercentRound1 || ""));
+              const q2 = parseFloat(String(item.allocQuotaPercentRound2 || ""));
+              const q3 = parseFloat(String(item.allocQuotaPercentRound3 || ""));
+
+              const p1 = String(item.allocPercentRound1 || "").trim();
+              const p2 = String(item.allocPercentRound2 || "").trim();
+              const p3 = String(item.allocPercentRound3 || "").trim();
+
+              const round1: any = {};
+              if (!isNaN(q1)) {
+                round1.allocPercent = q1;
+              }
+              if (p1 !== "" && p1 !== "0" && p1 !== "0%") {
+                round1.allocPercentString = p1.endsWith("%") ? p1 : p1 + "%";
+              } else {
+                round1.allocPercentString = null;
+              }
+              if (item.allocAmountRound1) {
+                round1.allocAmount = Number(item.allocAmountRound1);
+              } else {
+                round1.allocAmount = null;
+              }
+
+              const round2: any = {};
+              if (!isNaN(q2)) {
+                round2.allocPercent = q2;
+              }
+              if (p2 !== "" && p2 !== "0" && p2 !== "0%") {
+                round2.allocPercentString = p2.endsWith("%") ? p2 : p2 + "%";
+              } else {
+                round2.allocPercentString = null;
+              }
+              if (item.allocAmountRound2) {
+                round2.allocAmount = Number(item.allocAmountRound2);
+              } else {
+                round2.allocAmount = null;
+              }
+
+              const round3: any = {};
+              if (!isNaN(q3)) {
+                round3.allocPercent = q3;
+              }
+              if (p3 !== "" && p3 !== "0" && p3 !== "0%") {
+                round3.allocPercentString = p3.endsWith("%") ? p3 : p3 + "%";
+              } else {
+                round3.allocPercentString = null;
+              }
+              if (item.allocAmountRound3) {
+                round3.allocAmount = Number(item.allocAmountRound3);
+              } else {
+                round3.allocAmount = null;
+              }
+
+              newPreviewMap[item.employeeId] = {
+                round1,
+                round2,
+                round3,
+              };
+            }
+          }
+        }
+      });
+      setPreviewMap(newPreviewMap);
+    },
+    [personnelListResponse],
+  );
 
   const onSearch = (formData: any) => {
     setFilters({
@@ -321,14 +526,6 @@ export default function CompensationRequestDetail({
   const isLoading = isLoadingGroupDetail || isLoadingPersonnel;
   const isError = isErrorGroupDetail || isErrorPersonnel;
   const error = errorGroupDetail || errorPersonnel;
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="py-80">
-  //       <Loading fullscreen={false} />
-  //     </div>
-  //   );
-  // }
 
   if (isError) {
     const { title, description, statusCode } = formatApiError(
@@ -547,18 +744,22 @@ export default function CompensationRequestDetail({
 
       {/* Sticky Footer */}
       {!isCompleted && (
-        <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0">
+        <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0 z-10">
           <div className="flex items-center justify-between gap-3">
             <Button
-              variant="outline"
-              type="button"
-              className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
-              // onClick={() => onDeleteRequest?.(reqId)}
-              disabled={!reqId}
+              variant="secondary"
+              className="px-8 bg-gray-100 hover:bg-gray-200 text-black border-none rounded-full"
+              onClick={() => {
+                router.push(`/manage-compensation/item-request/${reqId}`);
+              }}
             >
-              ลบรายการ
+              ย้อนกลับ
             </Button>
-            <Button type="submit" onClick={onSubmit}>
+            <Button
+              type="submit"
+              className="px-10 rounded-full"
+              onClick={onSubmit}
+            >
               พิจารณาเสร็จสิ้น
             </Button>
           </div>

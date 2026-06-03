@@ -110,10 +110,17 @@ export async function getCompensationGroupDetail(
   );
 }
 
+export interface PreviewRoundData {
+  allocPercent?: number;
+  allocPercentString?: string;
+  allocAmount?: number;
+}
+
 export interface PreviewDataItem {
   employeeId: string;
-  allocPercent?: number;
-  allocAmount?: number;
+  round1?: PreviewRoundData;
+  round2?: PreviewRoundData;
+  round3?: PreviewRoundData;
 }
 
 export interface GetCompensationPersonnelParams {

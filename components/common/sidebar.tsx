@@ -348,15 +348,15 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
               <ul className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 flex-1 space-y-2 overflow-x-hidden overflow-y-auto pr-2">
                 {/* {session?.menu */}
                 {mockupSession?.menu
-                  .find((item) => item.code === active)
-                  ?.modules.filter((item) => item.type === "MENU")
-                  .map((item, index) => {
+                  .find((item: any) => item.code === active)
+                  ?.modules.filter((item: any) => item.type === "MENU")
+                  .map((item: any, index: any) => {
                     const hasChildren = item.modules && item.modules.length > 0;
 
                     // Check if any child is active
                     const isAnyChildActive = hasChildren
                       ? item.modules?.some(
-                          (child) =>
+                          (child: any) =>
                             pathname === child.url ||
                             pathname.startsWith(`${child.url}/`),
                         )
@@ -396,43 +396,45 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                           {/* Submenu */}
                           {isOpen && (
                             <ul className="mt-1 space-y-1">
-                              {item.modules?.map((subItem, subIndex) => {
-                                const isSubActive = pathname === subItem.url;
-                                return (
-                                  <motion.li
-                                    key={subItem.nameTh}
-                                    initial={{ opacity: 0, x: -5 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{
-                                      delay: 0.2 + subIndex * 0.05,
-                                    }}
-                                  >
-                                    <Link
-                                      href={subItem.url}
-                                      onClick={() => sessionStorage.clear()}
+                              {item.modules?.map(
+                                (subItem: any, subIndex: any) => {
+                                  const isSubActive = pathname === subItem.url;
+                                  return (
+                                    <motion.li
+                                      key={subItem.nameTh}
+                                      initial={{ opacity: 0, x: -5 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{
+                                        delay: 0.2 + subIndex * 0.05,
+                                      }}
                                     >
-                                      <motion.button
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        className={cn(
-                                          "flex w-full text-left gap-2 rounded-lg pr-4 py-2 transition-all cursor-pointer pl-10",
-                                          isSubActive
-                                            ? "bg-linear-to-r from-[#BFDBFE00] to-[#BFDBFE] text-primary"
-                                            : "text-foreground hover:bg-white/50",
-                                        )}
+                                      <Link
+                                        href={subItem.url}
+                                        onClick={() => sessionStorage.clear()}
                                       >
-                                        {/* {subItem.icon && <Icon icon={subItem.icon} />} */}
-                                        <span>
-                                          {nameLocalize(
-                                            subItem.nameTh,
-                                            subItem.nameEn,
+                                        <motion.button
+                                          whileHover={{ scale: 1.02 }}
+                                          whileTap={{ scale: 0.98 }}
+                                          className={cn(
+                                            "flex w-full text-left gap-2 rounded-lg pr-4 py-2 transition-all cursor-pointer pl-10",
+                                            isSubActive
+                                              ? "bg-linear-to-r from-[#BFDBFE00] to-[#BFDBFE] text-primary"
+                                              : "text-foreground hover:bg-white/50",
                                           )}
-                                        </span>
-                                      </motion.button>
-                                    </Link>
-                                  </motion.li>
-                                );
-                              })}
+                                        >
+                                          {/* {subItem.icon && <Icon icon={subItem.icon} />} */}
+                                          <span>
+                                            {nameLocalize(
+                                              subItem.nameTh,
+                                              subItem.nameEn,
+                                            )}
+                                          </span>
+                                        </motion.button>
+                                      </Link>
+                                    </motion.li>
+                                  );
+                                },
+                              )}
                             </ul>
                           )}
                         </motion.li>

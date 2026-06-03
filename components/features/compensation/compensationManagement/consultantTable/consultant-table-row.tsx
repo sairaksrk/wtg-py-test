@@ -43,25 +43,33 @@ export function ConsultantTableRow({
     });
   };
 
-  // จัดรูปแบบเปอร์เซ็นต์ (ไม่มีทศนิยมถ้าเป็นจำนวนเต็ม เช่น 3% หรือมีทศนิยมตามจริง เช่น 2.75%)
+  // จัดรูปแบบเปอร์เซ็นต์
   const formatPercent = (val: any) => {
     if (val === undefined || val === null || isNaN(Number(val))) return "0";
     const num = Number(val);
     return num % 1 === 0 ? num.toString() : num.toFixed(2);
   };
 
-  // จัดการการเปลี่ยนค่าตัวเลขที่รับมาจาก Input (ล้างคอมม่ามาให้แล้ว)
+  // ฟังก์ชันจัดการการเปลี่ยนค่าตัวเลข
   const handleNumberChange = (field: keyof ConsultantData, value: string) => {
     const parsed = value === "" ? 0 : parseFloat(value);
     onInputChange(field, isNaN(parsed) ? 0 : parsed);
   };
 
-  // ฟังก์ชัน"บริหารวงเงิน"
+  // ฟังก์ชันจัดการการเปลี่ยนค่าเปอร์เซ็นต์ (เก็บเป็น string เพื่อให้พิมพ์จุดทศนิยมได้สะดวก)
+  const handlePercentStringChange = (field: keyof ConsultantData, value: string) => {
+    // อนุญาตให้พิมพ์ตัวเลขและจุดทศนิยมเพียงจุดเดียว
+    const cleanValue = value
+      .replace(/[^0-9.]/g, "")
+      .replace(/(\..*?)\..*/g, "$1");
+    onInputChange(field, cleanValue);
+  };
+
+  // ฟังก์ชันควบคุมโควตาจัดสรรร้อยละ (รวมกัน 3 รอบต้องไม่เกิน 3%)
   const handleLimitChange = (
-    field: "officePercentLimit" | "deputyPercentLimit" | "directorPercentLimit",
+    field: "allocQuotaPercentRound1" | "allocQuotaPercentRound2" | "allocQuotaPercentRound3",
     value: string,
   ) => {
-    // 1. อนุญาตให้พิมพ์ตัวเลขและจุดทศนิยมเพียงจุดเดียว
     const cleanValue = value
       .replace(/[^0-9.]/g, "")
       .replace(/(\..*?)\..*/g, "$1");
@@ -74,12 +82,11 @@ export function ConsultantTableRow({
     const parsed = parseFloat(cleanValue);
     if (isNaN(parsed)) return;
 
-    // 2. ตรวจสอบผลรวมของช่องอื่นในกลุ่มเดียวกัน
     const otherFields = (
       [
-        "officePercentLimit",
-        "deputyPercentLimit",
-        "directorPercentLimit",
+        "allocQuotaPercentRound1",
+        "allocQuotaPercentRound2",
+        "allocQuotaPercentRound3",
       ] as const
     ).filter((f) => f !== field);
 
@@ -88,14 +95,11 @@ export function ConsultantTableRow({
       0,
     );
 
-    // 3. คำนวณค่าสูงสุดที่ยอมให้กรอกได้ (ต้องไม่เกิน 3 และรวมกับช่องอื่นต้องไม่เกิน 3)
     const maxAllowed = Math.max(0, 3 - otherSum);
 
     if (parsed > maxAllowed) {
-      // ถ้าเกิน ให้ปัดลงมาที่ค่าสูงสุดที่ยอมรับได้
       onInputChange(field, maxAllowed.toString());
     } else {
-      // ถ้าไม่เกิน ให้เก็บค่าเป็น string ไว้ก่อนเพื่อให้พิมพ์จุดทศนิยมต่อได้
       onInputChange(field, cleanValue);
     }
   };
@@ -161,80 +165,79 @@ export function ConsultantTableRow({
         )}
       </TableCell>
 
-      {/* บริหารวงเงิน สำนักร้อยละ (%)  จัดสรรร้อยละรอบที่ 1 (%)  */}
+      {/* จัดสรรร้อยละรอบที่ 1 (%) */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            value={displayRow.officePercentLimit ?? ""}
+            value={displayRow.allocQuotaPercentRound1 ?? ""}
             onChange={(e) =>
-              handleLimitChange("officePercentLimit", e.target.value)
+              handleLimitChange("allocQuotaPercentRound1", e.target.value)
             }
             className="h-11 rounded-xl"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.officePercentLimit)}
+            {formatPercent(row.allocQuotaPercentRound1)}
           </div>
         )}
       </TableCell>
-      {/* บริหารวงเงิน รองร้อยละ (%) จัดสรรร้อยละรอบที่ 2 (%)  */}
+      {/* จัดสรรร้อยละรอบที่ 2 (%) */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            value={displayRow.deputyPercentLimit ?? ""}
+            value={displayRow.allocQuotaPercentRound2 ?? ""}
             onChange={(e) =>
-              handleLimitChange("deputyPercentLimit", e.target.value)
+              handleLimitChange("allocQuotaPercentRound2", e.target.value)
             }
             className="h-11 rounded-xl"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.deputyPercentLimit)}
+            {formatPercent(row.allocQuotaPercentRound2)}
           </div>
         )}
       </TableCell>
-      {/* บริหารวงเงิน ผู้อำนวยการร้อยละ (%) จัดสรรร้อยละรอบที่ 3 (%)  */}
+      {/* จัดสรรร้อยละรอบที่ 3 (%) */}
       <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
-            value={displayRow.directorPercentLimit ?? ""}
+            value={displayRow.allocQuotaPercentRound3 ?? ""}
             onChange={(e) =>
-              handleLimitChange("directorPercentLimit", e.target.value)
+              handleLimitChange("allocQuotaPercentRound3", e.target.value)
             }
             className="h-11 rounded-xl"
           />
         ) : (
           <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.directorPercentLimit)}
+            {formatPercent(row.allocQuotaPercentRound3)}
           </div>
         )}
       </TableCell>
 
-      {/* สำนักประเมิน  ผมพิจารณารอบที่ 1*/}
+      {/* ผลพิจารณารอบที่ 1 */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.officeEvalPercent ?? ""}
+            value={displayRow.allocPercentRound1 ?? ""}
             onChange={(e) =>
-              handleNumberChange("officeEvalPercent", e.target.value)
+              handlePercentStringChange("allocPercentRound1", e.target.value)
             }
-            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="%" />}
           />
         ) : (
           <div className="text-center">
-            {formatPercent(row.officeEvalPercent)} %
+            {formatPercent(row.allocPercentRound1)} %
           </div>
         )}
       </TableCell>
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.officeEvalBaht ?? ""}
+            value={displayRow.allocAmountRound1 ?? ""}
             onChange={(e) =>
-              handleNumberChange("officeEvalBaht", e.target.value)
+              handleNumberChange("allocAmountRound1", e.target.value)
             }
             thousandSeparator
             className="h-11 rounded-xl"
@@ -242,35 +245,34 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
-          <div className="text-center">{formatNum(row.officeEvalBaht)}</div>
+          <div className="text-center">{formatNum(row.allocAmountRound1)}</div>
         )}
       </TableCell>
 
-      {/* รองผู้อำนวยการ ผมพิจารณารอบที่ 2 */}
+      {/* ผลพิจารณารอบที่ 2 */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.deputyEvalPercent ?? ""}
+            value={displayRow.allocPercentRound2 ?? ""}
             onChange={(e) =>
-              handleNumberChange("deputyEvalPercent", e.target.value)
+              handlePercentStringChange("allocPercentRound2", e.target.value)
             }
-            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="%" />}
           />
         ) : (
           <div className="text-center">
-            {formatPercent(row.deputyEvalPercent)} %
+            {formatPercent(row.allocPercentRound2)} %
           </div>
         )}
       </TableCell>
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.deputyEvalBaht ?? ""}
+            value={displayRow.allocAmountRound2 ?? ""}
             onChange={(e) =>
-              handleNumberChange("deputyEvalBaht", e.target.value)
+              handleNumberChange("allocAmountRound2", e.target.value)
             }
             thousandSeparator
             className="h-11 rounded-xl"
@@ -278,35 +280,34 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
-          <div className="text-center">{formatNum(row.deputyEvalBaht)}</div>
+          <div className="text-center">{formatNum(row.allocAmountRound2)}</div>
         )}
       </TableCell>
 
-      {/* ผู้อำนวยการสำนักบริหารหนี้สิน ผมพิจารณารอบที่ 3 */}
+      {/* ผลพิจารณารอบที่ 3 */}
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.directorEvalPercent ?? ""}
+            value={displayRow.allocPercentRound3 ?? ""}
             onChange={(e) =>
-              handleNumberChange("directorEvalPercent", e.target.value)
+              handlePercentStringChange("allocPercentRound3", e.target.value)
             }
-            thousandSeparator
             className="h-11 rounded-xl"
             iconPosition="right"
             icon={<SymbolBadge symbol="%" />}
           />
         ) : (
           <div className="text-center">
-            {formatPercent(row.directorEvalPercent)} %
+            {formatPercent(row.allocPercentRound3)} %
           </div>
         )}
       </TableCell>
       <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
-            value={displayRow.directorEvalBaht ?? ""}
+            value={displayRow.allocAmountRound3 ?? ""}
             onChange={(e) =>
-              handleNumberChange("directorEvalBaht", e.target.value)
+              handleNumberChange("allocAmountRound3", e.target.value)
             }
             thousandSeparator
             className="h-11 rounded-xl"
@@ -314,21 +315,21 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
-          <div className="text-center">{formatNum(row.directorEvalBaht)}</div>
+          <div className="text-center">{formatNum(row.allocAmountRound3)}</div>
         )}
       </TableCell>
 
       <TableCell className="py-5 text-center text-foreground">
-        {formatPercent(row.totalPercentIncrease)}%
+        {formatPercent(row.totalIncrementPercent)}%
       </TableCell>
       <TableCell className="py-5 text-left text-foreground">
-        {formatNum(row.totalAmountIncrease)}
+        {formatNum(row.totalIncrementAmount)}
       </TableCell>
       <TableCell className="py-5 text-left text-foreground">
-        {formatNum(row.specialCompensation)}
+        {formatNum(row.extraCompensation)}
       </TableCell>
       <TableCell className="py-5 text-left text-foreground">
-        {formatNum(row.receivedSalary)}
+        {formatNum(row.newSalary)}
       </TableCell>
       <TableCell className="py-5 text-left text-foreground">
         {formatNum(row.positionAllowance)}
