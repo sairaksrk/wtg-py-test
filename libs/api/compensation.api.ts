@@ -150,3 +150,26 @@ export async function getCompensationPersonnelList(
     },
   );
 }
+
+export interface SaveCompensationItem {
+  id: string;
+  allocPercent: number | null;
+  allocAmount: number | null;
+  allocQuotaPercent: number | null;
+  evaluationScore: number | null;
+  evaluationResult: string | null;
+}
+
+export interface SaveCompensationPayload {
+  items: SaveCompensationItem[];
+}
+
+// บันทึกข้อมูลแถวการคำนวณโดยใช้ groupsId ใน URL path
+export async function saveCompensationGroupItems(
+  groupsId: string,
+  payload: SaveCompensationPayload,
+): Promise<void> {
+  return api("POST", `/payroll/increment/groups/${groupsId}/save`, payload, {
+    plugin: "py",
+  });
+}

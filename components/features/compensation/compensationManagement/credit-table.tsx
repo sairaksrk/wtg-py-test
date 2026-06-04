@@ -1,10 +1,10 @@
 import { DataTable } from "@/components/common/data-table";
 import { useCreditColumns } from "./use-credit-columns";
-import { CompensationList } from "@/types/compensation";
+import { CreditLimitList } from "@/types/compensation";
 
 
 interface CompensationTableProps {
-  data: CompensationList[];
+  data: CreditLimitList[];
   totalRows: number;
   currentPage: number;
   onPageChange: (page: number) => void;

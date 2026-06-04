@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Table, TableBody } from "@/components/ui/table";
-import { toastSuccess } from "@/utils/toast";
 import { useTranslations } from "next-intl";
 import { ConsultantTableHeader } from "./consultant-table-header";
 import { ConsultantTableRow } from "./consultant-table-row";
@@ -39,9 +38,10 @@ export interface ConsultantData {
 interface ConsultantTableProps {
   data: ConsultantData[];
   onUpdate: (updatedData: ConsultantData[]) => void;
+  onSaveRow?: (row: ConsultantData, originalRow: ConsultantData) => Promise<void>;
 }
 
-export function ConsultantTable({ data, onUpdate }: ConsultantTableProps) {
+export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTableProps) {
   const c = useTranslations("common");
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [tempData, setTempData] = useState<ConsultantData | null>(null);
@@ -65,20 +65,28 @@ export function ConsultantTable({ data, onUpdate }: ConsultantTableProps) {
     }
   }, [data, editingRowId, activeField]);
 
-  const handleAutoSave = useCallback(() => {
+  const handleAutoSave = useCallback(async () => {
     if (editingRowId && tempData) {
+      const originalRow = data.find((item) => item.id === editingRowId);
       const newData = data.map((item) =>
         item.id === editingRowId ? tempData : item,
       );
 
       onUpdate(newData);
+
+      if (onSaveRow && originalRow) {
+        try {
+          await onSaveRow(tempData, originalRow);
+        } catch (err) {
+          console.error("Failed to save row:", err);
+        }
+      }
+
       setEditingRowId(null);
       setTempData(null);
       setActiveField(null);
-
-      toastSuccess(c("successfully"), "บันทึกข้อมูลแถวเรียบร้อยแล้ว");
     }
-  }, [editingRowId, tempData, data, onUpdate, c]);
+  }, [editingRowId, tempData, data, onUpdate, onSaveRow]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

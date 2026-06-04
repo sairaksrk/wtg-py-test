@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { toastSuccess } from "@/utils/toast";
+import { toastSuccess, toastError } from "@/utils/toast";
 import Loading from "@/components/common/loading";
 import ErrorComponent from "@/components/common/error";
 import { formatApiError } from "@/types/api";
 import {
   useGetCompensationGroupDetail,
   useGetCompensationPersonnelList,
+  useSaveCompensationGroupItems,
 } from "@/libs/query/compensation.queries";
 import {
   ConsultantTable,
@@ -198,7 +199,8 @@ export default function CompensationRequestDetail({
       description: c("save-data-confirmation-description"),
       confirmButton: {
         label: c("button.confirm"),
-        onClick: () => toastSuccess(c("successfully")),
+        onClick: () =>
+          toastSuccess(c("successfully"), c("successfully-description")),
       },
       cancelButton: { label: c("button.secondary-cancel"), show: true },
     });
@@ -209,12 +211,12 @@ export default function CompensationRequestDetail({
     {
       page: 1,
       take: getPageSize(),
-      requestNo: "",
-      name: "",
+      // requestNo: "",
+      // name: "",
       startDate: null,
-      positionId: "",
-      positionLevelId: "",
-      departmentId: "",
+      // positionId: "",
+      // positionLevelId: "",
+      // departmentId: "",
     },
   );
 
@@ -237,11 +239,11 @@ export default function CompensationRequestDetail({
       page: filters.page || 1,
       take: filters.take || 10,
       previewData,
-      requestNo: filters.requestNo || undefined,
-      name: filters.name || undefined,
-      positionId: filters.positionId || undefined,
-      positionLevelId: filters.positionLevelId || undefined,
-      departmentId: filters.departmentId || undefined,
+      // requestNo: filters.requestNo || undefined,
+      // name: filters.name || undefined,
+      // positionId: filters.positionId || undefined,
+      // positionLevelId: filters.positionLevelId || undefined,
+      // departmentId: filters.departmentId || undefined,
     }),
     [filters, previewData],
   );
@@ -253,8 +255,23 @@ export default function CompensationRequestDetail({
     error: errorPersonnel,
   } = useGetCompensationPersonnelList(reqId || "", groupsId || "", queryBody);
 
+  const saveMutation = useSaveCompensationGroupItems();
+
   useEffect(() => {
     if (personnelListResponse?.data) {
+      const mapEvalResultToTh = (result: string) => {
+        switch (result) {
+          case "EXCELLENT":
+            return "ดีเด่น";
+          case "VERY_GOOD":
+            return "ดีมาก";
+          case "GOOD":
+            return "ดี";
+          default:
+            return "เลือก";
+        }
+      };
+
       const mapped = personnelListResponse.data.map((item: any) => ({
         id: item.id,
         employeeId: item.employeeId,
@@ -267,7 +284,7 @@ export default function CompensationRequestDetail({
         baseCalculation: Number(item.calculationBase || 0),
         evalScore:
           item.evaluationScore !== null ? Number(item.evaluationScore) : 0,
-        evalResult: item.evaluationResult || "เลือก",
+        evalResult: mapEvalResultToTh(item.evaluationResult),
         allocPercentRound1:
           item.allocPercentRound1 !== null
             ? String(item.allocPercentRound1)
@@ -379,6 +396,116 @@ export default function CompensationRequestDetail({
     [personnelData],
   );
 
+  const handleSaveRow = useCallback(
+    async (row: ConsultantData, originalRow: ConsultantData) => {
+      // ตรวจจับรอบ (Round) ที่ถูกแก้ไขโดยอัตโนมัติ
+      let editedRound = 1;
+      if (
+        row.allocPercentRound3 !== originalRow.allocPercentRound3 ||
+        row.allocQuotaPercentRound3 !== originalRow.allocQuotaPercentRound3 ||
+        row.allocAmountRound3 !== originalRow.allocAmountRound3
+      ) {
+        editedRound = 3;
+      } else if (
+        row.allocPercentRound2 !== originalRow.allocPercentRound2 ||
+        row.allocQuotaPercentRound2 !== originalRow.allocQuotaPercentRound2 ||
+        row.allocAmountRound2 !== originalRow.allocAmountRound2
+      ) {
+        editedRound = 2;
+      } else if (
+        row.allocPercentRound1 !== originalRow.allocPercentRound1 ||
+        row.allocQuotaPercentRound1 !== originalRow.allocQuotaPercentRound1 ||
+        row.allocAmountRound1 !== originalRow.allocAmountRound1
+      ) {
+        editedRound = 1;
+      }
+
+      let allocPercent: number | null = null;
+      let allocAmount: number | null = null;
+      let allocQuotaPercent: number | null = null;
+
+      if (editedRound === 1) {
+        allocPercent =
+          row.allocPercentRound1 !== ""
+            ? parseFloat(String(row.allocPercentRound1))
+            : null;
+        allocQuotaPercent =
+          row.allocQuotaPercentRound1 !== ""
+            ? parseFloat(String(row.allocQuotaPercentRound1))
+            : null;
+        allocAmount =
+          row.allocAmountRound1 !== ""
+            ? parseFloat(String(row.allocAmountRound1))
+            : null;
+      } else if (editedRound === 2) {
+        allocPercent =
+          row.allocPercentRound2 !== ""
+            ? parseFloat(String(row.allocPercentRound2))
+            : null;
+        allocQuotaPercent =
+          row.allocQuotaPercentRound2 !== ""
+            ? parseFloat(String(row.allocQuotaPercentRound2))
+            : null;
+        allocAmount =
+          row.allocAmountRound2 !== ""
+            ? parseFloat(String(row.allocAmountRound2))
+            : null;
+      } else if (editedRound === 3) {
+        allocPercent =
+          row.allocPercentRound3 !== ""
+            ? parseFloat(String(row.allocPercentRound3))
+            : null;
+        allocQuotaPercent =
+          row.allocQuotaPercentRound3 !== ""
+            ? parseFloat(String(row.allocQuotaPercentRound3))
+            : null;
+        allocAmount =
+          row.allocAmountRound3 !== ""
+            ? parseFloat(String(row.allocAmountRound3))
+            : null;
+      }
+
+      const mapEvalResultToEn = (result: string) => {
+        switch (result) {
+          case "ดีเด่น":
+            return "EXCELLENT";
+          case "ดีมาก":
+            return "VERY_GOOD";
+          case "ดี":
+            return "GOOD";
+          default:
+            return null;
+        }
+      };
+
+      const payload = {
+        items: [
+          {
+            id: row.id, // py_payroll_calculations.id
+            allocPercent: isNaN(allocPercent!) ? null : allocPercent,
+            allocAmount: isNaN(allocAmount!) ? null : allocAmount,
+            allocQuotaPercent: isNaN(allocQuotaPercent!)
+              ? null
+              : allocQuotaPercent,
+            evaluationScore:
+              row.evalScore !== null ? Number(row.evalScore) : null,
+            evaluationResult: mapEvalResultToEn(row.evalResult),
+          },
+        ],
+      };
+
+      try {
+        // ส่ง groupsId และ payload ไปยัง Mutation
+        await saveMutation.mutateAsync({ groupsId: groupsId || "", payload });
+        toastSuccess(c("successfully"), c("successfully-description"));
+      } catch (error) {
+        const { title, description } = formatApiError(error, c("error-occur"));
+        toastError(title, description || c("error-detail"));
+      }
+    },
+    [saveMutation, groupsId, c],
+  );
+
   const onSearch = (formData: any) => {
     setFilters({
       ...filters,
@@ -408,17 +535,17 @@ export default function CompensationRequestDetail({
     setSearchCompensationOpen(false);
   };
 
-  const isLoading = isLoadingGroupDetail || isLoadingPersonnel;
+  const isLoading = isLoadingGroupDetail;
   const isError = isErrorGroupDetail || isErrorPersonnel;
   const error = errorGroupDetail || errorPersonnel;
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="py-80">
-  //       <Loading fullscreen={false} />
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div className="py-80">
+        <Loading fullscreen={false} />
+      </div>
+    );
+  }
 
   if (isError) {
     const { title, description, statusCode } = formatApiError(
@@ -469,7 +596,7 @@ export default function CompensationRequestDetail({
           <div className="flex flex-col gap-2">
             <span className="text-sm text-subdude">ชื่อกลุ่ม</span>
             <h2 className="text-xl font-medium text-[#18181B]">
-              กลุ่มผอ.สำนัก (ผอ.สบน.)
+              {groupDetail?.name || "-"}
             </h2>
             <div className="flex items-center gap-3 mt-1">
               <Badge
@@ -489,7 +616,7 @@ export default function CompensationRequestDetail({
               <div className="border-r border-gray-200 h-4" />
               <div className="flex items-center gap-1.5 text-sm text-subdude">
                 <Icon icon="solar:user-linear" className="size-4" />
-                <span>ทรัพย์ธนิตา วิเชียรชาญ</span>
+                <span>นางสาวอนันตญา สิริประภาชัย</span>
               </div>
             </div>
           </div>
@@ -561,11 +688,11 @@ export default function CompensationRequestDetail({
         </Card>
 
         {/* Horizontal Scrollable Cards */}
-        <div className="flex overflow-x-auto gap-4 mb-6 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+        {/* <div className="flex overflow-x-auto gap-4 mb-6 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
           {MOCKUP_ALLOCATION_CARDS.map((card, index) => (
             <AllocationCard key={index} {...card} />
           ))}
-        </div>
+        </div> */}
 
         {/* Personnel List Table */}
         <Card className="border border-gray-100 shadow-none rounded-3xl bg-white overflow-hidden">
@@ -618,6 +745,7 @@ export default function CompensationRequestDetail({
             <ConsultantTable
               data={personnelData}
               onUpdate={handleTableUpdate}
+              onSaveRow={handleSaveRow}
             />
           </CardContent>
         </Card>

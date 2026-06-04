@@ -181,7 +181,7 @@ export function ConsultantTableRow({
         )}
       </TableCell>
       {/* จัดสรรร้อยละรอบที่ 2 (%) */}
-      <TableCell className="py-5 px-3">
+      {/* <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
             value={displayRow.allocPercentRound2 ?? ""}
@@ -195,9 +195,9 @@ export function ConsultantTableRow({
             {formatPercent(row.allocPercentRound2)}
           </div>
         )}
-      </TableCell>
+      </TableCell> */}
       {/* จัดสรรร้อยละรอบที่ 3 (%) */}
-      <TableCell className="py-5 px-3">
+      {/* <TableCell className="py-5 px-3">
         {isEditing ? (
           <Input
             value={displayRow.allocPercentRound3 ?? ""}
@@ -211,7 +211,7 @@ export function ConsultantTableRow({
             {formatPercent(row.allocPercentRound3)}
           </div>
         )}
-      </TableCell>
+      </TableCell> */}
 
       {/* ผลพิจารณารอบที่ 1 - คอลัมน์ 10 */}
       <TableCell className="py-5 px-1.5">
@@ -249,7 +249,7 @@ export function ConsultantTableRow({
       </TableCell>
 
       {/* ผลพิจารณารอบที่ 2 */}
-      <TableCell className="py-5 px-1.5">
+      {/* <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
             value={displayRow.allocQuotaPercentRound2 ?? ""}
@@ -281,10 +281,10 @@ export function ConsultantTableRow({
         ) : (
           <div className="text-center">{formatNum(row.allocAmountRound2)}</div>
         )}
-      </TableCell>
+      </TableCell> */}
 
       {/* ผลพิจารณารอบที่ 3 */}
-      <TableCell className="py-5 px-1.5">
+      {/* <TableCell className="py-5 px-1.5">
         {isEditing ? (
           <Input
             value={displayRow.allocQuotaPercentRound3 ?? ""}
@@ -316,7 +316,7 @@ export function ConsultantTableRow({
         ) : (
           <div className="text-center">{formatNum(row.allocAmountRound3)}</div>
         )}
-      </TableCell>
+      </TableCell> */}
 
       <TableCell className="py-5 text-center text-foreground">
         {formatPercent(row.totalIncrementPercent)}%

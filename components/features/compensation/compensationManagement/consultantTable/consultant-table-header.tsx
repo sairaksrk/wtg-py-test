@@ -37,12 +37,12 @@ export function ConsultantTableHeader() {
         <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
           จัดสรรร้อยละรอบที่ 1 (%)
         </TableHead>
-        <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
+        {/* <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
           จัดสรรร้อยละรอบที่ 2 (%)
         </TableHead>
         <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
           จัดสรรร้อยละรอบที่ 3 (%)
-        </TableHead>
+        </TableHead> */}
 
         {/* ส่วนการประเมินของแต่ละระดับ */}
         <TableHead
@@ -51,7 +51,7 @@ export function ConsultantTableHeader() {
         >
           ผมพิจารณารอบที่ 1
         </TableHead>
-        <TableHead
+        {/* <TableHead
           className="w-72 font-normal text-subdude py-6 text-center text-sm"
           colSpan={2}
         >
@@ -62,7 +62,7 @@ export function ConsultantTableHeader() {
           colSpan={2}
         >
           ผมพิจารณารอบที่ 3
-        </TableHead>
+        </TableHead> */}
 
         <TableHead className="w-51 font-normal text-subdude py-6 text-center text-sm">
           รวมร้อยละที่ได้เลื่อน

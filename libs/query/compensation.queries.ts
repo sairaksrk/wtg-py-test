@@ -15,6 +15,8 @@ import {
   getCompensationGroupDetail,
   getCompensationPersonnelList,
   GetCompensationPersonnelParams,
+  saveCompensationGroupItems,
+  SaveCompensationPayload,
 } from "../api/compensation.api";
 
 /**
@@ -135,5 +137,24 @@ export function useGetCompensationPersonnelList(
     queryKey: compensationKeys.personnelList(reqId, groupsId, body),
     queryFn: () => getCompensationPersonnelList(reqId, groupsId, body),
     enabled: !!reqId && !!groupsId && (options?.enabled ?? true),
+  });
+}
+
+// บันทึกข้อมูลแถวการคำนวณโดยส่ง groupsId และ payload ไปยัง API
+export function useSaveCompensationGroupItems() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, ApiError, { groupsId: string; payload: SaveCompensationPayload }>({
+    mutationFn: ({ groupsId, payload }) => saveCompensationGroupItems(groupsId, payload),
+    onSuccess: (_, variables) => {
+      // Invalidate รายชื่อพนักงานเพื่ออัปเดตตาราง
+      queryClient.invalidateQueries({
+        queryKey: compensationKeys.personnelLists(),
+      });
+      // Invalidate รายละเอียดกลุ่มเพื่อดึงข้อมูลตัวเลขสรุปวงเงินใหม่
+      queryClient.invalidateQueries({
+        queryKey: ["compensation-group-detail", variables.groupsId],
+      });
+    },
   });
 }
