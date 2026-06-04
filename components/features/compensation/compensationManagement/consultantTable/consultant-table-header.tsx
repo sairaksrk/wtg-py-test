@@ -49,19 +49,19 @@ export function ConsultantTableHeader() {
           className="w-68 font-normal text-subdude py-6 text-center text-sm"
           colSpan={2}
         >
-          ผมพิจารณารอบที่ 1
+          ผลพิจารณารอบที่ 1
         </TableHead>
         {/* <TableHead
           className="w-72 font-normal text-subdude py-6 text-center text-sm"
           colSpan={2}
         >
-          ผมพิจารณารอบที่ 2
+          ผลพิจารณารอบที่ 2
         </TableHead>
         <TableHead
           className="w-72 font-normal text-subdude py-6 text-center text-sm"
           colSpan={2}
         >
-          ผมพิจารณารอบที่ 3
+          ผลพิจารณารอบที่ 3
         </TableHead> */}
 
         <TableHead className="w-51 font-normal text-subdude py-6 text-center text-sm">

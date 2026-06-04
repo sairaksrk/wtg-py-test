@@ -20,11 +20,12 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     color: "bg-[#F4F4F5] text-subdude",
   },
   reviewing: {
+    // pending: {
     label: "รอพิจารณา",
     color: "bg-[#FFF7ED] text-[#F97316]",
   },
 
-  สำเร็จ: {
+  success: {
     label: "สำเร็จ",
     color: "bg-[#F0FDF4] text-[#16A34A]",
   },

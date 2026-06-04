@@ -17,6 +17,7 @@ import {
   GetCompensationPersonnelParams,
   saveCompensationGroupItems,
   SaveCompensationPayload,
+  updateStatusConsider,
 } from "../api/compensation.api";
 
 /**
@@ -38,8 +39,11 @@ export const compensationKeys = {
   groupsListCheckBox: (reqId: string, params?: CompensationListParams) =>
     [...compensationKeys.groupsListCheckBoxes(), reqId, params] as const,
   personnelLists: () => [...compensationKeys.all, "personnel-list"] as const,
-  personnelList: (reqId: string, groupsId: string, body: GetCompensationPersonnelParams) =>
-    [...compensationKeys.personnelLists(), reqId, groupsId, body] as const,
+  personnelList: (
+    reqId: string,
+    groupsId: string,
+    body: GetCompensationPersonnelParams,
+  ) => [...compensationKeys.personnelLists(), reqId, groupsId, body] as const,
 };
 // ดึงรายการ จัดการค่าตอบแทน Get All
 
@@ -144,14 +148,36 @@ export function useGetCompensationPersonnelList(
 export function useSaveCompensationGroupItems() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, ApiError, { groupsId: string; payload: SaveCompensationPayload }>({
-    mutationFn: ({ groupsId, payload }) => saveCompensationGroupItems(groupsId, payload),
+  return useMutation<
+    void,
+    ApiError,
+    { groupsId: string; payload: SaveCompensationPayload }
+  >({
+    mutationFn: ({ groupsId, payload }) =>
+      saveCompensationGroupItems(groupsId, payload),
     onSuccess: (_, variables) => {
       // Invalidate รายชื่อพนักงานเพื่ออัปเดตตาราง
       queryClient.invalidateQueries({
         queryKey: compensationKeys.personnelLists(),
       });
       // Invalidate รายละเอียดกลุ่มเพื่อดึงข้อมูลตัวเลขสรุปวงเงินใหม่
+      queryClient.invalidateQueries({
+        queryKey: ["compensation-group-detail", variables.groupsId],
+      });
+    },
+  });
+}
+
+// กดปุ่ม พิจารณาเสร็จสิ้น
+
+export function useUpdateStatusConsider() {
+  const queryClient = useQueryClient();
+  return useMutation<void, ApiError, { groupsId: string }>({
+    mutationFn: ({ groupsId }) => updateStatusConsider(groupsId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: compensationKeys.personnelLists(),
+      });
       queryClient.invalidateQueries({
         queryKey: ["compensation-group-detail", variables.groupsId],
       });

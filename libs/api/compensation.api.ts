@@ -173,3 +173,15 @@ export async function saveCompensationGroupItems(
     plugin: "py",
   });
 }
+
+// กดปุ่ม พิจารณาเสร็จสิ้น
+export async function updateStatusConsider(groupsId: string): Promise<void> {
+  return api(
+    "POST",
+    `/payroll/increment/groups/${groupsId}/submit`,
+    undefined,
+    {
+      plugin: "py",
+    },
+  );
+}

@@ -15,6 +15,7 @@ import {
   useGetCompensationGroupDetail,
   useGetCompensationPersonnelList,
   useSaveCompensationGroupItems,
+  useUpdateStatusConsider,
 } from "@/libs/query/compensation.queries";
 import {
   ConsultantTable,
@@ -38,6 +39,7 @@ import { PersonnelSearchModal } from "./personnel-search-modal";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
 import { Pagination } from "@/components/common/pagination";
+import { useLoadingStore } from "@/stores/loading-store";
 
 interface AllocationCardProps {
   title: string;
@@ -103,56 +105,40 @@ const AllocationCard = ({
   );
 };
 
-const MOCKUP_ALLOCATION_CARDS: AllocationCardProps[] = [
-  {
-    title: "กลุ่มชำนาญการพิเศษลงมา (ผอ.สบน.)",
-    salary: "4,308,240.00",
-    percent: "3.00/0.25/0.15",
-    allocated: "8,693.24",
-    spent: "0.00",
-    balance: "-8,693.24",
-  },
-  {
-    title: "กลุ่มเชี่ยวชาญ (ผอ.สบน.)",
-    salary: "372,250.00",
-    percent: "0.25/0.15",
-    allocated: "720.36",
-    spent: "0.00",
-    balance: "720.36",
-  },
-  {
-    title: "กลุ่มรองผู้อำนวยการ (ผอ.สบน.)",
-    salary: "134,690.00",
-    percent: "3.00",
-    allocated: "4,040.70",
-    spent: "0.00",
-    balance: "4,040.70",
-  },
-  {
-    title: "กลุ่มที่ปรึกษา (ผอ.สบน.)",
-    salary: "76,800.00",
-    percent: "3.00",
-    allocated: "2,304.00",
-    spent: "0.00",
-    balance: "2,304.00",
-  },
-];
-
-const statusConfig: Record<
-  string,
-  { label: string; color: string; dotColor: string }
-> = {
-  รอพิจารณา: {
-    label: "รอพิจารณา",
-    color: "bg-[#FFF7ED] text-[#F97316] hover:bg-[#FFF7ED]",
-    dotColor: "bg-[#F97316]",
-  },
-  สำเร็จ: {
-    label: "สำเร็จ",
-    color: "bg-[#F0FDF4] text-[#16A34A] hover:bg-[#F0FDF4]",
-    dotColor: "bg-[#16A34A]",
-  },
-};
+// const MOCKUP_ALLOCATION_CARDS: AllocationCardProps[] = [
+//   {
+//     title: "กลุ่มชำนาญการพิเศษลงมา (ผอ.สบน.)",
+//     salary: "4,308,240.00",
+//     percent: "3.00/0.25/0.15",
+//     allocated: "8,693.24",
+//     spent: "0.00",
+//     balance: "-8,693.24",
+//   },
+//   {
+//     title: "กลุ่มเชี่ยวชาญ (ผอ.สบน.)",
+//     salary: "372,250.00",
+//     percent: "0.25/0.15",
+//     allocated: "720.36",
+//     spent: "0.00",
+//     balance: "720.36",
+//   },
+//   {
+//     title: "กลุ่มรองผู้อำนวยการ (ผอ.สบน.)",
+//     salary: "134,690.00",
+//     percent: "3.00",
+//     allocated: "4,040.70",
+//     spent: "0.00",
+//     balance: "4,040.70",
+//   },
+//   {
+//     title: "กลุ่มที่ปรึกษา (ผอ.สบน.)",
+//     salary: "76,800.00",
+//     percent: "3.00",
+//     allocated: "2,304.00",
+//     spent: "0.00",
+//     balance: "2,304.00",
+//   },
+// ];
 
 export default function CompensationRequestDetail({
   reqId,
@@ -164,6 +150,8 @@ export default function CompensationRequestDetail({
   const router = useRouter();
   const alert = useAlert();
   const c = useTranslations("common");
+
+  const updateLoading = useLoadingStore((state) => state.updateLoading);
 
   const [personnelData, setPersonnelData] = useState<ConsultantData[]>([]);
   const [searchCompensationOpen, setSearchCompensationOpen] = useState(false);
@@ -190,19 +178,57 @@ export default function CompensationRequestDetail({
     >
   >({});
 
-  const [status] = useState<string>("รอพิจารณา");
+  // const onSubmit = async () => {
+  //   alert.fire({
+  //     type: "warning",
+  //     title: c("save-data-confirmation"),
+  //     description: c("save-data-confirmation-description"),
+  //     confirmButton: {
+  //       label: c("button.confirm"),
+  //       onClick: () =>
+  //         toastSuccess(c("successfully"), c("successfully-description")),
+  //     },
+  //     cancelButton: { label: c("button.secondary-cancel"), show: true },
+  //   });
+  // };
+
+  const createMutation = useUpdateStatusConsider();
 
   const onSubmit = async () => {
     alert.fire({
       type: "warning",
-      title: c("save-data-confirmation"),
+      title: "ยืนยันการพิจารณา",
       description: c("save-data-confirmation-description"),
       confirmButton: {
         label: c("button.confirm"),
-        onClick: () =>
-          toastSuccess(c("successfully"), c("successfully-description")),
+        variant: "default",
+        onClick: async () => {
+          updateLoading(true);
+          try {
+            await createMutation.mutateAsync({
+              groupsId: groupsId || "",
+            });
+
+            toastSuccess(c("successfully"), c("successfully-description"));
+            router.push(
+              `/manage-compensation/item-request/${reqId}/${groupsId}`,
+            );
+          } catch (error) {
+            const { title, description } = formatApiError(
+              error,
+              c("error-occur"),
+            );
+            toastError(title, description || c("error-detail"));
+          } finally {
+            updateLoading(false);
+          }
+        },
       },
-      cancelButton: { label: c("button.secondary-cancel"), show: true },
+      cancelButton: {
+        label: c("button.secondary-cancel"),
+        variant: "secondary",
+        show: true,
+      },
     });
   };
 
@@ -568,8 +594,34 @@ export default function CompensationRequestDetail({
       minimumFractionDigits: 2,
     }) || "-";
   const isMainBalanceNegative = mainBalance.trim().startsWith("-");
-  const currentStatus = statusConfig[status] || statusConfig["รอพิจารณา"];
-  const isCompleted = status === "สำเร็จ";
+
+  // const [status] = useState<string>("รอพิจารณา");
+  // const currentStatus = statusConfig[status] || statusConfig["รอพิจารณา"];
+
+  const statusConfig: Record<
+    string,
+    { label: string; color: string; dotColor: string }
+  > = {
+    pending: {
+      label: "รอพิจารณา",
+      color: "bg-[#FFF7ED] text-[#F97316] hover:bg-[#FFF7ED]",
+      dotColor: "bg-[#F97316]",
+    },
+    success: {
+      label: "สำเร็จ",
+      color: "bg-[#F0FDF4] text-[#16A34A] hover:bg-[#F0FDF4]",
+      dotColor: "bg-[#16A34A]",
+    },
+  };
+
+  const status = groupDetail.status;
+
+  const currentStatus = statusConfig[status as keyof typeof statusConfig] || {
+    label: "",
+    color: "bg-gray-100 text-gray-400",
+  };
+
+  const isCompleted = status === "success";
   const totalPersonnel =
     personnelListResponse?.meta?.itemCount ?? personnelData.length;
 
@@ -596,7 +648,7 @@ export default function CompensationRequestDetail({
           <div className="flex flex-col gap-2">
             <span className="text-sm text-subdude">ชื่อกลุ่ม</span>
             <h2 className="text-xl font-medium text-[#18181B]">
-              {groupDetail?.name || "-"}
+              {groupDetail?.name ?? "-"}
             </h2>
             <div className="flex items-center gap-3 mt-1">
               <Badge
@@ -616,7 +668,9 @@ export default function CompensationRequestDetail({
               <div className="border-r border-gray-200 h-4" />
               <div className="flex items-center gap-1.5 text-sm text-subdude">
                 <Icon icon="solar:user-linear" className="size-4" />
-                <span>นางสาวอนันตญา สิริประภาชัย</span>
+                <span>
+                  {groupDetail?.reviewerName ?? "นางสาวอนันตญา สิริประภาชัย"}
+                </span>
               </div>
             </div>
           </div>
