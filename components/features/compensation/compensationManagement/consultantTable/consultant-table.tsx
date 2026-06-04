@@ -65,7 +65,7 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
     }
   }, [data, editingRowId, activeField]);
 
-  const handleAutoSave = useCallback(async () => {
+  const handleAutoSave = useCallback(async (nextRow?: ConsultantData) => {
     if (editingRowId && tempData) {
       const originalRow = data.find((item) => item.id === editingRowId);
       const newData = data.map((item) =>
@@ -74,17 +74,27 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
 
       onUpdate(newData);
 
+      const currentTempData = tempData;
+      const currentEditingRowId = editingRowId;
+
+      // สลับไปแถวใหม่ทันที (ถ้ามี) ป้องกันการเคลียร์ State ซ้อนทับกัน
+      if (nextRow) {
+        setEditingRowId(nextRow.id);
+        setTempData({ ...nextRow });
+        setActiveField(null);
+      } else {
+        setEditingRowId(null);
+        setTempData(null);
+        setActiveField(null);
+      }
+
       if (onSaveRow && originalRow) {
         try {
-          await onSaveRow(tempData, originalRow);
+          await onSaveRow(currentTempData, originalRow);
         } catch (err) {
           console.error("Failed to save row:", err);
         }
       }
-
-      setEditingRowId(null);
-      setTempData(null);
-      setActiveField(null);
     }
   }, [editingRowId, tempData, data, onUpdate, onSaveRow]);
 
@@ -110,11 +120,12 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
 
   const handleEditClick = (row: ConsultantData) => {
     if (editingRowId && editingRowId !== row.id) {
-      handleAutoSave();
+      handleAutoSave(row);
+    } else {
+      setEditingRowId(row.id);
+      setTempData({ ...row });
+      setActiveField(null);
     }
-    setEditingRowId(row.id);
-    setTempData({ ...row });
-    setActiveField(null);
   };
 
   const handleInputChange = (field: keyof ConsultantData, value: any) => {
@@ -166,7 +177,7 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
               tempData={tempData}
               onEditClick={handleEditClick}
               onInputChange={handleInputChange}
-              onAutoSave={handleAutoSave}
+              onAutoSave={() => handleAutoSave()}
             />
           ))}
         </TableBody>
