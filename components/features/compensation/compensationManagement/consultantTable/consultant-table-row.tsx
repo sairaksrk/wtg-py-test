@@ -16,6 +16,7 @@ interface ConsultantTableRowProps {
   onEditClick: (row: ConsultantData) => void;
   onInputChange: (field: keyof ConsultantData, value: any) => void;
   onAutoSave: () => void;
+  readOnly?: boolean;
 }
 
 const SymbolBadge = ({ symbol }: { symbol: string }) => (
@@ -31,12 +32,14 @@ export function ConsultantTableRow({
   onEditClick,
   onInputChange,
   onAutoSave,
+  readOnly = false,
 }: ConsultantTableRowProps) {
   const displayRow = isEditing ? tempData! : row;
 
   // จัดรูปแบบจำนวนเงิน (ทศนิยม 2 ตำแหน่ง)
   const formatNum = (val: any) => {
-    if (val === undefined || val === null || val === "" || isNaN(Number(val))) return "0.00";
+    if (val === undefined || val === null || val === "" || isNaN(Number(val)))
+      return "0.00";
     return Number(val).toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -45,7 +48,8 @@ export function ConsultantTableRow({
 
   // จัดรูปแบบเปอร์เซ็นต์
   const formatPercent = (val: any) => {
-    if (val === undefined || val === null || val === "" || isNaN(Number(val))) return "0";
+    if (val === undefined || val === null || val === "" || isNaN(Number(val)))
+      return "0";
     const num = Number(val);
     return num % 1 === 0 ? num.toString() : num.toFixed(2);
   };
@@ -56,7 +60,10 @@ export function ConsultantTableRow({
   };
 
   // ฟังก์ชันจัดการการเปลี่ยนค่าเปอร์เซ็นต์ (เก็บเป็น string เพื่อให้พิมพ์จุดทศนิยมได้สะดวก)
-  const handlePercentStringChange = (field: keyof ConsultantData, value: string) => {
+  const handlePercentStringChange = (
+    field: keyof ConsultantData,
+    value: string,
+  ) => {
     // อนุญาตให้พิมพ์ตัวเลขและจุดทศนิยมเพียงจุดเดียว
     const cleanValue = value
       .replace(/[^0-9.]/g, "")
@@ -105,7 +112,7 @@ export function ConsultantTableRow({
 
   return (
     <TableRow
-      onDoubleClick={() => onEditClick(row)}
+      onDoubleClick={() => !readOnly && onEditClick(row)}
       className={cn(
         "border-b text-base transition-colors",
         isEditing ? "bg-blue-50/30" : "hover:bg-gray-50/30",
@@ -219,7 +226,10 @@ export function ConsultantTableRow({
           <Input
             value={displayRow.allocQuotaPercentRound1 ?? ""}
             onChange={(e) =>
-              handlePercentStringChange("allocQuotaPercentRound1", e.target.value)
+              handlePercentStringChange(
+                "allocQuotaPercentRound1",
+                e.target.value,
+              )
             }
             className="h-11 rounded-xl"
             iconPosition="right"
@@ -338,7 +348,9 @@ export function ConsultantTableRow({
       </TableCell>
 
       <TableCell className="py-5 text-center">
-        {isEditing ? (
+        {readOnly ? (
+          <span className="text-subdude text-sm">-</span>
+        ) : isEditing ? (
           <Button
             variant="ghost"
             size="icon"

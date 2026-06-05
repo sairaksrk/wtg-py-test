@@ -39,9 +39,10 @@ interface ConsultantTableProps {
   data: ConsultantData[];
   onUpdate: (updatedData: ConsultantData[]) => void;
   onSaveRow?: (row: ConsultantData, originalRow: ConsultantData) => Promise<void>;
+  readOnly?: boolean;
 }
 
-export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTableProps) {
+export function ConsultantTable({ data, onUpdate, onSaveRow, readOnly = false }: ConsultantTableProps) {
   const c = useTranslations("common");
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [tempData, setTempData] = useState<ConsultantData | null>(null);
@@ -66,6 +67,7 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
   }, [data, editingRowId, activeField]);
 
   const handleAutoSave = useCallback(async (nextRow?: ConsultantData) => {
+    if (readOnly) return;
     if (editingRowId && tempData) {
       const originalRow = data.find((item) => item.id === editingRowId);
       const newData = data.map((item) =>
@@ -96,12 +98,12 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
         }
       }
     }
-  }, [editingRowId, tempData, data, onUpdate, onSaveRow]);
+  }, [editingRowId, tempData, data, onUpdate, onSaveRow, readOnly]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!editingRowId) return;
+      if (!editingRowId || readOnly) return;
 
       const isOutsideTable =
         tableRef.current && !tableRef.current.contains(target);
@@ -116,9 +118,10 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [editingRowId, handleAutoSave]);
+  }, [editingRowId, handleAutoSave, readOnly]);
 
   const handleEditClick = (row: ConsultantData) => {
+    if (readOnly) return;
     if (editingRowId && editingRowId !== row.id) {
       handleAutoSave(row);
     } else {
@@ -129,6 +132,7 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
   };
 
   const handleInputChange = (field: keyof ConsultantData, value: any) => {
+    if (readOnly) return;
     setActiveField(field as string);
     let updatedRow = tempData ? { ...tempData, [field]: value } : null;
 
@@ -178,6 +182,7 @@ export function ConsultantTable({ data, onUpdate, onSaveRow }: ConsultantTablePr
               onEditClick={handleEditClick}
               onInputChange={handleInputChange}
               onAutoSave={() => handleAutoSave()}
+              readOnly={readOnly}
             />
           ))}
         </TableBody>

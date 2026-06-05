@@ -178,20 +178,6 @@ export default function CompensationRequestDetail({
     >
   >({});
 
-  // const onSubmit = async () => {
-  //   alert.fire({
-  //     type: "warning",
-  //     title: c("save-data-confirmation"),
-  //     description: c("save-data-confirmation-description"),
-  //     confirmButton: {
-  //       label: c("button.confirm"),
-  //       onClick: () =>
-  //         toastSuccess(c("successfully"), c("successfully-description")),
-  //     },
-  //     cancelButton: { label: c("button.secondary-cancel"), show: true },
-  //   });
-  // };
-
   const createMutation = useUpdateStatusConsider();
 
   const onSubmit = async () => {
@@ -614,7 +600,7 @@ export default function CompensationRequestDetail({
     },
   };
 
-  const status = groupDetail.status;
+  const status = groupDetail?.status;
 
   const currentStatus = statusConfig[status as keyof typeof statusConfig] || {
     label: "",
@@ -800,6 +786,7 @@ export default function CompensationRequestDetail({
               data={personnelData}
               onUpdate={handleTableUpdate}
               onSaveRow={handleSaveRow}
+              readOnly={isCompleted}
             />
           </CardContent>
         </Card>
