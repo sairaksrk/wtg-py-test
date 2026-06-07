@@ -119,3 +119,43 @@ export interface GroupItem {
   // name: string;
   reviewerName?: string | null;
 }
+
+// ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
+export interface PreviewRoundData {
+  allocPercent?: number | null;
+  allocQuotaPercent?: number | null;
+  allocAmount?: number | null;
+}
+
+export interface PreviewDataItem {
+  employeeId: string;
+  round1?: PreviewRoundData;
+  round2?: PreviewRoundData;
+  round3?: PreviewRoundData;
+}
+
+export interface GetCompensationPersonnelParams {
+  page: number;
+  take: number;
+  previewData?: PreviewDataItem[];
+  search?: string;
+  requestNo?: string;
+  name?: string;
+  positionId?: string;
+  positionLevelId?: string;
+  departmentId?: string;
+}
+
+// บันทึกข้อมูลแถวการคำนวณโดยใช้ groupsId ใน URL path
+export interface SaveCompensationItem {
+  id: string;
+  allocPercent: number | null;
+  allocAmount: number | null;
+  allocQuotaPercent: number | null;
+  evaluationScore: number | null;
+  evaluationResult: string | null;
+}
+
+export interface SaveCompensationPayload {
+  items: SaveCompensationItem[];
+}

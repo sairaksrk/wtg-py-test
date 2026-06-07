@@ -6,6 +6,8 @@ import type {
   CompensationRequestData,
   // GroupItem,
   CreateCreditLimit,
+  GetCompensationPersonnelParams,
+  SaveCompensationPayload,
 } from "@/types/compensation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -17,9 +19,7 @@ import {
   getGroupsListCheckBox,
   getCompensationGroupDetail,
   getCompensationPersonnelList,
-  GetCompensationPersonnelParams,
   saveCompensationGroupItems,
-  SaveCompensationPayload,
   updateStatusConsider,
 } from "../api/compensation.api";
 

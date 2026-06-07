@@ -8,6 +8,8 @@ import type {
   CompensationRequestData,
   // GroupItem,
   CreateCreditLimit,
+  GetCompensationPersonnelParams,
+  SaveCompensationPayload,
 } from "@/types/compensation";
 import { api } from "./api";
 
@@ -109,31 +111,6 @@ export async function getCompensationGroupDetail(
   );
 }
 
-export interface PreviewRoundData {
-  allocPercent?: number | null;
-  allocQuotaPercent?: number | null;
-  allocAmount?: number | null;
-}
-
-export interface PreviewDataItem {
-  employeeId: string;
-  round1?: PreviewRoundData;
-  round2?: PreviewRoundData;
-  round3?: PreviewRoundData;
-}
-
-export interface GetCompensationPersonnelParams {
-  page: number;
-  take: number;
-  previewData?: PreviewDataItem[];
-  search?: string;
-  requestNo?: string;
-  name?: string;
-  positionId?: string;
-  positionLevelId?: string;
-  departmentId?: string;
-}
-
 // ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
 export async function getCompensationPersonnelList(
   reqId: string,
@@ -148,19 +125,6 @@ export async function getCompensationPersonnelList(
       plugin: "py",
     },
   );
-}
-
-export interface SaveCompensationItem {
-  id: string;
-  allocPercent: number | null;
-  allocAmount: number | null;
-  allocQuotaPercent: number | null;
-  evaluationScore: number | null;
-  evaluationResult: string | null;
-}
-
-export interface SaveCompensationPayload {
-  items: SaveCompensationItem[];
 }
 
 // บันทึกข้อมูลแถวการคำนวณโดยใช้ groupsId ใน URL path
