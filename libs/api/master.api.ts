@@ -1,11 +1,8 @@
 import { MasterSelectProps } from "@/types/api";
 import { api } from "./api";
 
-/**
- * Get a master list of mas_titles
- */
-
 // ประเภทและระดับตำแหน่ง PY
+
 export async function getPositionTypeLevelList(params?: {
   lang?: string;
 }): Promise<MasterSelectProps[]> {
@@ -21,6 +18,7 @@ export async function getPositionTypeLevelList(params?: {
 }
 
 // หน่วยงาน PY
+
 export async function getStructureUnitList(params?: {
   lang?: string;
 }): Promise<MasterSelectProps[]> {

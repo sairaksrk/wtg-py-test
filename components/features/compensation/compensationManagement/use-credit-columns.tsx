@@ -7,11 +7,12 @@ import { useDateFormatter } from "@/hooks/use-date-formatter";
 import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
-import { CreditLimitList } from "@/types/compensation";
+import { CompensationGroup } from "@/types/compensation";
 
 interface UseCreditColumnsProps {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onView?: (id: string) => void;
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -19,24 +20,30 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     label: "ฉบับร่าง",
     color: "bg-[#F4F4F5] text-subdude",
   },
-  reviewing: {
-    // pending: {
+  pending: {
     label: "รอพิจารณา",
     color: "bg-[#FFF7ED] text-[#F97316]",
   },
-
+  reviewing: {
+    label: "รอพิจารณา",
+    color: "bg-[#FFF7ED] text-[#F97316]",
+  },
   success: {
     label: "สำเร็จ",
     color: "bg-[#F0FDF4] text-[#16A34A]",
   },
 };
 
-export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
+export function useCreditColumns({
+  onEdit,
+  onDelete,
+  onView,
+}: UseCreditColumnsProps) {
   const { formatToBuddhist } = useDateFormatter();
   const router = useRouter();
   const c = useTranslations("common");
 
-  const columns: ColumnDef<CreditLimitList>[] = useMemo(() => {
+  const columns: ColumnDef<CompensationGroup>[] = useMemo(() => {
     return [
       {
         accessorKey: "name",
@@ -114,51 +121,6 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
           );
         },
       },
-      //     {
-      //   accessorKey: "row4",
-      //   header: "ผู้อำนวยการสำนัก",
-      //   size: 10,
-      //   cell: ({ row }) => {
-      //     const data = row.original.row4;
-      //     return (
-      //       <h1>
-      //         {data !== undefined && data !== null
-      //           ? `${Number(data).toFixed(1)} %`
-      //           : "-"}
-      //       </h1>
-      //     );
-      //   },
-      // },
-      // {
-      //   accessorKey: "row5",
-      //   header: "รองผู้อำนวยการ",
-      //   size: 10,
-      //   cell: ({ row }) => {
-      //     const data = row.original.row5;
-      //     return (
-      //       <h1>
-      //         {data !== undefined && data !== null
-      //           ? `${Number(data).toFixed(1)} %`
-      //           : "-"}
-      //       </h1>
-      //     );
-      //   },
-      // },
-      // {
-      //   accessorKey: "row6",
-      //   header: "ผู้อำนวยการสำนักบริหารหนี้สิน",
-      //   size: 12,
-      //   cell: ({ row }) => {
-      //     const data = row.original.row6;
-      //     return (
-      //       <h1>
-      //         {data !== undefined && data !== null
-      //           ? `${Number(data).toFixed(1)} %`
-      //           : "-"}
-      //       </h1>
-      //     );
-      //   },
-      // },
       {
         accessorKey: "status",
         header: "สถานะ",
@@ -206,27 +168,45 @@ export function useCreditColumns({ onEdit, onDelete }: UseCreditColumnsProps) {
         header: "เครื่องมือ",
         size: 8,
         cell: ({ row }) => {
+          const status = row.original.status;
           return (
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onEdit?.(row.original.id)}
-                title={c("edit-item")}
-                className="text-black hover:text-black"
-              >
-                <Icon icon="solar:pen-outline" className="size-4" />
-              </Button>
+              {status === "success" ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onView?.(row.original.id)}
+                  title={c("view-item")}
+                  className="text-black hover:text-black"
+                >
+                  <Icon icon="solar:eye-outline" className="size-4" />
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit?.(row.original.id)}
+                    title={c("edit-item")}
+                    className="text-black hover:text-black"
+                  >
+                    <Icon icon="solar:pen-outline" className="size-4" />
+                  </Button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onDelete?.(row.original.id)}
-                title={c("delete-item")}
-                className="text-destructive hover:text-destructive"
-              >
-                <Icon icon="solar:trash-bin-trash-outline" className="size-4" />
-              </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDelete?.(row.original.id)}
+                    title={c("delete-item")}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Icon
+                      icon="solar:trash-bin-trash-outline"
+                      className="size-4"
+                    />
+                  </Button>
+                </>
+              )}
             </div>
           );
         },

@@ -1,16 +1,16 @@
 import { DataTable } from "@/components/common/data-table";
 import { useCreditColumns } from "./use-credit-columns";
-import { CreditLimitList } from "@/types/compensation";
-
+import { CompensationGroup } from "@/types/compensation";
 
 interface CompensationTableProps {
-  data: CreditLimitList[];
+  data: CompensationGroup[];
   totalRows: number;
   currentPage: number;
   onPageChange: (page: number) => void;
   rowsPerPage?: number;
   onEdit?: (id: any) => void;
   onDelete?: (id: string) => void;
+  onView?: (id: string) => void;
 }
 
 export function CreditTable({
@@ -21,8 +21,9 @@ export function CreditTable({
   rowsPerPage = 10,
   onEdit,
   onDelete,
+  onView,
 }: CompensationTableProps) {
-  const columns = useCreditColumns({ onEdit, onDelete });
+  const columns = useCreditColumns({ onEdit, onDelete, onView });
 
   return (
     <DataTable

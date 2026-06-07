@@ -13,22 +13,14 @@ import {
 
 export const masterKeys = {
   all: ["master"] as const,
-  // titles: (params?: { lang?: string }) =>
-  //   [...masterKeys.all, "titles", params] as const,
-  // positionTypes: () => [...masterKeys.all, "position-types"] as const,
-  // positionLevels: () => [...masterKeys.all, "position-levels"] as const,
-  // positions: () => [...masterKeys.all, "positions"] as const,
   agencies: () => [...masterKeys.all, "agencies"] as const,
   positionTypeLevels: () =>
     [...masterKeys.all, "position-type-levels"] as const,
   reviewer: () => [...masterKeys.all, "reviewer"] as const,
 };
 
-/**
- * Hook to fetch master title list
- */
-
 // ประเภทและระดับตำแหน่ง PY
+
 export function usePositionTypeLevelList() {
   return useQuery<any[], ApiError>({
     queryKey: masterKeys.positionTypeLevels(),
@@ -40,6 +32,7 @@ export function usePositionTypeLevelList() {
 }
 
 // หน่วยงาน PY
+
 export function useGetStructureUnitList() {
   return useQuery<MasterSelectProps[], ApiError>({
     queryKey: masterKeys.agencies(),
@@ -51,6 +44,7 @@ export function useGetStructureUnitList() {
 }
 
 // ผู้พิจารณา PY
+
 export function useGetReviewerList() {
   return useQuery<MasterSelectProps[], ApiError>({
     queryKey: masterKeys.reviewer(),

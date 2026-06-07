@@ -5,6 +5,9 @@ import type {
   CompensationListParams,
   CompensationList,
   CreateCompensationItem,
+  CompensationRequestData,
+  // GroupItem,
+  CreateCreditLimit,
 } from "@/types/compensation";
 import { api } from "./api";
 
@@ -44,8 +47,8 @@ export async function createCompensationItem(
 export async function getCompensationRequestById(
   reqId: string,
   params?: CompensationListParams,
-): Promise<any> {
-  return api<any>(
+): Promise<CompensationRequestData> {
+  return api<CompensationRequestData>(
     "GET",
     `/payroll/master/increment-groups/${reqId}`,
     undefined,
@@ -54,7 +57,6 @@ export async function getCompensationRequestById(
         page: params?.page,
         take: params?.take,
       },
-
       plugin: "py",
     },
   );
@@ -64,24 +66,21 @@ export async function getCompensationRequestById(
 
 export async function getGroupsListCheckBox(
   reqId: string,
-): Promise<PaginatedResponse<CompensationList>> {
-  return api<PaginatedResponse<CompensationList>>(
-    "GET",
-    `/payroll/master/groups/options`,
-    undefined,
-    {
-      params: {
-        excludePeriodId: reqId,
-      },
-      plugin: "py",
+  // ): Promise<GroupItem[]> {
+): Promise<any[]> {
+  // return api<GroupItem[]>("GET", `/payroll/master/groups/options`, undefined, {
+  return api<any[]>("GET", `/payroll/master/groups/options`, undefined, {
+    params: {
+      excludePeriodId: reqId,
     },
-  );
+    plugin: "py",
+  });
 }
 
 // เพิ่ม รายการบริหารวงเงิน
 
 export async function createCreditLimitList(
-  payload: any,
+  payload: CreateCreditLimit,
 ): Promise<{ payrollPeriodId: string }> {
   return api("POST", `/payroll/increment/groups`, payload, {
     plugin: "py",

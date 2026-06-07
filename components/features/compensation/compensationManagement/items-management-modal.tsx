@@ -54,9 +54,6 @@ export function ItemsManagementModal({
     },
   });
 
-  const createMutation = useCreateCompensationItem();
-  // const updateMutation = useUpdateCompensationItem();
-
   useEffect(() => {
     if (!editingId) {
       reset({
@@ -65,6 +62,9 @@ export function ItemsManagementModal({
       });
     }
   }, [open, editingId, reset]);
+
+  const createMutation = useCreateCompensationItem();
+  // const updateMutation = useUpdateCompensationItem();
 
   const onSubmit = async (formData: PositionFormValues) => {
     try {

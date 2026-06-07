@@ -3,6 +3,9 @@ import type {
   CompensationListParams,
   CompensationList,
   CreateCompensationItem,
+  CompensationRequestData,
+  // GroupItem,
+  CreateCreditLimit,
 } from "@/types/compensation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -24,6 +27,7 @@ import {
  * Query keys for Compensation -related queries
  * Following TanStack Query best practices for key management
  */
+
 export const compensationKeys = {
   all: ["compensation"] as const,
   lists: () => [...compensationKeys.all, "list"] as const,
@@ -45,6 +49,7 @@ export const compensationKeys = {
     body: GetCompensationPersonnelParams,
   ) => [...compensationKeys.personnelLists(), reqId, groupsId, body] as const,
 };
+
 // ดึงรายการ จัดการค่าตอบแทน Get All
 
 export function useGetCompensationList(params?: CompensationListParams) {
@@ -73,7 +78,7 @@ export function useGetCompensationRequestById(
   reqId: string,
   params?: CompensationListParams,
 ) {
-  return useQuery<any, ApiError>({
+  return useQuery<CompensationRequestData, ApiError>({
     queryKey: compensationKeys.requestDetail(reqId, params),
     queryFn: () => getCompensationRequestById(reqId, params),
     enabled: !!reqId,
@@ -81,11 +86,10 @@ export function useGetCompensationRequestById(
 }
 
 // ดึง รายการกลุ่มที่สร้างไว้แล้ว (checkbox)
-export function useGetGroupsListCheckBox(
-  reqId: string,
-  //   params?: CompensationListParams,
-) {
-  return useQuery<any, ApiError>({
+
+export function useGetGroupsListCheckBox(reqId: string) {
+  // return useQuery<GroupItem[], ApiError>({
+  return useQuery<any[], ApiError>({
     queryKey: compensationKeys.groupsListCheckBox(reqId),
     queryFn: () => getGroupsListCheckBox(reqId),
     enabled: !!reqId,
@@ -97,7 +101,7 @@ export function useGetGroupsListCheckBox(
 export function useCreateCreditLimitList() {
   const queryClient = useQueryClient();
 
-  return useMutation<{ payrollPeriodId: string }, ApiError, any>({
+  return useMutation<{ payrollPeriodId: string }, ApiError, CreateCreditLimit>({
     mutationFn: createCreditLimitList,
     onSuccess: () => {
       queryClient.invalidateQueries({

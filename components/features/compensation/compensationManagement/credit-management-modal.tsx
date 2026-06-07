@@ -22,7 +22,6 @@ import { Combobox } from "@/components/common/combobox";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { cn } from "@/utils/helpers";
-// import { set } from "lodash";
 import { Badge } from "@/components/ui/badge";
 import { formatApiError } from "@/types/api";
 import { useLoadingStore } from "@/stores/loading-store";
@@ -30,12 +29,8 @@ import {
   useCreateCreditLimitList,
   useGetGroupsListCheckBox,
 } from "@/libs/query/compensation.queries";
-import { useUpdatePositionItem } from "@/libs/query/manpower.queries";
-import {
-  CreateCreditLimitPayload,
-  CreditLimitList,
-} from "@/types/compensation";
-import { is } from "date-fns/locale";
+import { CreateCreditLimit, GroupItem } from "@/types/compensation";
+import ErrorComponent from "@/components/common/error";
 
 // const positionFormSchema = z.object({
 //   name: z.string().min(1),
@@ -117,14 +112,26 @@ export function CreditManagementModal({
     },
   });
 
-  const { data: structureUnitData, isLoading: isLoadingAgency } =
-    useGetStructureUnitList();
+  const {
+    data: structureUnitData,
+    isLoading: isLoadingAgency,
+    isError: isErrorAgency,
+    error: errorAgency,
+  } = useGetStructureUnitList();
 
-  const { data: positionTypeLevelData, isLoading: isLoadingPositionTypeLevel } =
-    usePositionTypeLevelList();
+  const {
+    data: positionTypeLevelData,
+    isLoading: isLoadingPositionTypeLevel,
+    isError: isErrorPositionTypeLevel,
+    error: errorPositionTypeLevel,
+  } = usePositionTypeLevelList();
 
-  const { data: reviewerListData, isLoading: isLoadingReviewer } =
-    useGetReviewerList();
+  const {
+    data: reviewerListData,
+    isLoading: isLoadingReviewer,
+    isError: isErrorReviewer,
+    error: errorReviewer,
+  } = useGetReviewerList();
 
   const positionTypeData = useMemo(
     () =>
@@ -138,12 +145,12 @@ export function CreditManagementModal({
   const {
     data: groupsData,
     isLoading: isLoadingGroups,
-    isError,
-    error,
+    isError: isErrorGroupDetail,
+    error: errorGroupDetail,
   } = useGetGroupsListCheckBox(reqId || "");
 
-  const listGroupsData: CreditLimitList[] = useMemo(() => {
-    return groupsData?.items || [];
+  const listGroupsData: GroupItem[] = useMemo(() => {
+    return groupsData || [];
   }, [groupsData]);
 
   const createMutation = useCreateCreditLimitList();
@@ -167,7 +174,7 @@ export function CreditManagementModal({
     try {
       updateLoading(true);
 
-      const payloadCreate: CreateCreditLimitPayload = {
+      const payloadCreate: CreateCreditLimit = {
         payrollPeriodId: reqId || "",
         name: formData.name,
         reviewerId: formData.reviewerId,
@@ -197,13 +204,6 @@ export function CreditManagementModal({
     }
   };
 
-  const isSaving = createMutation.isPending;
-  const isLoading =
-    isLoadingAgency ||
-    isLoadingPositionTypeLevel ||
-    isLoadingReviewer ||
-    isLoadingGroups;
-
   const handleGroupCheckboxChange = (id: string, checked: boolean) => {
     setSelectedIds((prev) => {
       const newSet = new Set(prev);
@@ -216,11 +216,11 @@ export function CreditManagementModal({
     });
   };
 
-  const renderGroupItem = (group: CreditLimitList) => {
-    const isSelected = selectedIds.has(group.id);
+  const renderGroupItem = (group: GroupItem) => {
+    const isSelected = selectedIds.has(group?.value);
     return (
       <label
-        key={group.id}
+        key={group.value}
         className={cn(
           "relative flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all hover:bg-gray-50/50",
           isSelected
@@ -232,12 +232,12 @@ export function CreditManagementModal({
           <Checkbox
             checked={isSelected}
             onCheckedChange={(checked: boolean) => {
-              handleGroupCheckboxChange(group.id, checked);
+              handleGroupCheckboxChange(group?.value, checked);
             }}
           />
 
           <span className="text-base font-medium text-[#18181B]">
-            {group.name}
+            {group?.label}
           </span>
         </div>
 
@@ -249,11 +249,42 @@ export function CreditManagementModal({
             icon="solar:check-circle-linear"
             className="h-3 w-3 text-[#16A34A]"
           />
-          {group.reviewerName ?? "-"}
+          {group?.reviewerName ?? "-"}
         </Badge>
       </label>
     );
   };
+
+  const isSaving = createMutation.isPending;
+  const isLoading =
+    isLoadingAgency ||
+    isLoadingPositionTypeLevel ||
+    isLoadingReviewer ||
+    isLoadingGroups;
+
+  const isError =
+    isErrorGroupDetail ||
+    isErrorAgency ||
+    isErrorPositionTypeLevel ||
+    isErrorReviewer;
+  const error =
+    errorGroupDetail || errorAgency || errorPositionTypeLevel || errorReviewer;
+
+  if (isError) {
+    const { title, description, statusCode } = formatApiError(
+      error,
+      c("error-occur"),
+    );
+    return (
+      <div className="py-20">
+        <ErrorComponent
+          statusCode={statusCode}
+          title={title}
+          message={description}
+        />
+      </div>
+    );
+  }
 
   return (
     <Modal
