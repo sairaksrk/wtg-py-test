@@ -49,7 +49,10 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
 
   const [creditManagementModalOpen, setCreditManagementModalOpen] =
     useState<ModalStateProps>({ id: null, state: false });
-  const [itemManagementModalOpen, setItemManagementModalOpen] = useState({
+  const [itemManagementModalOpen, setItemManagementModalOpen] = useState<{
+    id: string | null;
+    state: boolean;
+  }>({
     id: null,
     state: false,
   });
@@ -339,7 +342,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                             className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
                             onClick={() =>
                               setItemManagementModalOpen({
-                                id: null,
+                                id: compensationRequestData?.period?.id || null,
                                 state: true,
                               })
                             }

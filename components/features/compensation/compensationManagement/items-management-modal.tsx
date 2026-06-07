@@ -69,15 +69,25 @@ export function ItemsManagementModal({
   const onSubmit = async (formData: PositionFormValues) => {
     try {
       updateLoading(true);
-      const payloadCreate: CreateCompensationItem = {
-        name: formData.name,
-        remarks: formData.remarks || "",
-      };
-      const res = await createMutation.mutateAsync(payloadCreate);
+
+      if (editingId) {
+        // const payloadUpdate: any = {
+        //   name: formData.name,
+        //   remarks: formData.remarks || "",
+        // };
+        // await updateMutation.mutateAsync(payloadUpdate);
+      } else {
+        const payloadCreate: CreateCompensationItem = {
+          name: formData.name,
+          remarks: formData.remarks || "",
+        };
+        await createMutation.mutateAsync(payloadCreate);
+      }
+
       toastSuccess(c("successfully"), c("successfully-description"));
       onSave();
 
-      router.push(`/manage-compensation/item-request/${res.id}`);
+      router.push(`/manage-compensation/item-request/${editingId}`);
     } catch (error) {
       const { title, description } = formatApiError(error, c("error-occur"));
 
@@ -107,7 +117,6 @@ export function ItemsManagementModal({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
             <p className="text-base font-medium">ข้อมูลรายละเอียดคำขอ</p>
-
             <Controller
               name="name"
               control={control}
