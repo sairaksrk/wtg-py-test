@@ -69,8 +69,10 @@ export function ItemsManagementModal({
   const onSubmit = async (formData: PositionFormValues) => {
     try {
       updateLoading(true);
+      let targetId = editingId;
 
       if (editingId) {
+        // อัปเดตรายการเดิม (ถ้ามี)
         // const payloadUpdate: any = {
         //   name: formData.name,
         //   remarks: formData.remarks || "",
@@ -81,13 +83,16 @@ export function ItemsManagementModal({
           name: formData.name,
           remarks: formData.remarks || "",
         };
-        await createMutation.mutateAsync(payloadCreate);
+        const res = await createMutation.mutateAsync(payloadCreate);
+        targetId = res?.id; // เก็บ ID ที่สร้างขึ้นใหม่
       }
 
       toastSuccess(c("successfully"), c("successfully-description"));
       onSave();
 
-      router.push(`/manage-compensation/item-request/${editingId}`);
+      if (targetId) {
+        router.push(`/manage-compensation/item-request/${targetId}`);
+      }
     } catch (error) {
       const { title, description } = formatApiError(error, c("error-occur"));
 

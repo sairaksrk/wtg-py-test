@@ -64,7 +64,7 @@ export default function CompensationList() {
     },
   );
 
-  const { data, isLoading, isError, error } = useGetCompensationList({
+  const { data, isLoading, isError, error, refetch } = useGetCompensationList({
     page: filters.page,
     take: filters.take,
     // requestNo: filters.requestNo,
@@ -106,6 +106,8 @@ export default function CompensationList() {
           updateLoading(true);
           try {
             await deleteCompensationMutation.mutateAsync(id);
+            // สั่งดึงข้อมูลใหม่หลังจากลบสำเร็จ
+            await refetch();
             if (filters.page! > 1 && data?.data.length === 1) {
               setFilters({ ...filters, page: filters.page! - 1 });
             }

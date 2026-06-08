@@ -72,6 +72,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     isLoading: isLoadingCompensationRequest,
     isError,
     error,
+    refetch,
   } = useGetCompensationRequestById(reqId || "", {
     page: filters.page,
     take: filters.take,
@@ -227,6 +228,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
           updateLoading(true);
           try {
             await deleteCreditLimitListMutation.mutateAsync(id);
+            await refetch(); // ดึงข้อมูลใหม่เมื่อลบสำเร็จ
             if (
               filters.page! > 1 &&
               compensationRequestData?.groups.length === 1
@@ -528,9 +530,10 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onClose={() =>
                   setItemManagementModalOpen({ id: null, state: false })
                 }
-                onSave={() =>
-                  setItemManagementModalOpen({ id: null, state: false })
-                }
+                onSave={() => {
+                  setItemManagementModalOpen({ id: null, state: false });
+                  refetch(); // ดึงข้อมูลใหม่เมื่อแก้ไขข้อมูลสำเร็จ
+                }}
               />
 
               <CreditManagementModal
@@ -540,9 +543,10 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onClose={() =>
                   setCreditManagementModalOpen({ id: null, state: false })
                 }
-                onSave={() =>
-                  setCreditManagementModalOpen({ id: null, state: false })
-                }
+                onSave={() => {
+                  setCreditManagementModalOpen({ id: null, state: false });
+                  refetch(); // ดึงข้อมูลใหม่เมื่อเพิ่มรายการบริหารวงเงินสำเร็จ
+                }}
               />
             </div>
           </div>
