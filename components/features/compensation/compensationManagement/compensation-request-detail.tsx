@@ -12,6 +12,7 @@ import Loading from "@/components/common/loading";
 import ErrorComponent from "@/components/common/error";
 import { formatApiError } from "@/types/api";
 import {
+  useDeleteCreditLimitList,
   useGetCompensationGroupDetail,
   useGetCompensationPersonnelList,
   useSaveCompensationGroupItems,
@@ -145,7 +146,7 @@ export default function CompensationRequestDetail({
   groupsId,
 }: {
   reqId?: string;
-  groupsId?: string;
+  groupsId: string;
 }) {
   const router = useRouter();
   const alert = useAlert();
@@ -213,6 +214,39 @@ export default function CompensationRequestDetail({
       cancelButton: {
         label: c("button.secondary-cancel"),
         variant: "secondary",
+        show: true,
+      },
+    });
+  };
+
+  const deleteCreditLimitListMutation = useDeleteCreditLimitList();
+  const onDeleteRequest = (id: string) => {
+    alert.fire({
+      type: "delete",
+      title: c("delete-confirmation"),
+      description: c("delete-confirmation-description"),
+      confirmButton: {
+        label: c("button.delete"),
+        variant: "destructive",
+        onClick: async () => {
+          updateLoading(true);
+          try {
+            await deleteCreditLimitListMutation.mutateAsync(id);
+            toastSuccess(c("successfully"), c("successfully-description"));
+            router.push(`/manage-compensation/item-request/${reqId}`);
+          } catch (error) {
+            const { title, description } = formatApiError(
+              error,
+              c("error-occur"),
+            );
+            toastError(title, description || c("error-detail"));
+          } finally {
+            updateLoading(false);
+          }
+        },
+      },
+      cancelButton: {
+        label: c("button.secondary-cancel"),
         show: true,
       },
     });
@@ -810,8 +844,8 @@ export default function CompensationRequestDetail({
               variant="outline"
               type="button"
               className="bg-[#F4F4F5] border-[#F4F4F5] text-red-500 hover:text-red-500"
-              // onClick={() => onDeleteRequest?.(reqId)}
-              disabled={!reqId}
+              onClick={() => onDeleteRequest?.(groupsId)}
+              disabled={!groupsId}
             >
               ลบรายการ
             </Button>
