@@ -29,6 +29,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  useDeleteCompensationItem,
   useDeleteCreditLimitList,
   useGetCompensationRequestById,
 } from "@/libs/query/compensation.queries";
@@ -36,7 +37,7 @@ import { useDateFormatter } from "@/hooks/use-date-formatter";
 import ErrorComponent from "@/components/common/error";
 
 interface RequestFormProps {
-  reqId?: string;
+  reqId: string;
 }
 
 export default function CompensationRequestForm({ reqId }: RequestFormProps) {
@@ -84,7 +85,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       color: "bg-[#F4F4F5] text-subdude",
     },
     reviewing: {
-      label: "อยู่ระหว่างพิจาราณา",
+      label: "อยู่ระหว่างการพิจารณา",
       color: "bg-[#FEFCE8] text-[#FACC15]",
     },
     นำส่งเอกสาร: {
@@ -178,7 +179,9 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     });
   };
 
-  const onDeleteRequest = () => {
+  const deleteCompensationMutation = useDeleteCompensationItem();
+
+  const onDeleteRequest = (id: string) => {
     alert.fire({
       type: "delete",
       title: c("delete-confirmation"),
@@ -187,23 +190,20 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         label: c("button.delete"),
         variant: "destructive",
         onClick: async () => {
-          toastSuccess(c("successfully"), c("successfully-description"));
-          // updateLoading(true);
-          // try {
-          //  await deleteCreditLimitListMutation.mutateAsync(reqId);
-          //   toastSuccess(c("successfully"), c("successfully-description"));
-          //   router.push(
-          //     `/manage-compensation/item-request/${reqId}}`,
-          //   );
-          // } catch (error) {
-          //   const { title, description } = formatApiError(
-          //     error,
-          //     c("error-occur"),
-          //   );
-          //   toastError(title, description || c("error-detail"));
-          // } finally {
-          //   updateLoading(false);
-          // }
+          updateLoading(true);
+          try {
+            await deleteCompensationMutation.mutateAsync(id);
+            toastSuccess(c("successfully"), c("successfully-description"));
+            router.push(`/manage-compensation`);
+          } catch (error) {
+            const { title, description } = formatApiError(
+              error,
+              c("error-occur"),
+            );
+            toastError(title, description || c("error-detail"));
+          } finally {
+            updateLoading(false);
+          }
         },
       },
       cancelButton: {
@@ -556,7 +556,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
               variant="secondary"
               type="button"
               className="border-[#F4F4F5] bg-[#F4F4F5] text-red-500 hover:text-red-500"
-              onClick={onDeleteRequest}
+              onClick={() => onDeleteRequest?.(reqId)}
               disabled={!reqId}
             >
               ลบรายการ

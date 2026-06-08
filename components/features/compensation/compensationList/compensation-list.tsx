@@ -32,7 +32,10 @@ import {
 
 import { formatApiError } from "@/types/api";
 import { ItemsManagementModal } from "../compensationManagement/items-management-modal";
-import { useGetCompensationList } from "@/libs/query/compensation.queries";
+import {
+  useDeleteCompensationItem,
+  useGetCompensationList,
+} from "@/libs/query/compensation.queries";
 
 export default function CompensationList() {
   const router = useRouter();
@@ -89,7 +92,7 @@ export default function CompensationList() {
     setSearchCompensationOpen(false);
   };
 
-  // const deleteManpowerMutation = useDeleteManpowerRequest();
+  const deleteCompensationMutation = useDeleteCompensationItem();
 
   const onDeleteRequest = (id: string) => {
     alert.fire({
@@ -100,22 +103,22 @@ export default function CompensationList() {
         label: c("button.delete"),
         variant: "destructive",
         onClick: async () => {
-          // updateLoading(true);
-          // try {
-          //   await deleteManpowerMutation.mutateAsync(id);
-          //   if (filters.page! > 1 && data?.data.length === 1) {
-          //     setFilters({ ...filters, page: filters.page! - 1 });
-          //   }
-          //   toastSuccess(c("successfully"), c("successfully-description"));
-          // } catch (error) {
-          //   const { title, description } = formatApiError(
-          //     error,
-          //     c("error-occur"),
-          //   );
-          //   toastError(title, description || c("error-detail"));
-          // } finally {
-          //   updateLoading(false);
-          // }
+          updateLoading(true);
+          try {
+            await deleteCompensationMutation.mutateAsync(id);
+            if (filters.page! > 1 && data?.data.length === 1) {
+              setFilters({ ...filters, page: filters.page! - 1 });
+            }
+            toastSuccess(c("successfully"), c("successfully-description"));
+          } catch (error) {
+            const { title, description } = formatApiError(
+              error,
+              c("error-occur"),
+            );
+            toastError(title, description || c("error-detail"));
+          } finally {
+            updateLoading(false);
+          }
         },
       },
       cancelButton: {

@@ -13,7 +13,7 @@ import type {
 } from "@/types/compensation";
 import { api } from "./api";
 
-// ดึงข้อมูล จัดการค่าตอบแทน Get All
+// หน้า 1 จัดการค่าตอบแทน - ดึงข้อมูล จัดการค่าตอบแทน Get All
 
 export async function getCompensationList(
   params?: CompensationListParams,
@@ -34,7 +34,7 @@ export async function getCompensationList(
   );
 }
 
-// เพิ่ม รายการค่าตอบแทน
+// หน้า 1 จัดการค่าตอบแทน - เพิ่ม รายการค่าตอบแทน
 
 export async function createCompensationItem(
   payload: CreateCompensationItem,
@@ -44,7 +44,17 @@ export async function createCompensationItem(
   });
 }
 
-// ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน Get ById
+// หน้า 1 จัดการค่าตอบแทน - ลบ รายการค่าตอบแทน && หน้า 2 ปุ่มลบรายการ
+
+export async function deleteCompensationItem(
+  id: string,
+): Promise<{ id: string }> {
+  return api("DELETE", `/payroll/increment/rounds/${id}`, undefined, {
+    plugin: "py",
+  });
+}
+
+// หน้า 2 - ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน Get ById
 
 export async function getCompensationRequestById(
   reqId: string,
@@ -64,7 +74,7 @@ export async function getCompensationRequestById(
   );
 }
 
-// ดึง รายการกลุ่มที่สร้างไว้แล้ว (checkbox)
+// หน้า 2 - ดึง รายการกลุ่มที่สร้างไว้แล้ว (checkbox)
 
 export async function getGroupsListCheckBox(
   reqId: string,
@@ -79,7 +89,7 @@ export async function getGroupsListCheckBox(
   });
 }
 
-// เพิ่ม รายการบริหารวงเงิน
+// หน้า 2 - Modal เพิ่ม รายการบริหารวงเงิน
 
 export async function createCreditLimitList(
   payload: CreateCreditLimit,
@@ -89,7 +99,7 @@ export async function createCreditLimitList(
   });
 }
 
-// ลบ รายการบริหารวงเงิน
+// หน้า 2 - ลบ รายการบริหารวงเงิน
 
 export async function deleteCreditLimitList(id: string): Promise<void> {
   return api<void>("DELETE", `/payroll/increment/groups/${id}`, undefined, {
@@ -97,7 +107,8 @@ export async function deleteCreditLimitList(id: string): Promise<void> {
   });
 }
 
-// ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
+// หน้า 3 - ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
+
 export async function getCompensationGroupDetail(
   groupsId: string,
 ): Promise<any> {
@@ -111,7 +122,8 @@ export async function getCompensationGroupDetail(
   );
 }
 
-// ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
+// หน้า 3 - ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
+
 export async function getCompensationPersonnelList(
   reqId: string,
   groupsId: string,
@@ -127,7 +139,8 @@ export async function getCompensationPersonnelList(
   );
 }
 
-// บันทึกข้อมูลแถวการคำนวณโดยใช้ groupsId ใน URL path
+// หน้า 3 - บันทึกข้อมูลแถวการคำนวณโดยใช้ groupsId ใน URL path
+
 export async function saveCompensationGroupItems(
   groupsId: string,
   payload: SaveCompensationPayload,
@@ -137,7 +150,8 @@ export async function saveCompensationGroupItems(
   });
 }
 
-// กดปุ่ม พิจารณาเสร็จสิ้น
+// หน้า 3 - กดปุ่ม พิจารณาเสร็จสิ้น
+
 export async function updateStatusConsider(groupsId: string): Promise<void> {
   return api(
     "POST",

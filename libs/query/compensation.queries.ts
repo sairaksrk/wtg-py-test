@@ -21,6 +21,7 @@ import {
   getCompensationPersonnelList,
   saveCompensationGroupItems,
   updateStatusConsider,
+  deleteCompensationItem,
 } from "../api/compensation.api";
 
 /**
@@ -50,7 +51,7 @@ export const compensationKeys = {
   ) => [...compensationKeys.personnelLists(), reqId, groupsId, body] as const,
 };
 
-// ดึงรายการ จัดการค่าตอบแทน Get All
+// หน้า 1 จัดการค่าตอบแทน - ดึงข้อมูล จัดการค่าตอบแทน Get All
 
 export function useGetCompensationList(params?: CompensationListParams) {
   return useQuery<PaginatedResponse<CompensationList>, ApiError>({
@@ -59,7 +60,7 @@ export function useGetCompensationList(params?: CompensationListParams) {
   });
 }
 
-// เพิ่ม รายการค่าตอบแทน
+// หน้า 1 จัดการค่าตอบแทน - เพิ่ม รายการค่าตอบแทน
 
 export function useCreateCompensationItem() {
   const queryClient = useQueryClient();
@@ -72,7 +73,21 @@ export function useCreateCompensationItem() {
   });
 }
 
-// ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน ById
+
+// หน้า 1 จัดการค่าตอบแทน - ลบ รายการค่าตอบแทน && หน้า 2 ปุ่มลบรายการ
+
+export function useDeleteCompensationItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ id: string }, ApiError, string>({
+    mutationFn: deleteCompensationItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: compensationKeys.lists() });
+    },
+  });
+}
+
+// หน้า 2 - ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน Get ById
 
 export function useGetCompensationRequestById(
   reqId: string,
@@ -85,7 +100,7 @@ export function useGetCompensationRequestById(
   });
 }
 
-// ดึง รายการกลุ่มที่สร้างไว้แล้ว (checkbox)
+// หน้า 2 - ดึง รายการกลุ่มที่สร้างไว้แล้ว (checkbox)
 
 export function useGetGroupsListCheckBox(reqId: string) {
   // return useQuery<GroupItem[], ApiError>({
@@ -96,7 +111,7 @@ export function useGetGroupsListCheckBox(reqId: string) {
   });
 }
 
-// เพิ่มรายการบริหารวงเงิน
+// หน้า 2 - Modal เพิ่ม รายการบริหารวงเงิน
 
 export function useCreateCreditLimitList() {
   const queryClient = useQueryClient();
@@ -110,7 +125,8 @@ export function useCreateCreditLimitList() {
     },
   });
 }
-// ลบรายการบริหารวงเงิน
+
+// หน้า 2 - ลบ รายการบริหารวงเงิน
 
 export function useDeleteCreditLimitList() {
   const queryClient = useQueryClient();
@@ -125,7 +141,8 @@ export function useDeleteCreditLimitList() {
   });
 }
 
-// ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
+// หน้า 3 - ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
+
 export function useGetCompensationGroupDetail(groupsId: string) {
   return useQuery<any, ApiError>({
     queryKey: ["compensation-group-detail", groupsId],
@@ -134,7 +151,8 @@ export function useGetCompensationGroupDetail(groupsId: string) {
   });
 }
 
-// ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
+// หน้า 3 - ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
+
 export function useGetCompensationPersonnelList(
   reqId: string,
   groupsId: string,
@@ -148,7 +166,8 @@ export function useGetCompensationPersonnelList(
   });
 }
 
-// บันทึกข้อมูลแถวการคำนวณโดยส่ง groupsId และ payload ไปยัง API
+// หน้า 3 - บันทึกข้อมูลแถวการคำนวณโดยใช้ groupsId ใน URL path
+
 export function useSaveCompensationGroupItems() {
   const queryClient = useQueryClient();
 
@@ -172,7 +191,7 @@ export function useSaveCompensationGroupItems() {
   });
 }
 
-// กดปุ่ม พิจารณาเสร็จสิ้น
+// หน้า 3 - กดปุ่ม พิจารณาเสร็จสิ้น
 
 export function useUpdateStatusConsider() {
   const queryClient = useQueryClient();
