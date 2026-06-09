@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 import { ConsultantTableHeader } from "./consultant-table-header";
 import { ConsultantTableRow } from "./consultant-table-row";
 
-// MOCKUP ROUNDTABLE 1, 2, หรือ 3
-const roundtable = 1;
+// MOCKUP ROUNDTABLE 1, 2, 3
+// const roundtable = 1;
 
 export interface ConsultantData {
   id: string;
@@ -46,6 +46,7 @@ interface ConsultantTableProps {
     originalRow: ConsultantData,
   ) => Promise<void>;
   readOnly?: boolean;
+  roundtable?: number;
 }
 
 export function ConsultantTable({
@@ -53,6 +54,7 @@ export function ConsultantTable({
   onUpdate,
   onSaveRow,
   readOnly = false,
+  roundtable = 1,
 }: ConsultantTableProps) {
   const c = useTranslations("common");
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
@@ -91,7 +93,7 @@ export function ConsultantTable({
         const currentTempData = tempData;
         const currentEditingRowId = editingRowId;
 
-        // สลับไปแถวใหม่ทันที (ถ้ามี) ป้องกันการเคลียร์ State ซ้อนทับกัน
+        // สลับไปแถวใหม่ทันที (ถ้ามี) ป้องกันเคลียร์ State ซ้อนทับกัน
         if (nextRow) {
           setEditingRowId(nextRow.id);
           setTempData({ ...nextRow });

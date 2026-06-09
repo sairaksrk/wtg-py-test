@@ -106,41 +106,6 @@ const AllocationCard = ({
   );
 };
 
-// const MOCKUP_ALLOCATION_CARDS: AllocationCardProps[] = [
-//   {
-//     title: "กลุ่มชำนาญการพิเศษลงมา (ผอ.สบน.)",
-//     salary: "4,308,240.00",
-//     percent: "3.00/0.25/0.15",
-//     allocated: "8,693.24",
-//     spent: "0.00",
-//     balance: "-8,693.24",
-//   },
-//   {
-//     title: "กลุ่มเชี่ยวชาญ (ผอ.สบน.)",
-//     salary: "372,250.00",
-//     percent: "0.25/0.15",
-//     allocated: "720.36",
-//     spent: "0.00",
-//     balance: "720.36",
-//   },
-//   {
-//     title: "กลุ่มรองผู้อำนวยการ (ผอ.สบน.)",
-//     salary: "134,690.00",
-//     percent: "3.00",
-//     allocated: "4,040.70",
-//     spent: "0.00",
-//     balance: "4,040.70",
-//   },
-//   {
-//     title: "กลุ่มที่ปรึกษา (ผอ.สบน.)",
-//     salary: "76,800.00",
-//     percent: "3.00",
-//     allocated: "2,304.00",
-//     spent: "0.00",
-//     balance: "2,304.00",
-//   },
-// ];
-
 export default function CompensationRequestDetail({
   reqId,
   groupsId,
@@ -296,7 +261,7 @@ export default function CompensationRequestDetail({
 
   const {
     data: personnelListResponse,
-    isLoading: isLoadingPersonnel,
+    // isLoading: isLoadingPersonnel,
     isError: isErrorPersonnel,
     error: errorPersonnel,
   } = useGetCompensationPersonnelList(reqId || "", groupsId || "", queryBody);
@@ -371,7 +336,7 @@ export default function CompensationRequestDetail({
 
   const handleTableUpdate = useCallback(
     (updatedData: ConsultantData[]) => {
-      // หาแถวที่มีการเปลี่ยนแปลงค่าเมื่อเทียบกับสถานะล่าสุดใน personnelData
+      // หาแถวที่มีการเปลี่ยนแปลงค่าเทียบกับสถานะล่าสุดใน personnelData
       const changedItem = updatedData.find((item) => {
         const prevItem = personnelData.find((p) => p.id === item.id);
         if (!prevItem) return false;
@@ -444,7 +409,7 @@ export default function CompensationRequestDetail({
 
   const handleSaveRow = useCallback(
     async (row: ConsultantData, originalRow: ConsultantData) => {
-      // ตรวจจับรอบ (Round) ที่ถูกแก้ไขโดยอัตโนมัติ
+      // ตรวจรอบ ที่ถูกแก้ไข
       let editedRound = 1;
       if (
         row.allocPercentRound3 !== originalRow.allocPercentRound3 ||
@@ -527,7 +492,7 @@ export default function CompensationRequestDetail({
       const payload = {
         items: [
           {
-            id: row.id, // py_payroll_calculations.id
+            id: row.id,
             allocPercent: isNaN(allocPercent!) ? null : allocPercent,
             allocAmount: isNaN(allocAmount!) ? null : allocAmount,
             allocQuotaPercent: isNaN(allocQuotaPercent!)
@@ -541,7 +506,6 @@ export default function CompensationRequestDetail({
       };
 
       try {
-        // ส่ง groupsId และ payload ไปยัง Mutation
         await saveMutation.mutateAsync({ groupsId: groupsId || "", payload });
         toastSuccess(c("successfully"), c("successfully-description"));
       } catch (error) {
@@ -614,7 +578,6 @@ export default function CompensationRequestDetail({
       minimumFractionDigits: 2,
     }) || "-";
   const isMainBalanceNegative = mainBalance.trim().startsWith("-");
-
   // const [status] = useState<string>("รอพิจารณา");
   // const currentStatus = statusConfig[status] || statusConfig["รอพิจารณา"];
 
@@ -644,7 +607,7 @@ export default function CompensationRequestDetail({
   const isCompleted = status === "success";
   const totalPersonnel =
     personnelListResponse?.meta?.itemCount ?? personnelData.length;
-
+  const subGroups = groupDetail?.subGroups || [];
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="max-w-full mx-auto px-4">
@@ -761,12 +724,42 @@ export default function CompensationRequestDetail({
           </CardContent>
         </Card>
 
-        {/* Horizontal Scrollable Cards */}
-        {/* <div className="flex overflow-x-auto gap-4 mb-6 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-          {MOCKUP_ALLOCATION_CARDS.map((card, index) => (
-            <AllocationCard key={index} {...card} />
-          ))}
-        </div> */}
+        {/* Horizontal Scrollable Cards (Subgroups) */}
+        {subGroups.length > 0 && (
+          <div className="flex overflow-x-auto gap-4 mb-6 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+            {subGroups.map((sub: any) => (
+              <AllocationCard
+                key={sub.id}
+                title={sub.name}
+                salary={
+                  sub.totalSalary?.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  }) || "0.00"
+                }
+                percent={
+                  sub.budgetPercent?.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  }) || "0.00"
+                }
+                allocated={
+                  sub.budgetAmount?.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  }) || "0.00"
+                }
+                spent={
+                  sub.spentAmount?.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  }) || "0.00"
+                }
+                balance={
+                  sub.remainingAmount?.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  }) || "0.00"
+                }
+              />
+            ))}
+          </div>
+        )}
 
         {/* Personnel List Table */}
         <Card className="border border-gray-100 shadow-none rounded-3xl bg-white overflow-hidden">
@@ -821,6 +814,7 @@ export default function CompensationRequestDetail({
               onUpdate={handleTableUpdate}
               onSaveRow={handleSaveRow}
               readOnly={isCompleted}
+              roundtable={groupDetail?.round ?? 1}
             />
           </CardContent>
         </Card>

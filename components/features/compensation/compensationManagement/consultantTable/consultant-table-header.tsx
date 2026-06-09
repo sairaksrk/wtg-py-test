@@ -42,7 +42,7 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         <TableHead 
           className={cn(
             "w-48 font-normal py-6 text-center text-sm transition-colors",
-            roundtable === 1 ? "bg-[#FACC15] text-black font-medium" : "text-subdude"
+            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude"
           )}
         >
           จัดสรรร้อยละรอบที่ 1 (%)
@@ -52,7 +52,7 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
           <TableHead 
             className={cn(
               "w-48 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 2 ? "bg-[#FACC15] text-black font-medium" : "text-subdude"
+              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude"
             )}
           >
             จัดสรรร้อยละรอบที่ 2 (%)
@@ -63,7 +63,7 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
           <TableHead 
             className={cn(
               "w-48 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 3 ? "bg-[#FACC15] text-black font-medium" : "text-subdude"
+              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude"
             )}
           >
             จัดสรรร้อยละรอบที่ 3 (%)
@@ -73,8 +73,8 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         {/* ส่วนการประเมินของแต่ละระดับ */}
         <TableHead
           className={cn(
-            "w-68 font-normal py-6 text-center text-sm transition-colors",
-            roundtable === 1 ? "bg-[#FACC15] text-black font-medium" : "text-subdude"
+            "w-89 font-normal py-6 text-center text-sm transition-colors",
+            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude"
           )}
           colSpan={2}
         >
@@ -84,8 +84,8 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         {roundtable >= 2 && (
           <TableHead
             className={cn(
-              "w-68 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 2 ? "bg-[#FACC15] text-black font-medium" : "text-subdude"
+              "w-89 font-normal py-6 text-center text-sm transition-colors",
+              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude"
             )}
             colSpan={2}
           >
@@ -96,8 +96,8 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         {roundtable >= 3 && (
           <TableHead
             className={cn(
-              "w-68 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 3 ? "bg-[#FACC15] text-black font-medium" : "text-subdude"
+              "w-89 font-normal py-6 text-center text-sm transition-colors",
+              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude"
             )}
             colSpan={2}
           >

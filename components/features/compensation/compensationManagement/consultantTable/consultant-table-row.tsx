@@ -138,7 +138,7 @@ export function ConsultantTableRow({
         {formatNum(row.baseCalculation)}
       </TableCell>
 
-      <TableCell className="py-5 px-3">
+      <TableCell className="py-5 px-5">
         {isEditing ? (
           <Input
             value={displayRow.evalScore ?? ""}
@@ -147,9 +147,7 @@ export function ConsultantTableRow({
             className="h-11 rounded-xl"
           />
         ) : (
-          <div className="h-11 flex items-center justify-center">
-            {row.evalScore ?? "-"}
-          </div>
+          <div className="px-3 text-left">{row.evalScore ?? "-"}</div>
         )}
       </TableCell>
       <TableCell className="py-5 px-3">
@@ -167,9 +165,7 @@ export function ConsultantTableRow({
             className="h-11"
           />
         ) : (
-          <div className="h-11 flex items-center justify-center">
-            {row.evalResult ?? "-"}
-          </div>
+          <div className="px-3 text-left">{row.evalResult ?? "-"}</div>
         )}
       </TableCell>
 
@@ -189,7 +185,7 @@ export function ConsultantTableRow({
             className="h-11 rounded-xl"
           />
         ) : (
-          <div className="h-11 flex items-center justify-center">
+          <div className="px-3 text-left">
             {formatPercent(row.allocPercentRound1)}
           </div>
         )}
@@ -211,7 +207,7 @@ export function ConsultantTableRow({
               className="h-11 rounded-xl"
             />
           ) : (
-            <div className="h-11 flex items-center justify-center">
+            <div className="px-3 text-left">
               {formatPercent(row.allocPercentRound2)}
             </div>
           )}
@@ -234,7 +230,7 @@ export function ConsultantTableRow({
               className="h-11 rounded-xl"
             />
           ) : (
-            <div className="h-11 flex items-center justify-center">
+            <div className="px-3 text-left">
               {formatPercent(row.allocPercentRound3)}
             </div>
           )}
@@ -261,7 +257,7 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="%" />}
           />
         ) : (
-          <div className="text-center">
+          <div className="px-3 text-left">
             {formatPercent(row.allocQuotaPercentRound1)} %
           </div>
         )}
@@ -284,7 +280,9 @@ export function ConsultantTableRow({
             icon={<SymbolBadge symbol="฿" />}
           />
         ) : (
-          <div className="text-center">{formatNum(row.allocAmountRound1)}</div>
+          <div className="px-3 text-left">
+            {formatNum(row.allocAmountRound1)}
+          </div>
         )}
       </TableCell>
 
@@ -311,7 +309,7 @@ export function ConsultantTableRow({
                 icon={<SymbolBadge symbol="%" />}
               />
             ) : (
-              <div className="text-center">
+              <div className="px-3 text-left">
                 {formatPercent(row.allocQuotaPercentRound2)} %
               </div>
             )}
@@ -334,7 +332,7 @@ export function ConsultantTableRow({
                 icon={<SymbolBadge symbol="฿" />}
               />
             ) : (
-              <div className="text-center">
+              <div className="px-3 text-left">
                 {formatNum(row.allocAmountRound2)}
               </div>
             )}
@@ -365,7 +363,7 @@ export function ConsultantTableRow({
                 icon={<SymbolBadge symbol="%" />}
               />
             ) : (
-              <div className="text-center">
+              <div className="px-3 text-left">
                 {formatPercent(row.allocQuotaPercentRound3)} %
               </div>
             )}
@@ -388,7 +386,7 @@ export function ConsultantTableRow({
                 icon={<SymbolBadge symbol="฿" />}
               />
             ) : (
-              <div className="text-center">
+              <div className="px-3 text-left">
                 {formatNum(row.allocAmountRound3)}
               </div>
             )}
@@ -396,7 +394,7 @@ export function ConsultantTableRow({
         </>
       )}
 
-      <TableCell className="py-5 text-center text-foreground">
+      <TableCell className="py-5 pl-12 text-left text-foreground">
         {formatPercent(row.totalIncrementPercent)}%
       </TableCell>
       <TableCell className="py-5 text-left text-foreground">
@@ -415,7 +413,7 @@ export function ConsultantTableRow({
         {formatNum(row.totalIncome)}
       </TableCell>
 
-      <TableCell className="py-5 text-center">
+      <TableCell className="py-5 text-left">
         {readOnly ? (
           <span className="text-subdude text-sm">-</span>
         ) : isEditing ? (
