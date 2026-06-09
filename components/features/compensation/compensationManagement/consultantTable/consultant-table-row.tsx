@@ -17,6 +17,7 @@ interface ConsultantTableRowProps {
   onInputChange: (field: keyof ConsultantData, value: any) => void;
   onAutoSave: () => void;
   readOnly?: boolean;
+  roundtable?: number;
 }
 
 const SymbolBadge = ({ symbol }: { symbol: string }) => (
@@ -33,6 +34,7 @@ export function ConsultantTableRow({
   onInputChange,
   onAutoSave,
   readOnly = false,
+  roundtable = 1,
 }: ConsultantTableRowProps) {
   const displayRow = isEditing ? tempData! : row;
 
@@ -171,9 +173,14 @@ export function ConsultantTableRow({
         )}
       </TableCell>
 
-      {/* จัดสรรร้อยละรอบที่ 1 (%) - คอลัมน์ 9 */}
-      <TableCell className="py-5 px-3">
-        {isEditing ? (
+      {/* จัดสรรร้อยละรอบที่ 1 */}
+      <TableCell
+        className={cn(
+          "py-5 px-3 transition-colors",
+          roundtable === 1 && "bg-[#FEFCE8]",
+        )}
+      >
+        {isEditing && roundtable === 1 ? (
           <Input
             value={displayRow.allocPercentRound1 ?? ""}
             onChange={(e) =>
@@ -188,41 +195,59 @@ export function ConsultantTableRow({
         )}
       </TableCell>
       {/* จัดสรรร้อยละรอบที่ 2 (%) */}
-      {/* <TableCell className="py-5 px-3">
-        {isEditing ? (
-          <Input
-            value={displayRow.allocPercentRound2 ?? ""}
-            onChange={(e) =>
-              handleLimitChange("allocPercentRound2", e.target.value)
-            }
-            className="h-11 rounded-xl"
-          />
-        ) : (
-          <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.allocPercentRound2)}
-          </div>
-        )}
-      </TableCell> */}
+      {roundtable >= 2 && (
+        <TableCell
+          className={cn(
+            "py-5 px-3 transition-colors",
+            roundtable === 2 && "bg-[#FEFCE8]",
+          )}
+        >
+          {isEditing && roundtable === 2 ? (
+            <Input
+              value={displayRow.allocPercentRound2 ?? ""}
+              onChange={(e) =>
+                handleLimitChange("allocPercentRound2", e.target.value)
+              }
+              className="h-11 rounded-xl"
+            />
+          ) : (
+            <div className="h-11 flex items-center justify-center">
+              {formatPercent(row.allocPercentRound2)}
+            </div>
+          )}
+        </TableCell>
+      )}
       {/* จัดสรรร้อยละรอบที่ 3 (%) */}
-      {/* <TableCell className="py-5 px-3">
-        {isEditing ? (
-          <Input
-            value={displayRow.allocPercentRound3 ?? ""}
-            onChange={(e) =>
-              handleLimitChange("allocPercentRound3", e.target.value)
-            }
-            className="h-11 rounded-xl"
-          />
-        ) : (
-          <div className="h-11 flex items-center justify-center">
-            {formatPercent(row.allocPercentRound3)}
-          </div>
+      {roundtable >= 3 && (
+        <TableCell
+          className={cn(
+            "py-5 px-3 transition-colors",
+            roundtable === 3 && "bg-[#FEFCE8]",
+          )}
+        >
+          {isEditing && roundtable === 3 ? (
+            <Input
+              value={displayRow.allocPercentRound3 ?? ""}
+              onChange={(e) =>
+                handleLimitChange("allocPercentRound3", e.target.value)
+              }
+              className="h-11 rounded-xl"
+            />
+          ) : (
+            <div className="h-11 flex items-center justify-center">
+              {formatPercent(row.allocPercentRound3)}
+            </div>
+          )}
+        </TableCell>
+      )}
+      {/* ผลพิจารณารอบที่ 1 */}
+      <TableCell
+        className={cn(
+          "py-5 px-1.5 transition-colors",
+          roundtable === 1 && "bg-[#FEFCE8]",
         )}
-      </TableCell> */}
-
-      {/* ผลพิจารณารอบที่ 1 - คอลัมน์ 10 */}
-      <TableCell className="py-5 px-1.5">
-        {isEditing ? (
+      >
+        {isEditing && roundtable === 1 ? (
           <Input
             value={displayRow.allocQuotaPercentRound1 ?? ""}
             onChange={(e) =>
@@ -241,8 +266,13 @@ export function ConsultantTableRow({
           </div>
         )}
       </TableCell>
-      <TableCell className="py-5 px-1.5">
-        {isEditing ? (
+      <TableCell
+        className={cn(
+          "py-5 px-1.5 transition-colors",
+          roundtable === 1 && "bg-[#FEFCE8]",
+        )}
+      >
+        {isEditing && roundtable === 1 ? (
           <Input
             value={displayRow.allocAmountRound1 ?? ""}
             onChange={(e) =>
@@ -259,74 +289,112 @@ export function ConsultantTableRow({
       </TableCell>
 
       {/* ผลพิจารณารอบที่ 2 */}
-      {/* <TableCell className="py-5 px-1.5">
-        {isEditing ? (
-          <Input
-            value={displayRow.allocQuotaPercentRound2 ?? ""}
-            onChange={(e) =>
-              handlePercentStringChange("allocQuotaPercentRound2", e.target.value)
-            }
-            className="h-11 rounded-xl"
-            iconPosition="right"
-            icon={<SymbolBadge symbol="%" />}
-          />
-        ) : (
-          <div className="text-center">
-            {formatPercent(row.allocQuotaPercentRound2)} %
-          </div>
-        )}
-      </TableCell>
-      <TableCell className="py-5 px-1.5">
-        {isEditing ? (
-          <Input
-            value={displayRow.allocAmountRound2 ?? ""}
-            onChange={(e) =>
-              handleNumberChange("allocAmountRound2", e.target.value)
-            }
-            thousandSeparator
-            className="h-11 rounded-xl"
-            iconPosition="right"
-            icon={<SymbolBadge symbol="฿" />}
-          />
-        ) : (
-          <div className="text-center">{formatNum(row.allocAmountRound2)}</div>
-        )}
-      </TableCell> */}
+      {roundtable >= 2 && (
+        <>
+          <TableCell
+            className={cn(
+              "py-5 px-1.5 transition-colors",
+              roundtable === 2 && "bg-[#FEFCE8]",
+            )}
+          >
+            {isEditing && roundtable === 2 ? (
+              <Input
+                value={displayRow.allocQuotaPercentRound2 ?? ""}
+                onChange={(e) =>
+                  handlePercentStringChange(
+                    "allocQuotaPercentRound2",
+                    e.target.value,
+                  )
+                }
+                className="h-11 rounded-xl"
+                iconPosition="right"
+                icon={<SymbolBadge symbol="%" />}
+              />
+            ) : (
+              <div className="text-center">
+                {formatPercent(row.allocQuotaPercentRound2)} %
+              </div>
+            )}
+          </TableCell>
+          <TableCell
+            className={cn(
+              "py-5 px-1.5 transition-colors",
+              roundtable === 2 && "bg-[#FEFCE8]",
+            )}
+          >
+            {isEditing && roundtable === 2 ? (
+              <Input
+                value={displayRow.allocAmountRound2 ?? ""}
+                onChange={(e) =>
+                  handleNumberChange("allocAmountRound2", e.target.value)
+                }
+                thousandSeparator
+                className="h-11 rounded-xl"
+                iconPosition="right"
+                icon={<SymbolBadge symbol="฿" />}
+              />
+            ) : (
+              <div className="text-center">
+                {formatNum(row.allocAmountRound2)}
+              </div>
+            )}
+          </TableCell>
+        </>
+      )}
 
       {/* ผลพิจารณารอบที่ 3 */}
-      {/* <TableCell className="py-5 px-1.5">
-        {isEditing ? (
-          <Input
-            value={displayRow.allocQuotaPercentRound3 ?? ""}
-            onChange={(e) =>
-              handlePercentStringChange("allocQuotaPercentRound3", e.target.value)
-            }
-            className="h-11 rounded-xl"
-            iconPosition="right"
-            icon={<SymbolBadge symbol="%" />}
-          />
-        ) : (
-          <div className="text-center">
-            {formatPercent(row.allocQuotaPercentRound3)} %
-          </div>
-        )}
-      </TableCell>
-      <TableCell className="py-5 px-1.5">
-        {isEditing ? (
-          <Input
-            value={displayRow.allocAmountRound3 ?? ""}
-            onChange={(e) =>
-              handleNumberChange("allocAmountRound3", e.target.value)
-            }
-            thousandSeparator
-            className="h-11 rounded-xl"
-            iconPosition="right"
-            icon={<SymbolBadge symbol="฿" />}
-          />
-        ) : (
-          <div className="text-center">{formatNum(row.allocAmountRound3)}</div>
-        )}
-      </TableCell> */}
+      {roundtable >= 3 && (
+        <>
+          <TableCell
+            className={cn(
+              "py-5 px-1.5 transition-colors",
+              roundtable === 3 && "bg-[#FEFCE8]",
+            )}
+          >
+            {isEditing && roundtable === 3 ? (
+              <Input
+                value={displayRow.allocQuotaPercentRound3 ?? ""}
+                onChange={(e) =>
+                  handlePercentStringChange(
+                    "allocQuotaPercentRound3",
+                    e.target.value,
+                  )
+                }
+                className="h-11 rounded-xl"
+                iconPosition="right"
+                icon={<SymbolBadge symbol="%" />}
+              />
+            ) : (
+              <div className="text-center">
+                {formatPercent(row.allocQuotaPercentRound3)} %
+              </div>
+            )}
+          </TableCell>
+          <TableCell
+            className={cn(
+              "py-5 px-1.5 transition-colors",
+              roundtable === 3 && "bg-[#FEFCE8]",
+            )}
+          >
+            {isEditing && roundtable === 3 ? (
+              <Input
+                value={displayRow.allocAmountRound3 ?? ""}
+                onChange={(e) =>
+                  handleNumberChange("allocAmountRound3", e.target.value)
+                }
+                thousandSeparator
+                className="h-11 rounded-xl"
+                iconPosition="right"
+                icon={<SymbolBadge symbol="฿" />}
+              />
+            ) : (
+              <div className="text-center">
+                {formatNum(row.allocAmountRound3)}
+              </div>
+            )}
+          </TableCell>
+        </>
+      )}
 
       <TableCell className="py-5 text-center text-foreground">
         {formatPercent(row.totalIncrementPercent)}%

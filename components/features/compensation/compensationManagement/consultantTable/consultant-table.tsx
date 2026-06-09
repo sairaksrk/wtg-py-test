@@ -6,6 +6,9 @@ import { useTranslations } from "next-intl";
 import { ConsultantTableHeader } from "./consultant-table-header";
 import { ConsultantTableRow } from "./consultant-table-row";
 
+// MOCKUP ROUNDTABLE 1, 2, หรือ 3
+const roundtable = 1;
+
 export interface ConsultantData {
   id: string;
   employeeId?: string;
@@ -38,11 +41,19 @@ export interface ConsultantData {
 interface ConsultantTableProps {
   data: ConsultantData[];
   onUpdate: (updatedData: ConsultantData[]) => void;
-  onSaveRow?: (row: ConsultantData, originalRow: ConsultantData) => Promise<void>;
+  onSaveRow?: (
+    row: ConsultantData,
+    originalRow: ConsultantData,
+  ) => Promise<void>;
   readOnly?: boolean;
 }
 
-export function ConsultantTable({ data, onUpdate, onSaveRow, readOnly = false }: ConsultantTableProps) {
+export function ConsultantTable({
+  data,
+  onUpdate,
+  onSaveRow,
+  readOnly = false,
+}: ConsultantTableProps) {
   const c = useTranslations("common");
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [tempData, setTempData] = useState<ConsultantData | null>(null);
@@ -66,39 +77,42 @@ export function ConsultantTable({ data, onUpdate, onSaveRow, readOnly = false }:
     }
   }, [data, editingRowId, activeField]);
 
-  const handleAutoSave = useCallback(async (nextRow?: ConsultantData) => {
-    if (readOnly) return;
-    if (editingRowId && tempData) {
-      const originalRow = data.find((item) => item.id === editingRowId);
-      const newData = data.map((item) =>
-        item.id === editingRowId ? tempData : item,
-      );
+  const handleAutoSave = useCallback(
+    async (nextRow?: ConsultantData) => {
+      if (readOnly) return;
+      if (editingRowId && tempData) {
+        const originalRow = data.find((item) => item.id === editingRowId);
+        const newData = data.map((item) =>
+          item.id === editingRowId ? tempData : item,
+        );
 
-      onUpdate(newData);
+        onUpdate(newData);
 
-      const currentTempData = tempData;
-      const currentEditingRowId = editingRowId;
+        const currentTempData = tempData;
+        const currentEditingRowId = editingRowId;
 
-      // สลับไปแถวใหม่ทันที (ถ้ามี) ป้องกันการเคลียร์ State ซ้อนทับกัน
-      if (nextRow) {
-        setEditingRowId(nextRow.id);
-        setTempData({ ...nextRow });
-        setActiveField(null);
-      } else {
-        setEditingRowId(null);
-        setTempData(null);
-        setActiveField(null);
-      }
+        // สลับไปแถวใหม่ทันที (ถ้ามี) ป้องกันการเคลียร์ State ซ้อนทับกัน
+        if (nextRow) {
+          setEditingRowId(nextRow.id);
+          setTempData({ ...nextRow });
+          setActiveField(null);
+        } else {
+          setEditingRowId(null);
+          setTempData(null);
+          setActiveField(null);
+        }
 
-      if (onSaveRow && originalRow) {
-        try {
-          await onSaveRow(currentTempData, originalRow);
-        } catch (err) {
-          console.error("Failed to save row:", err);
+        if (onSaveRow && originalRow) {
+          try {
+            await onSaveRow(currentTempData, originalRow);
+          } catch (err) {
+            console.error("Failed to save row:", err);
+          }
         }
       }
-    }
-  }, [editingRowId, tempData, data, onUpdate, onSaveRow, readOnly]);
+    },
+    [editingRowId, tempData, data, onUpdate, onSaveRow, readOnly],
+  );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -138,21 +152,30 @@ export function ConsultantTable({ data, onUpdate, onSaveRow, readOnly = false }:
 
     if (updatedRow) {
       // เคลียร์ค่า เพื่อไม่ให้ค่าเก่าค้างส่งไปยัง API
-      if (field === "allocPercentRound1" || field === "allocQuotaPercentRound1") {
+      if (
+        field === "allocPercentRound1" ||
+        field === "allocQuotaPercentRound1"
+      ) {
         updatedRow.allocAmountRound1 = "";
       } else if (field === "allocAmountRound1") {
         updatedRow.allocPercentRound1 = "";
         updatedRow.allocQuotaPercentRound1 = "";
       }
 
-      if (field === "allocPercentRound2" || field === "allocQuotaPercentRound2") {
+      if (
+        field === "allocPercentRound2" ||
+        field === "allocQuotaPercentRound2"
+      ) {
         updatedRow.allocAmountRound2 = "";
       } else if (field === "allocAmountRound2") {
         updatedRow.allocPercentRound2 = "";
         updatedRow.allocQuotaPercentRound2 = "";
       }
 
-      if (field === "allocPercentRound3" || field === "allocQuotaPercentRound3") {
+      if (
+        field === "allocPercentRound3" ||
+        field === "allocQuotaPercentRound3"
+      ) {
         updatedRow.allocAmountRound3 = "";
       } else if (field === "allocAmountRound3") {
         updatedRow.allocPercentRound3 = "";
@@ -171,7 +194,7 @@ export function ConsultantTable({ data, onUpdate, onSaveRow, readOnly = false }:
   return (
     <div ref={tableRef} className="w-full overflow-x-auto">
       <Table className="w-full table-fixed">
-        <ConsultantTableHeader />
+        <ConsultantTableHeader roundtable={roundtable} />
         <TableBody>
           {data.map((row) => (
             <ConsultantTableRow
@@ -183,6 +206,7 @@ export function ConsultantTable({ data, onUpdate, onSaveRow, readOnly = false }:
               onInputChange={handleInputChange}
               onAutoSave={() => handleAutoSave()}
               readOnly={readOnly}
+              roundtable={roundtable}
             />
           ))}
         </TableBody>
