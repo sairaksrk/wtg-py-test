@@ -95,7 +95,7 @@ export async function api<T = any>(
     "x-internal-secret": String(process.env.NEXT_PUBLIC_INTERNAL_SECRET),
     // ในอนาคตควรดึงจาก Session แต่ตอนนี้ใส่เป็นค่าคงที่
     "x-user-id": "c2c0caf4-cff0-4287-a23c-bd239625537a",
-    "x-organization-id": "e66b2ede-bb39-4c17-af77-c7bf1efef9dc",
+    "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
     ...(config.headers || {}),
   };
   const configWithPlugin = { ...config, plugin: config.plugin || "plugin" };

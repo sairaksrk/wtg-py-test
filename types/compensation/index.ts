@@ -51,7 +51,7 @@ export interface CreditLimitList {
 // สร้าง รายการบริหารวงเงิน
 
 export interface CreateCreditLimit {
-  payrollPeriodId?: string;
+  payrollPeriodId: string;
   name: string;
   reviewerId: string;
   allocPercent: number;
