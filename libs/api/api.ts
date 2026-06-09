@@ -94,7 +94,7 @@ export async function api<T = any>(
     "x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY),
     "x-internal-secret": String(process.env.NEXT_PUBLIC_INTERNAL_SECRET),
     // ในอนาคตควรดึงจาก Session แต่ตอนนี้ใส่เป็นค่าคงที่
-    "x-user-id": "c2c0caf4-cff0-4287-a23c-bd239625537a",
+    "x-user-id": "user-e01",
     "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
     ...(config.headers || {}),
   };
