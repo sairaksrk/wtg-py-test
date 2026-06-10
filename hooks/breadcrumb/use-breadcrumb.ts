@@ -1,9 +1,10 @@
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useMemo } from "react"
 import { usePathname } from "@/i18n/navigation"
 import { useSession } from "@/libs/auth/auth-client"
 import { useBreadcrumbStore } from "@/stores/breadcrumb-store"
 import { getBreadcrumbDisplayName } from "@/utils/breadcrumb-config"
+import { MOCKUP_SESSION } from "@/libs/constants/menu"
 
 interface BreadcrumbItem {
 	name: string
@@ -21,7 +22,15 @@ interface BreadcrumbItem {
 export function useBreadcrumb(): BreadcrumbItem[] {
 	const pathname = usePathname()
 	const locale = useLocale()
-	const { data: session } = useSession()
+	const t = useTranslations("common")
+	const { data: sessionData } = useSession()
+	
+	// Use mockup session if real session is not available
+	const session =
+    sessionData?.menu && sessionData.menu.length > 0
+      ? sessionData
+      : MOCKUP_SESSION;
+	  
 	const customSegments = useBreadcrumbStore(state => state.customSegments)
 
 	return useMemo(() => {
@@ -66,7 +75,7 @@ export function useBreadcrumb(): BreadcrumbItem[] {
 			// Search through all systems
 			for (const system of session.menu) {
 				// Filter only MENU type modules
-				const menuModules = system.modules?.filter(m => m.type === "MENU") || []
+				const menuModules = system.modules?.filter((m: any) => m.type.toUpperCase() === "MENU") || []
 
 				for (const menuItem of menuModules) {
 					// Check if this module matches
@@ -127,19 +136,26 @@ export function useBreadcrumb(): BreadcrumbItem[] {
 					const segments = dynamicSegment.split("/").filter(Boolean)
 
 					segments.forEach((segment, index) => {
-						const url = `${baseUrl}/${segments.slice(0, index + 1).join("/")}`
-						const isLast = index === segments.length - 1
+						// Check if segment is an ID (UUID or numeric ID)
+						const isId = /^[0-9a-f-]+$/i.test(segment);
+						if (isId) return;
+
+						// Check if next segment is an ID (if so, this is the active page)
+						const nextSegment = segments[index + 1];
+						const isNextId = !!nextSegment && /^[0-9a-f-]+$/i.test(nextSegment);
+						const isCurrentActive = !!(index === segments.length - 1 || isNextId);
 
 						const displayName = getBreadcrumbDisplayName(baseUrl, segment)
-						const isI18nKey = displayName === "home"
-							|| displayName.startsWith("sidebar.")
-							|| displayName.startsWith("breadcrumb.")
+						
+						// Check for translation in common.json
+						const i18nKey = `breadcrumb.${segment}`;
+						const hasTranslation = t.has(i18nKey);
 
 						breadcrumbs.push({
-							name: displayName,
-							url,
-							isActive: isLast,
-							isI18nKey,
+							name: hasTranslation ? i18nKey : displayName,
+							url: isCurrentActive ? pathname : undefined,
+							isActive: isCurrentActive,
+							isI18nKey: hasTranslation || displayName.startsWith("breadcrumb."),
 						})
 					})
 				}
@@ -161,5 +177,5 @@ export function useBreadcrumb(): BreadcrumbItem[] {
 		}
 
 		return breadcrumbs
-	}, [pathname, locale, session?.menu, customSegments])
+	}, [pathname, locale, session?.menu, customSegments, t])
 }

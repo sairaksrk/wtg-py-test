@@ -2,6 +2,7 @@ import { useLocale } from "next-intl"
 import { useMemo } from "react"
 import { usePathname } from "@/i18n/navigation"
 import { useSession } from "@/libs/auth/auth-client"
+import { MOCKUP_SESSION } from "@/libs/constants/menu"
 
 interface CurrentMenu {
 	nameTh: string
@@ -24,8 +25,15 @@ interface CurrentMenu {
 export function useCurrentMenu(): CurrentMenu | null {
 	const pathname = usePathname()
 	const locale = useLocale()
-	const { data: session } = useSession()
-
+	// const { data: session } = useSession()
+	const { data: sessionData } = useSession()
+	
+	// Use mockup session if real session is not available
+	const session =
+    sessionData?.menu && sessionData.menu.length > 0
+      ? sessionData
+      : MOCKUP_SESSION;
+	  
 	return useMemo(() => {
 		if (!session?.menu) {
 			return null
@@ -43,7 +51,7 @@ export function useCurrentMenu(): CurrentMenu | null {
 
 		// Search through all systems and their modules
 		for (const system of session.menu) {
-			const menuModules = system.modules?.filter(m => m.type === "MENU") || []
+			const menuModules = system.modules?.filter((m: any) => m.type.toUpperCase() === "MENU") || []
 
 			for (const menuItem of menuModules) {
 				// Check if this is the current menu item

@@ -123,7 +123,7 @@ export function ConsultantTableRow({
       <TableCell className="py-5 text-foreground">{row.positionNo}</TableCell>
       <TableCell className="py-5">
         <div className="flex flex-col">
-          <span className="font-medium text-foreground text-base">
+          <span className="text-foreground text-base">
             {row.name}
           </span>
           <span className="text-sm text-subdude">{row.subPosition}</span>

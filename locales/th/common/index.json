@@ -45,7 +45,8 @@
   "delete-item": "ลบรายการ",
   "view-item": "ดูรายการ",
   "breadcrumb": {
-    "detail": "รายละเอียด"
+    "detail": "รายละเอียด",
+    "item-request": "รายละเอียดคำขอ"
   },
   "alert": {
     "confirm": "ยืนยัน",

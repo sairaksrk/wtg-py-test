@@ -15,6 +15,7 @@ import {
   useDeleteCreditLimitList,
   useGetCompensationGroupDetail,
   useGetCompensationPersonnelList,
+  useGetCompensationRequestById,
   useSaveCompensationGroupItems,
   useUpdateStatusConsider,
 } from "@/libs/query/compensation.queries";
@@ -41,6 +42,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
 import { Pagination } from "@/components/common/pagination";
 import { useLoadingStore } from "@/stores/loading-store";
+import { useSetBreadcrumb } from "@/hooks/breadcrumb/use-set-breadcrumb";
 
 interface AllocationCardProps {
   title: string;
@@ -244,6 +246,22 @@ export default function CompensationRequestDetail({
     isError: isErrorGroupDetail,
     error: errorGroupDetail,
   } = useGetCompensationGroupDetail(groupsId || "");
+
+  // ดึงข้อมูลรายการหลักเพื่อเอาชื่อรายการมาแสดงใน Breadcrumb
+  const { data: compensationRequestData } = useGetCompensationRequestById(
+    reqId || "",
+  );
+  // ตั้งค่า Breadcrumb แบบไดนามิกตามชื่อรายการหลัก และชื่อกลุ่ม/กองจริง
+  useSetBreadcrumb([
+    {
+      name: compensationRequestData?.period?.name || "กำลังโหลด...",
+      url: `/manage-compensation/item-request/${reqId}`,
+    },
+    {
+      name: groupDetail?.name || "",
+      url: `/manage-compensation/item-request/${reqId}/${groupsId}`,
+    },
+  ]);
 
   const queryBody = useMemo(
     () => ({

@@ -35,6 +35,7 @@ import {
 } from "@/libs/query/compensation.queries";
 import { useDateFormatter } from "@/hooks/use-date-formatter";
 import ErrorComponent from "@/components/common/error";
+import { useSetBreadcrumb } from "@/hooks/breadcrumb/use-set-breadcrumb";
 
 interface RequestFormProps {
   reqId: string;
@@ -78,6 +79,13 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     take: filters.take,
   });
 
+  // ตั้งค่า Breadcrumb แบบไดนามิกตามชื่อรายการจริง
+  useSetBreadcrumb([
+    {
+      name: compensationRequestData?.period?.name || "",
+      // url: `/manage-compensation/item-request/${reqId}`,
+    },
+  ]);
   const status = compensationRequestData?.period?.status;
 
   const statusConfig: Record<string, { label: string; color: string }> = {
