@@ -6,7 +6,7 @@ import type {
   CompensationList,
   CreateCompensationItem,
   CompensationRequestData,
-  // GroupItem,
+  GroupItem,
   CreateCreditLimit,
   GetCompensationPersonnelParams,
   SaveCompensationPayload,
@@ -106,10 +106,8 @@ export async function getCompensationRequestById(
 
 export async function getGroupsListCheckBox(
   reqId: string,
-  // ): Promise<GroupItem[]> {
-): Promise<any[]> {
-  // return api<GroupItem[]>("GET", `/payroll/master/groups/options`, undefined, {
-  return api<any[]>("GET", `/payroll/master/groups/options`, undefined, {
+): Promise<GroupItem[]> {
+  return api<GroupItem[]>("GET", `/payroll/master/groups/options`, undefined, {
     params: {
       periodId: reqId,
     },

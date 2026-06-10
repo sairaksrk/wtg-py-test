@@ -4,7 +4,7 @@ import type {
   CompensationList,
   CreateCompensationItem,
   CompensationRequestData,
-  // GroupItem,
+  GroupItem,
   CreateCreditLimit,
   GetCompensationPersonnelParams,
   SaveCompensationPayload,
@@ -136,8 +136,7 @@ export function useGetCompensationRequestById(
 // หน้า 2 - ดึง รายการกลุ่มที่สร้างไว้แล้ว (checkbox)
 
 export function useGetGroupsListCheckBox(reqId: string) {
-  // return useQuery<GroupItem[], ApiError>({
-  return useQuery<any[], ApiError>({
+  return useQuery<GroupItem[], ApiError>({
     queryKey: compensationKeys.groupsListCheckBox(reqId),
     queryFn: () => getGroupsListCheckBox(reqId),
     enabled: !!reqId,

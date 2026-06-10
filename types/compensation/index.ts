@@ -126,9 +126,7 @@ export interface CompensationRequestData {
 export interface GroupItem {
   value: string;
   label: string;
-  // id: string;
-  // name: string;
-  reviewerName?: string | null;
+  reviewerName: string;
 }
 
 // ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
