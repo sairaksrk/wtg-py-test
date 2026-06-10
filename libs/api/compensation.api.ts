@@ -111,7 +111,7 @@ export async function getGroupsListCheckBox(
   // return api<GroupItem[]>("GET", `/payroll/master/groups/options`, undefined, {
   return api<any[]>("GET", `/payroll/master/groups/options`, undefined, {
     params: {
-      excludePeriodId: reqId,
+      periodId: reqId,
     },
     plugin: "py",
   });
