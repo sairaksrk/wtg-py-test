@@ -374,32 +374,57 @@ export default function CompensationRequestDetail({
                 ? String(amount).trim()
                 : "";
 
+            const allocPercent = pStr !== "" ? parseFloat(pStr) : null;
+            const allocQuotaPercent = qStr !== "" ? parseFloat(qStr) : null;
+            const allocAmount =
+              aStr !== "" && aStr !== "0" ? Number(aStr) : null;
+
+            // ตรวจสอบว่ารอบนี้มีค่าที่ถูกแก้ไขจริงหรือไม่ (ไม่เป็น null และไม่เป็น 0)
+            const hasActiveValue =
+              (allocPercent !== null && allocPercent !== 0) ||
+              (allocQuotaPercent !== null && allocQuotaPercent !== 0) ||
+              (allocAmount !== null && allocAmount !== 0);
+
+            if (!hasActiveValue) return undefined;
+
             return {
-              allocPercent: pStr !== "" ? parseFloat(pStr) : null,
-              allocQuotaPercent: qStr !== "" ? parseFloat(qStr) : null,
-              allocAmount: aStr !== "" && aStr !== "0" ? Number(aStr) : null,
+              allocPercent,
+              allocQuotaPercent,
+              allocAmount,
             };
           };
 
+          const round1 = buildRound(
+            changedItem.allocPercentRound1,
+            changedItem.allocQuotaPercentRound1,
+            changedItem.allocAmountRound1,
+          );
+          const round2 = buildRound(
+            changedItem.allocPercentRound2,
+            changedItem.allocQuotaPercentRound2,
+            changedItem.allocAmountRound2,
+          );
+          const round3 = buildRound(
+            changedItem.allocPercentRound3,
+            changedItem.allocQuotaPercentRound3,
+            changedItem.allocAmountRound3,
+          );
+
+          const employeeUpdate: any = {};
+          if (round1) employeeUpdate.round1 = round1;
+          if (round2) employeeUpdate.round2 = round2;
+          if (round3) employeeUpdate.round3 = round3;
+
+          // หากไม่มีรอบใดถูกแก้ไขเลย ให้ลบพนักงานคนนี้ออกจาก previewMap
+          if (Object.keys(employeeUpdate).length === 0) {
+            const next = { ...prev };
+            delete next[changedItem.employeeId!];
+            return next;
+          }
+
           return {
             ...prev,
-            [changedItem.employeeId!]: {
-              round1: buildRound(
-                changedItem.allocPercentRound1,
-                changedItem.allocQuotaPercentRound1,
-                changedItem.allocAmountRound1,
-              ),
-              round2: buildRound(
-                changedItem.allocPercentRound2,
-                changedItem.allocQuotaPercentRound2,
-                changedItem.allocAmountRound2,
-              ),
-              round3: buildRound(
-                changedItem.allocPercentRound3,
-                changedItem.allocQuotaPercentRound3,
-                changedItem.allocAmountRound3,
-              ),
-            },
+            [changedItem.employeeId!]: employeeUpdate,
           };
         });
       }
