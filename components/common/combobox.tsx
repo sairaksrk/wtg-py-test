@@ -98,6 +98,7 @@ export function Combobox(props: ComboBoxProps) {
             setOpen(isOpen);
             setIsFocused(isOpen);
           }}
+          modal={true}
         >
           <PopoverTrigger asChild>
             <Button

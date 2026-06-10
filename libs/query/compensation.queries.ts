@@ -175,31 +175,31 @@ export function useDeleteCreditLimitList() {
 
 // หน้า 2 - ปุ่ม บันทึกการนำส่ง Update Status นำส่งเอกสาร (รอทำ)
 
-// export function useUpdateSubmitDeliver() {
-//   const queryClient = useQueryClient();
-//   return useMutation<void, ApiError, { reqId: string }>({
-//     mutationFn: ({ reqId }) => updateSubmitDeliver(reqId),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: compensationKeys.requestDetails(),
-//       });
-//     },
-//   });
-// }
+export function useUpdateSubmitDeliver() {
+  const queryClient = useQueryClient();
+  return useMutation<void, ApiError, { reqId: string }>({
+    mutationFn: ({ reqId }) => updateSubmitDeliver(reqId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: compensationKeys.requestDetails(),
+      });
+    },
+  });
+}
 
 // หน้า 2 - ปุ่ม เสร็จสิ้น Update Status เสร็จสิ้น (รอทำ)
 
-// export function useUpdateSubmitSuccess() {
-//   const queryClient = useQueryClient();
-//   return useMutation<void, ApiError, { reqId: string }>({
-//     mutationFn: ({ reqId }) => updateSubmitSuccess(reqId),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: compensationKeys.requestDetails(),
-//       });
-//     },
-//   });
-// }
+export function useUpdateSubmitSuccess() {
+  const queryClient = useQueryClient();
+  return useMutation<void, ApiError, { reqId: string }>({
+    mutationFn: ({ reqId }) => updateSubmitSuccess(reqId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: compensationKeys.requestDetails(),
+      });
+    },
+  });
+}
 
 // หน้า 3 - ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
 

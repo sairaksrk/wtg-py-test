@@ -151,7 +151,7 @@ export async function getCompensationGroupDetail(
 // หน้า 2 - ปุ่ม บันทึกการนำส่ง Update Status นำส่งเอกสาร (รอทำ)
 
 export async function updateSubmitDeliver(reqId: string): Promise<void> {
-  return api("POST", `/payroll/increment/groups/${reqId}/submit`, undefined, {
+  return api("POST", `/payroll/increment/rounds/${reqId}/submit`, undefined, {
     plugin: "py",
   });
 }
@@ -159,7 +159,7 @@ export async function updateSubmitDeliver(reqId: string): Promise<void> {
 // หน้า 2 - ปุ่ม เสร็จสิ้น Update Status เสร็จสิ้น (รอทำ)
 
 export async function updateSubmitSuccess(reqId: string): Promise<void> {
-  return api("POST", `/payroll/increment/groups/${reqId}/submit`, undefined, {
+  return api("POST", `/payroll/increment/rounds/${reqId}/finish`, undefined, {
     plugin: "py",
   });
 }

@@ -110,6 +110,7 @@ export function DatePicker(props: DatePickerProps) {
             setOpen(isOpen);
             setIsFocused(isOpen);
           }}
+          modal={true}
         >
           <PopoverTrigger asChild>
             <Button

@@ -32,6 +32,8 @@ import {
   useDeleteCompensationItem,
   useDeleteCreditLimitList,
   useGetCompensationRequestById,
+  useUpdateSubmitDeliver,
+  useUpdateSubmitSuccess,
 } from "@/libs/query/compensation.queries";
 import { useDateFormatter } from "@/hooks/use-date-formatter";
 import ErrorComponent from "@/components/common/error";
@@ -97,7 +99,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       label: "อยู่ระหว่างการพิจารณา",
       color: "bg-[#FEFCE8] text-[#FACC15]",
     },
-    นำส่งเอกสาร: {
+    submitted: {
       label: "นำส่งเอกสาร",
       color: "bg-[#F0F9FF] text-[#0EA5E9]",
     },
@@ -112,7 +114,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     color: "bg-gray-100 text-gray-400",
   };
 
-  // const updateSubmitDeliverMutation = useUpdateSubmitDeliver();
+  const updateSubmitDeliverMutation = useUpdateSubmitDeliver();
 
   const onSubmitDeliver = () => {
     alert.fire({
@@ -123,25 +125,22 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         label: c("button.confirm"),
         variant: "default",
         onClick: async () => {
-          toastSuccess(c("successfully"), c("successfully-description"));
-          // updateLoading(true);
-          // try {
-          //   await updateSubmitDeliverMutation.mutateAsync({
-          //     reqId: reqId || "",
-          //   });
-          //   toastSuccess(c("successfully"), c("successfully-description"));
-          //   router.push(
-          //     `/manage-compensation/item-request/${reqId}}`,
-          //   );
-          // } catch (error) {
-          //   const { title, description } = formatApiError(
-          //     error,
-          //     c("error-occur"),
-          //   );
-          //   toastError(title, description || c("error-detail"));
-          // } finally {
-          //   updateLoading(false);
-          // }
+          updateLoading(true);
+          try {
+            await updateSubmitDeliverMutation.mutateAsync({
+              reqId: reqId || "",
+            });
+            toastSuccess(c("successfully"), c("successfully-description"));
+            router.push(`/manage-compensation/item-request/${reqId}`);
+          } catch (error) {
+            const { title, description } = formatApiError(
+              error,
+              c("error-occur"),
+            );
+            toastError(title, description || c("error-detail"));
+          } finally {
+            updateLoading(false);
+          }
         },
       },
       cancelButton: {
@@ -152,7 +151,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     });
   };
 
-  // const updateSubmitSuccessMutation = useUpdateSubmitSuccess();
+  const updateSubmitSuccessMutation = useUpdateSubmitSuccess();
 
   const onSubmitSuccess = async () => {
     alert.fire({
@@ -163,25 +162,22 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         label: c("button.confirm"),
         variant: "default",
         onClick: async () => {
-          toastSuccess(c("successfully"), c("successfully-description"));
-          // updateLoading(true);
-          // try {
-          //   await updateSubmitSuccessMutation.mutateAsync({
-          //     reqId: reqId || "",
-          //   });
-          //   toastSuccess(c("successfully"), c("successfully-description"));
-          //   router.push(
-          //     `/manage-compensation/item-request/${reqId}}`,
-          //   );
-          // } catch (error) {
-          //   const { title, description } = formatApiError(
-          //     error,
-          //     c("error-occur"),
-          //   );
-          //   toastError(title, description || c("error-detail"));
-          // } finally {
-          //   updateLoading(false);
-          // }
+          updateLoading(true);
+          try {
+            await updateSubmitSuccessMutation.mutateAsync({
+              reqId: reqId || "",
+            });
+            toastSuccess(c("successfully"), c("successfully-description"));
+            router.push(`/manage-compensation/item-request/${reqId}`);
+          } catch (error) {
+            const { title, description } = formatApiError(
+              error,
+              c("error-occur"),
+            );
+            toastError(title, description || c("error-detail"));
+          } finally {
+            updateLoading(false);
+          }
         },
       },
       cancelButton: {
@@ -274,6 +270,13 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     setExportCompensationOpen(false);
   };
 
+  const isAllSuccess =
+    compensationRequestData?.groups?.every(
+      (group) => group.status === "success",
+    ) ?? false;
+
+  const groups = compensationRequestData?.groups ?? [];
+
   const isDisabled = compensationRequestData?.groups?.length === 0;
 
   const actionButton =
@@ -281,18 +284,20 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       <Button
         variant="secondary"
         type="button"
-        disabled={isDisabled}
+        disabled={isDisabled || !isAllSuccess}
         onClick={onSubmitDeliver}
       >
         บันทึกการนำส่ง
       </Button>
-    ) : status === "นำส่งเอกสาร" ? (
-      <Button type="button" disabled={isDisabled} onClick={onSubmitSuccess}>
+    ) : status === "submitted" ? (
+      <Button
+        type="button"
+        disabled={isDisabled || !isAllSuccess}
+        onClick={onSubmitSuccess}
+      >
         เสร็จสิ้น
       </Button>
     ) : null;
-
-  const groups = compensationRequestData?.groups ?? [];
 
   const isLoading = reqId ? isLoadingCompensationRequest : false;
 
@@ -565,25 +570,27 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         </main>
       </div>
 
-      <footer className="sticky bottom-0 z-10 rounded-full bg-white px-6 py-4">
-        <div className="flex items-center justify-between gap-3">
-          {status === "draft" || status === "reviewing" ? (
-            <Button
-              variant="secondary"
-              type="button"
-              className="border-[#F4F4F5] bg-[#F4F4F5] text-red-500 hover:text-red-500"
-              onClick={() => onDeleteRequest?.(reqId)}
-              disabled={!reqId}
-            >
-              ลบรายการ
-            </Button>
-          ) : (
-            <div />
-          )}
+      {status !== "success" && (
+        <footer className="sticky bottom-0 z-10 rounded-full bg-white px-6 py-4">
+          <div className="flex items-center justify-between gap-3">
+            {status === "draft" || status === "reviewing" ? (
+              <Button
+                variant="secondary"
+                type="button"
+                className="border-[#F4F4F5] bg-[#F4F4F5] text-red-500 hover:text-red-500"
+                onClick={() => onDeleteRequest?.(reqId)}
+                disabled={!reqId}
+              >
+                ลบรายการ
+              </Button>
+            ) : (
+              <div />
+            )}
 
-          {actionButton}
-        </div>
-      </footer>
+            {actionButton}
+          </div>
+        </footer>
+      )}
     </>
   );
 }

@@ -117,7 +117,7 @@ export function CompensationSearchModal({
                 },
                 {
                   label: "นำส่งเอกสาร",
-                  value: "นำส่งเอกสาร",
+                  value: "submitted",
                 },
                 {
                   label: "เสร็จสิ้น",

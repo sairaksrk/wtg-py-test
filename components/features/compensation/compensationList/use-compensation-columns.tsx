@@ -23,7 +23,7 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     label: "อยู่ระหว่างการพิจารณา",
     color: "bg-[#FEFCE8] text-[#FACC15]",
   },
-  นำส่งเอกสาร: {
+  submitted: {
     label: "นำส่งเอกสาร",
     color: "bg-[#F0F9FF] text-[#0EA5E9]",
   },
