@@ -8,6 +8,8 @@ import type {
   CreateCreditLimit,
   GetCompensationPersonnelParams,
   SaveCompensationPayload,
+  CompensationItem,
+  UpdateCompensationItem,
 } from "@/types/compensation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -22,6 +24,10 @@ import {
   saveCompensationGroupItems,
   updateStatusConsider,
   deleteCompensationItem,
+  getCompensationItemById,
+  updateCompensationItem,
+  updateSubmitSuccess,
+  updateSubmitDeliver,
 } from "../api/compensation.api";
 
 /**
@@ -35,7 +41,7 @@ export const compensationKeys = {
   list: (params?: CompensationListParams) =>
     [...compensationKeys.lists(), params] as const,
   details: () => [...compensationKeys.all, "detail"] as const,
-  detail: (id: string) => [...compensationKeys.details(), id] as const,
+  detail: (reqId: string) => [...compensationKeys.details(), reqId] as const,
   requestDetails: () => [...compensationKeys.all, "request-detail"] as const,
   requestDetail: (reqId: string, params?: CompensationListParams) =>
     [...compensationKeys.requestDetails(), reqId, params] as const,
@@ -73,7 +79,6 @@ export function useCreateCompensationItem() {
   });
 }
 
-
 // หน้า 1 จัดการค่าตอบแทน - ลบ รายการค่าตอบแทน && หน้า 2 ปุ่มลบรายการ
 
 export function useDeleteCompensationItem() {
@@ -86,6 +91,34 @@ export function useDeleteCompensationItem() {
     },
   });
 }
+
+// หน้า 2 - Modal แก้ไข รายการค่าตอบแทน (รอทำ)
+
+// export function useUpdateCompensationItem() {
+//   const queryClient = useQueryClient();
+//   return useMutation<
+//     void,
+//     ApiError,
+//     { reqId: string; data: UpdateCompensationItem }
+//   >({
+//     mutationFn: ({ reqId, data }) => updateCompensationItem(reqId, data),
+//     onSuccess: (_, variables) => {
+//       queryClient.invalidateQueries({
+//         queryKey: compensationKeys.detail(variables.reqId),
+//       });
+//     },
+//   });
+// }
+
+// หน้า 2 - Modal ดึงข้อมูล รายการค่าตอบแทน Get ById (รอทำ)
+
+// export function useGetCompensationItemById(reqId: string) {
+//   return useQuery<CompensationItem, ApiError>({
+//     queryKey: compensationKeys.detail(reqId),
+//     queryFn: () => getCompensationItemById(reqId),
+//     enabled: !!reqId,
+//   });
+// }
 
 // หน้า 2 - ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน Get ById
 
@@ -140,6 +173,34 @@ export function useDeleteCreditLimitList() {
     },
   });
 }
+
+// หน้า 2 - ปุ่ม บันทึกการนำส่ง Update Status นำส่งเอกสาร (รอทำ)
+
+// export function useUpdateSubmitDeliver() {
+//   const queryClient = useQueryClient();
+//   return useMutation<void, ApiError, { reqId: string }>({
+//     mutationFn: ({ reqId }) => updateSubmitDeliver(reqId),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({
+//         queryKey: compensationKeys.requestDetails(),
+//       });
+//     },
+//   });
+// }
+
+// หน้า 2 - ปุ่ม เสร็จสิ้น Update Status เสร็จสิ้น (รอทำ)
+
+// export function useUpdateSubmitSuccess() {
+//   const queryClient = useQueryClient();
+//   return useMutation<void, ApiError, { reqId: string }>({
+//     mutationFn: ({ reqId }) => updateSubmitSuccess(reqId),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({
+//         queryKey: compensationKeys.requestDetails(),
+//       });
+//     },
+//   });
+// }
 
 // หน้า 3 - ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
 

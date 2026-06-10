@@ -10,6 +10,8 @@ import type {
   CreateCreditLimit,
   GetCompensationPersonnelParams,
   SaveCompensationPayload,
+  UpdateCompensationItem,
+  CompensationItem,
 } from "@/types/compensation";
 import { api } from "./api";
 
@@ -52,6 +54,32 @@ export async function deleteCompensationItem(
   return api("DELETE", `/payroll/increment/rounds/${id}`, undefined, {
     plugin: "py",
   });
+}
+
+// หน้า 2 - Modal แก้ไข รายการค่าตอบแทน (รอทำ)
+
+export async function updateCompensationItem(
+  id: string,
+  payload: UpdateCompensationItem,
+): Promise<void> {
+  return api<void>("PUT", `/payroll/increment/rounds/${id}`, payload, {
+    plugin: "py",
+  });
+}
+
+// หน้า 2 - Modal ดึงข้อมูล รายการค่าตอบแทน Get ById (รอทำ)
+
+export async function getCompensationItemById(
+  reqId: string,
+): Promise<CompensationItem> {
+  return api<CompensationItem>(
+    "GET",
+    `/payroll/increment/rounds/${reqId}`,
+    undefined,
+    {
+      plugin: "py",
+    },
+  );
 }
 
 // หน้า 2 - ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน Get ById
@@ -120,6 +148,22 @@ export async function getCompensationGroupDetail(
       plugin: "py",
     },
   );
+}
+
+// หน้า 2 - ปุ่ม บันทึกการนำส่ง Update Status นำส่งเอกสาร (รอทำ)
+
+export async function updateSubmitDeliver(reqId: string): Promise<void> {
+  return api("POST", `/payroll/increment/groups/${reqId}/submit`, undefined, {
+    plugin: "py",
+  });
+}
+
+// หน้า 2 - ปุ่ม เสร็จสิ้น Update Status เสร็จสิ้น (รอทำ)
+
+export async function updateSubmitSuccess(reqId: string): Promise<void> {
+  return api("POST", `/payroll/increment/groups/${reqId}/submit`, undefined, {
+    plugin: "py",
+  });
 }
 
 // หน้า 3 - ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร

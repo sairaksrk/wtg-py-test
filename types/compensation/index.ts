@@ -5,7 +5,6 @@ export const COMPENSATION_REQUEST_SESSION_KEY =
 
 export const CREDIT_LIMIT_LIST_SESSION_KEY = "credit-limit-list-table-state";
 
-
 export interface CompensationListParams {
   page?: number;
   take?: number;
@@ -32,6 +31,18 @@ export interface CompensationList {
 
 // สร้าง จัดการค่าตอบแทน
 export interface CreateCompensationItem {
+  name: string;
+  remarks: string;
+}
+
+export interface UpdateCompensationItem {
+  id: string;
+  name: string;
+  remarks: string;
+}
+
+export interface CompensationItem {
+  id: string;
   name: string;
   remarks: string;
 }

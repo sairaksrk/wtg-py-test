@@ -104,10 +104,12 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     color: "bg-gray-100 text-gray-400",
   };
 
+  // const updateSubmitDeliverMutation = useUpdateSubmitDeliver();
+
   const onSubmitDeliver = () => {
     alert.fire({
       type: "warning",
-      title: c("save-data-confirmation"),
+      title: "ยืนยันการนำส่งข้อมูล",
       description: c("save-data-confirmation-description"),
       confirmButton: {
         label: c("button.confirm"),
@@ -141,6 +143,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       },
     });
   };
+
+  // const updateSubmitSuccessMutation = useUpdateSubmitSuccess();
 
   const onSubmitSuccess = async () => {
     alert.fire({

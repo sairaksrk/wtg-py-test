@@ -181,7 +181,7 @@ export function CreditManagementModal({
         allocPercent: Number(formData.allocPercent),
         // กรณีเลือกจากกลุ่ม
         ...(isGroupSelected && {
-          id: Array.from(selectedIds),
+          sourceGroupIds: Array.from(selectedIds),
         }),
         // กรณีเลือกเอง
         ...(!isGroupSelected && {

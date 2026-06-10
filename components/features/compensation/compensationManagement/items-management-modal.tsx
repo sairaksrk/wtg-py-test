@@ -72,7 +72,6 @@ export function ItemsManagementModal({
       let targetId = editingId;
 
       if (editingId) {
-        // อัปเดตรายการเดิม (ถ้ามี)
         // const payloadUpdate: any = {
         //   name: formData.name,
         //   remarks: formData.remarks || "",
@@ -84,7 +83,7 @@ export function ItemsManagementModal({
           remarks: formData.remarks || "",
         };
         const res = await createMutation.mutateAsync(payloadCreate);
-        targetId = res?.id; // เก็บ ID ที่สร้างขึ้นใหม่
+        targetId = res?.id;
       }
 
       toastSuccess(c("successfully"), c("successfully-description"));
