@@ -31,6 +31,7 @@ export interface CompensationList {
 
 // สร้าง จัดการค่าตอบแทน
 export interface CreateCompensationItem {
+  id?: string;
   name: string;
   remarks: string;
 }

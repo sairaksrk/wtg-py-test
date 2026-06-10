@@ -59,10 +59,9 @@ export async function deleteCompensationItem(
 // หน้า 2 - Modal แก้ไข รายการค่าตอบแทน (รอทำ)
 
 export async function updateCompensationItem(
-  id: string,
   payload: UpdateCompensationItem,
-): Promise<void> {
-  return api<void>("PUT", `/payroll/increment/rounds/${id}`, payload, {
+): Promise<{ id: string }> {
+  return api("POST", `/payroll/increment/rounds`, payload, {
     plugin: "py",
   });
 }

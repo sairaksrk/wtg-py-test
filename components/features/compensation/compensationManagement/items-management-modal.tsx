@@ -15,7 +15,10 @@ import { formatApiError } from "@/types/api";
 import { useRouter } from "@/i18n/navigation";
 import { TextArea } from "@/components/ui/textarea";
 import { CreateCompensationItem } from "@/types/compensation";
-import { useCreateCompensationItem } from "@/libs/query/compensation.queries";
+import {
+  useCreateCompensationItem,
+  useUpdateCompensationItem,
+} from "@/libs/query/compensation.queries";
 
 const positionFormSchema = z.object({
   name: z.string().min(1),
@@ -29,6 +32,7 @@ interface PositionManageModalProps {
   editingId?: string | null;
   onClose: () => void;
   onSave: () => void;
+  data?: any;
 }
 
 export function ItemsManagementModal({
@@ -36,6 +40,7 @@ export function ItemsManagementModal({
   editingId,
   onClose,
   onSave,
+  data,
 }: PositionManageModalProps) {
   const router = useRouter();
   const c = useTranslations("common");
@@ -55,16 +60,24 @@ export function ItemsManagementModal({
   });
 
   useEffect(() => {
+    if (editingId && data) {
+      reset({
+        name: data.name,
+        remarks: data.remarks || "",
+      });
+      return;
+    }
+    // กรณี Create (ไม่มี editingId)
     if (!editingId) {
       reset({
         name: "",
         remarks: "",
       });
     }
-  }, [open, editingId, reset]);
+  }, [open, editingId, data, reset]);
 
   const createMutation = useCreateCompensationItem();
-  // const updateMutation = useUpdateCompensationItem();
+  const updateMutation = useUpdateCompensationItem();
 
   const onSubmit = async (formData: PositionFormValues) => {
     try {
@@ -72,11 +85,12 @@ export function ItemsManagementModal({
       let targetId = editingId;
 
       if (editingId) {
-        // const payloadUpdate: any = {
-        //   name: formData.name,
-        //   remarks: formData.remarks || "",
-        // };
-        // await updateMutation.mutateAsync(payloadUpdate);
+        const payloadUpdate: any = {
+          id: editingId,
+          name: formData.name,
+          remarks: formData.remarks || "",
+        };
+        await updateMutation.mutateAsync(payloadUpdate);
       } else {
         const payloadCreate: CreateCompensationItem = {
           name: formData.name,
@@ -101,8 +115,7 @@ export function ItemsManagementModal({
     }
   };
 
-  // const isSaving = createMutation.isPending || updateMutation.isPending;
-  const isSaving = createMutation.isPending;
+  const isSaving = createMutation.isPending || updateMutation.isPending;
   const isLoading = false;
 
   return (

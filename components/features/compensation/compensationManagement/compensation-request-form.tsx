@@ -31,6 +31,7 @@ import {
 import {
   useDeleteCompensationItem,
   useDeleteCreditLimitList,
+  useGetCompensationItemById,
   useGetCompensationRequestById,
   useUpdateSubmitDeliver,
   useUpdateSubmitSuccess,
@@ -80,6 +81,12 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     page: filters.page,
     take: filters.take,
   });
+
+  const {
+    data: compensationItemData,
+    isLoading: isLoadingCompensationItem,
+    refetch: refetchCompensationItem,
+  } = useGetCompensationItemById(reqId || "");
 
   // ตั้งค่า Breadcrumb แบบไดนามิกตามชื่อรายการจริง
   useSetBreadcrumb([
@@ -299,7 +306,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       </Button>
     ) : null;
 
-  const isLoading = reqId ? isLoadingCompensationRequest : false;
+  const isLoading = isLoadingCompensationRequest || isLoadingCompensationItem;
 
   if (isLoading) {
     return (
@@ -550,7 +557,9 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onSave={() => {
                   setItemManagementModalOpen({ id: null, state: false });
                   refetch(); // ดึงข้อมูลใหม่เมื่อแก้ไขข้อมูลสำเร็จ
+                  refetchCompensationItem(); // ดึงข้อมูลใหม่ของ compensation item ด้วย 
                 }}
+                data={compensationItemData}
               />
 
               <CreditManagementModal

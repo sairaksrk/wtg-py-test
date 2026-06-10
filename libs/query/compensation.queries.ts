@@ -75,6 +75,9 @@ export function useCreateCompensationItem() {
     mutationFn: createCompensationItem,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: compensationKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: compensationKeys.requestDetails(),
+      });
     },
   });
 }
@@ -94,31 +97,29 @@ export function useDeleteCompensationItem() {
 
 // หน้า 2 - Modal แก้ไข รายการค่าตอบแทน (รอทำ)
 
-// export function useUpdateCompensationItem() {
-//   const queryClient = useQueryClient();
-//   return useMutation<
-//     void,
-//     ApiError,
-//     { reqId: string; data: UpdateCompensationItem }
-//   >({
-//     mutationFn: ({ reqId, data }) => updateCompensationItem(reqId, data),
-//     onSuccess: (_, variables) => {
-//       queryClient.invalidateQueries({
-//         queryKey: compensationKeys.detail(variables.reqId),
-//       });
-//     },
-//   });
-// }
+export function useUpdateCompensationItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ id: string }, ApiError, UpdateCompensationItem>({
+    mutationFn: updateCompensationItem,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: compensationKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: compensationKeys.detail(variables.id),
+      });
+    },
+  });
+}
 
 // หน้า 2 - Modal ดึงข้อมูล รายการค่าตอบแทน Get ById (รอทำ)
 
-// export function useGetCompensationItemById(reqId: string) {
-//   return useQuery<CompensationItem, ApiError>({
-//     queryKey: compensationKeys.detail(reqId),
-//     queryFn: () => getCompensationItemById(reqId),
-//     enabled: !!reqId,
-//   });
-// }
+export function useGetCompensationItemById(reqId: string) {
+  return useQuery<CompensationItem, ApiError>({
+    queryKey: compensationKeys.detail(reqId),
+    queryFn: () => getCompensationItemById(reqId),
+    enabled: !!reqId,
+  });
+}
 
 // หน้า 2 - ดึงข้อมูล หน้าจัดการรายการบริหารวงเงิน Get ById
 
