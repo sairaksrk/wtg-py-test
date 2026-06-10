@@ -2,8 +2,13 @@
 
 import React from "react";
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/utils/helpers";
 
-export function ConsultantTableHeader() {
+interface ConsultantTableHeaderProps {
+  roundtable?: number;
+}
+
+export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderProps) {
   return (
     <TableHeader className="bg-white">
       <TableRow className="border-b border-gray-100">
@@ -34,35 +39,71 @@ export function ConsultantTableHeader() {
         </TableHead>
 
         {/* ส่วนบริหารวงเงิน */}
-        <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
+        <TableHead 
+          className={cn(
+            "w-48 font-normal py-6 text-center text-sm transition-colors",
+            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude"
+          )}
+        >
           จัดสรรร้อยละรอบที่ 1 (%)
         </TableHead>
-        {/* <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
-          จัดสรรร้อยละรอบที่ 2 (%)
-        </TableHead>
-        <TableHead className="w-48 font-normal text-subdude py-6 text-center text-sm">
-          จัดสรรร้อยละรอบที่ 3 (%)
-        </TableHead> */}
+        
+        {roundtable >= 2 && (
+          <TableHead 
+            className={cn(
+              "w-48 font-normal py-6 text-center text-sm transition-colors",
+              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude"
+            )}
+          >
+            จัดสรรร้อยละรอบที่ 2 (%)
+          </TableHead>
+        )}
+
+        {roundtable >= 3 && (
+          <TableHead 
+            className={cn(
+              "w-48 font-normal py-6 text-center text-sm transition-colors",
+              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude"
+            )}
+          >
+            จัดสรรร้อยละรอบที่ 3 (%)
+          </TableHead>
+        )}
 
         {/* ส่วนการประเมินของแต่ละระดับ */}
         <TableHead
-          className="w-68 font-normal text-subdude py-6 text-center text-sm"
+          className={cn(
+            "w-89 font-normal py-6 text-center text-sm transition-colors",
+            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude"
+          )}
           colSpan={2}
         >
           ผลพิจารณารอบที่ 1
         </TableHead>
-        {/* <TableHead
-          className="w-72 font-normal text-subdude py-6 text-center text-sm"
-          colSpan={2}
-        >
-          ผลพิจารณารอบที่ 2
-        </TableHead>
-        <TableHead
-          className="w-72 font-normal text-subdude py-6 text-center text-sm"
-          colSpan={2}
-        >
-          ผลพิจารณารอบที่ 3
-        </TableHead> */}
+
+        {roundtable >= 2 && (
+          <TableHead
+            className={cn(
+              "w-89 font-normal py-6 text-center text-sm transition-colors",
+              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude"
+            )}
+            colSpan={2}
+          >
+            ผลพิจารณารอบที่ 2
+          </TableHead>
+        )}
+
+        {roundtable >= 3 && (
+          <TableHead
+            className={cn(
+              "w-89 font-normal py-6 text-center text-sm transition-colors",
+              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude"
+            )}
+            colSpan={2}
+          >
+            ผลพิจารณารอบที่ 3
+          </TableHead>
+        )}
 
         <TableHead className="w-51 font-normal text-subdude py-6 text-center text-sm">
           รวมร้อยละที่ได้เลื่อน
