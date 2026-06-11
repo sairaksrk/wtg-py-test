@@ -137,8 +137,9 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
             await updateSubmitDeliverMutation.mutateAsync({
               reqId: reqId || "",
             });
+            await refetch();
             toastSuccess(c("successfully"), c("successfully-description"));
-            router.push(`/manage-compensation/item-request/${reqId}`);
+            // router.push(`/manage-compensation/item-request/${reqId}`);
           } catch (error) {
             const { title, description } = formatApiError(
               error,
@@ -174,8 +175,9 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
             await updateSubmitSuccessMutation.mutateAsync({
               reqId: reqId || "",
             });
+            await refetch();
             toastSuccess(c("successfully"), c("successfully-description"));
-            router.push(`/manage-compensation/item-request/${reqId}`);
+            // router.push(`/manage-compensation/item-request/${reqId}`);
           } catch (error) {
             const { title, description } = formatApiError(
               error,
@@ -557,7 +559,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onSave={() => {
                   setItemManagementModalOpen({ id: null, state: false });
                   refetch(); // ดึงข้อมูลใหม่เมื่อแก้ไขข้อมูลสำเร็จ
-                  refetchCompensationItem(); // ดึงข้อมูลใหม่ของ compensation item ด้วย 
+                  refetchCompensationItem(); // ดึงข้อมูลใหม่ของ compensation item ด้วย
                 }}
                 data={compensationItemData}
               />
