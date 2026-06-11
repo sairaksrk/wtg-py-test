@@ -1,0 +1,69 @@
+name: Deploy WTG-py TEST
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ✅ สร้าง version ไม่ซ้ำ
+      - name: Generate TAG
+        id: vars
+        run: echo "TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+
+      # ✅ สร้าง .env (ปรับ PORT เป็น 3003 และตั้งค่า NEXT_PUBLIC_X_API_KEY เป็นค่าว่าง)
+      - name: Create .env
+        run: |
+          cat <<EOF > .env
+          NEXT_PUBLIC_BASE_URL=http://${{ secrets.SERVER_HOST }}:3003
+          NEXT_PUBLIC_CORE_URL=http://${{ secrets.SERVER_HOST }}:3000
+          NEXT_PUBLIC_API_URL=http://159.65.6.121
+          NEXT_PUBLIC_STORAGE_URL=http://159.65.6.121
+          NEXT_PUBLIC_API_PREFIX=dash
+          NEXT_PUBLIC_X_API_KEY=""
+          NEXT_PUBLIC_INTERNAL_SECRET=dev-secret
+          NEXT_PUBLIC_SKIP_AUTH=true
+          NEXT_PUBLIC_PAGE_SIZE=10
+          NEXT_PUBLIC_PAGE_SIZE_MINI=5
+          NEXT_PUBLIC_IS_LOCALE=false
+          EOF
+
+      - name: Login Docker
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wtg-py-test:${{ steps.vars.outputs.TAG }} .
+
+      - name: Push Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/wtg-py-test:${{ steps.vars.outputs.TAG }}
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/wtg-py-test:${{ steps.vars.outputs.TAG }}
+
+            docker stop wtg-py-test || true
+            docker rm wtg-py-test || true
+
+            docker run -d \
+              --name wtg-py-test \
+              -p 3003:3003 \
+              -e PORT=3003 \
+              --restart always \
+              ${{ secrets.DOCKER_USERNAME }}/wtg-py-test:${{ steps.vars.outputs.TAG }}
+
+            # ✅ ลบ image เก่าของ repo นี้
+            docker images ${{ secrets.DOCKER_USERNAME }}/wtg-py-test --format "{{.Repository}}:{{.Tag}}" \
+              | grep -v "${{ steps.vars.outputs.TAG }}" \
+              | xargs -r docker rmi || true
