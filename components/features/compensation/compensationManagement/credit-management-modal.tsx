@@ -32,22 +32,22 @@ import {
 import { CreateCreditLimit, GroupItem } from "@/types/compensation";
 import ErrorComponent from "@/components/common/error";
 
-// const positionFormSchema = z.object({
-//   name: z.string().min(1),
-//   reviewerId: z.string().min(1),
-//   allocPercent: z.string().min(1),
-//   positionLevelIds: z.array(z.string()).min(1),
-//   structureUnitIds: z.array(z.string()).min(1),
-// });
-
 const positionFormSchema = z
   .object({
     name: z.string().min(1),
     reviewerId: z.string().min(1),
-    allocPercent: z.string().min(1),
+    allocPercent: z
+      .string()
+      .min(1)
+      .refine(
+        (val) => {
+          const num = parseFloat(val);
+          return !isNaN(num) && num <= 3;
+        },
+        { message: "จัดสรรร้อยละต้องไม่เกิน 3" },
+      ),
     positionLevelIds: z.array(z.string()).optional(),
     structureUnitIds: z.array(z.string()).optional(),
-
     isGroupSelected: z.boolean(),
   })
   .superRefine((data, ctx) => {
@@ -94,6 +94,8 @@ export function CreditManagementModal({
 
   const [isGroupSelected, setIsGroupSelected] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [allocInputKey, setAllocInputKey] = useState<number>(0);
+
   const {
     control,
     handleSubmit,
@@ -167,6 +169,7 @@ export function CreditManagementModal({
       });
       setIsGroupSelected(false);
       setSelectedIds(new Set());
+      setAllocInputKey((prev) => prev + 1);
     }
   }, [open, editingId, reset]);
 
@@ -343,11 +346,12 @@ export function CreditManagementModal({
               render={({ field }) => (
                 <Input
                   {...field}
+                  key={allocInputKey}
                   label="จัดสรรร้อยละ"
                   floatingLabel
                   required
                   error={errors.allocPercent?.message}
-                  thousandSeparator
+                  thousandSeparator={false}
                   iconPosition="right"
                   icon={
                     <Icon
@@ -356,7 +360,31 @@ export function CreditManagementModal({
                     />
                   }
                   disabled={isSaving}
-                  // maxValue={3}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "") {
+                      field.onChange("");
+                      return;
+                    }
+                    
+                    // กรองให้พิมพ์ได้เฉพาะตัวเลขและจุดทศนิยม
+                    const cleanVal = val
+                      .replace(/[^0-9.]/g, "")
+                      .replace(/(\..*?)\..*/g, "$1");
+
+                    const parsed = parseFloat(cleanVal);
+                    if (!isNaN(parsed)) {
+                      if (parsed > 3) {
+                        field.onChange("3");
+                        // บังคับรีเซ็ต Key เพื่อล้างค่าใน Input State
+                        setAllocInputKey((prev) => prev + 1);
+                      } else {
+                        field.onChange(cleanVal);
+                      }
+                    } else {
+                      field.onChange("");
+                    }
+                  }}
                 />
               )}
             />
@@ -454,7 +482,6 @@ export function CreditManagementModal({
           >
             {isGroupSelected && (
               <span className="text-sm text-primary font-medium">
-                {/* เลือกแล้ว {selectedIds.length} รายการ */}
                 เลือกแล้ว {selectedIds.size} รายการ
               </span>
             )}
@@ -468,16 +495,7 @@ export function CreditManagementModal({
               >
                 ยกเลิก
               </Button>
-              <Button
-                type="submit"
-                // disabled={
-                //   (isGroupSelected && selectedIds.length === 0) ||
-                //   createMutation.isPending
-                //     ? true
-                //     : false
-                // }
-                disabled={isSaving}
-              >
+              <Button type="submit" disabled={isSaving}>
                 บันทึก
               </Button>
             </div>
