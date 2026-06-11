@@ -14,6 +14,7 @@ type InputProps = React.ComponentProps<"input"> & {
   floatingLabel?: boolean;
   required?: boolean;
   error?: string;
+  maxValue?: number;
 };
 
 function Input({
@@ -30,6 +31,7 @@ function Input({
   floatingLabel = false,
   required = false,
   error,
+  maxValue,
   ...props
 }: InputProps) {
   const [toggleType, setToggleType] = useState(type);
@@ -79,6 +81,11 @@ function Input({
     if (thousandSeparator) {
       // Only allow numbers, commas, and decimal points
       const cleanValue = inputValue.replace(/[^\d.,]/g, "");
+      const numericValue = Number(removeCommas(cleanValue));
+      
+      if (maxValue !== undefined && numericValue > maxValue) {
+        return;
+      }
 
       if (
         cleanValue === "" ||

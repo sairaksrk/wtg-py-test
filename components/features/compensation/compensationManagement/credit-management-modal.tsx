@@ -356,6 +356,7 @@ export function CreditManagementModal({
                     />
                   }
                   disabled={isSaving}
+                  maxValue={3}
                 />
               )}
             />
