@@ -91,7 +91,7 @@ const AllocationCard = ({
           </div>
         </div>
       </CardContent>
-      <div className="px-3 text-sm">
+      <div className="px-3 text-sm mb-6">
         <div className="px-4 mt-4 bg-[#F0F7FF] w-full flex justify-between items-center rounded-[6px] py-1">
           <span className="text-subdude">คงเหลือ</span>
           <span
@@ -251,7 +251,7 @@ export default function CompensationRequestDetail({
   const { data: compensationRequestData } = useGetCompensationRequestById(
     reqId || "",
   );
-  // ตั้งค่า Breadcrumb แบบไดนามิกตามชื่อรายการหลัก และชื่อกลุ่ม/กองจริง
+  // Breadcrumb ชื่อรายการหลัก และชื่อกลุ่ม
   useSetBreadcrumb([
     {
       name: compensationRequestData?.period?.name || "กำลังโหลด...",
@@ -679,7 +679,7 @@ export default function CompensationRequestDetail({
             <div className="flex items-center gap-3 mt-1">
               <Badge
                 className={cn(
-                  "border-none px-3 py-1 text-xs font-normal rounded-full flex items-center gap-1",
+                  "border-none px-3 py-1 text-sm font-normal rounded-full flex items-center gap-1",
                   currentStatus.color,
                 )}
               >
