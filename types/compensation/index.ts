@@ -9,15 +9,15 @@ export interface CompensationListParams {
   page?: number;
   take?: number;
   search?: string;
-  requestNo?: string;
-  startDate?: number | null;
-  endDate?: number | null;
+  status?: string;
+  name?: string;
+  approvedBy?: string;
+  createdAt?: number | null;
+  employeeName?: string;
+  positionNumber?: string;
+  positionLevelId?: string;
   departmentId?: string;
   positionId?: string;
-  status?: string;
-  responsibleHrId?: string;
-  name?: string;
-  positionLevelId?: string;
 }
 // ตาราง จัดการค่าตอบแทน
 export interface CompensationList {

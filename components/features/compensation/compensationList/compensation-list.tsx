@@ -56,38 +56,41 @@ export default function CompensationList() {
     {
       page: 1,
       take: getPageSize(),
-      startDate: null,
-      // departmentId: "",
-      // positionId: "",
-      // status: "",
-      // responsibleHr: "",
+      createdAt: null,
+      name: "",
+      status: "",
+      approvedBy: "",
     },
   );
 
   const { data, isLoading, isError, error, refetch } = useGetCompensationList({
     page: filters.page,
     take: filters.take,
-    // requestNo: filters.requestNo,
-    // requestDate: filters.requestDate,
-    // departmentId: filters.departmentId,
-    // positionId: filters.positionId,
-    // status: filters.status,
-    // responsibleHr: filters.responsibleHr,
+    createdAt: filters.createdAt,
+    name: filters.name,
+    status: filters.status,
+    approvedBy: filters.approvedBy,
   });
 
   const onSearch = (formData: any) => {
-    setFilters({ ...filters, startDate: formData?.startDate });
+    setFilters({
+      ...filters,
+      createdAt: formData.createdAt
+        ? new Date(formData.createdAt).getTime()
+        : null,
+      name: formData.name,
+      status: formData?.status,
+      approvedBy: formData?.approvedBy,
+    });
   };
 
   const onClearFilters = () => {
     setFilters({
       ...filters,
-      // requestNo: "",
-      startDate: null,
-      // departmentId: "",
-      // positionId: "",
-      // status: "",
-      // responsibleHrId: "",
+      createdAt: null,
+      name: "",
+      status: "",
+      approvedBy: "",
     });
     setSearchCompensationOpen(false);
   };

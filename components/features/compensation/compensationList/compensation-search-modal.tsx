@@ -30,22 +30,22 @@ export function CompensationSearchModal({
       try {
         const parsed = JSON.parse(savedState);
         return {
-          startDate: parsed.startDate
-            ? new Date(Number(parsed.startDate))
+          createdAt: parsed.createdAt
+            ? new Date(Number(parsed.createdAt))
             : null,
-          itemName: parsed.itemName || "",
+          name: parsed.name || "",
           status: parsed.status || "",
-          approver: parsed.approver || "",
+          approvedBy: parsed.approvedBy || "",
         };
       } catch (e) {
         console.error(e);
       }
     }
     return {
-      startDate: null,
-      itemName: "",
+      createdAt: null,
+      name: "",
       status: "",
-      approver: "",
+      approvedBy: "",
     };
   };
 
@@ -58,22 +58,16 @@ export function CompensationSearchModal({
     if (savedState) {
       const parsed = JSON.parse(savedState);
       reset({
-        startDate: parsed.startDate || "",
-        itemName: parsed.itemName || "",
+        createdAt: parsed.createdAt || "",
+        name: parsed.name || "",
         status: parsed.status || "",
-        approver: parsed.approver || "",
+        approvedBy: parsed.approvedBy || "",
       });
     }
   }, [reset]);
 
   const onClear = () => {
     onClearFilters();
-    // reset({
-    //   startDate: "",
-    //   itemName: "",
-    //   status: "",
-    //   approver: "",
-    // });
   };
 
   const onSubmit = async (formData: any) => {
@@ -85,7 +79,7 @@ export function CompensationSearchModal({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 gap-6">
         <Controller
-          name="startDate"
+          name="createdAt"
           control={control}
           render={({ field }) => (
             <DatePicker {...field} label="วันที่สร้าง" floatingLabel />
@@ -93,7 +87,7 @@ export function CompensationSearchModal({
         />
 
         <Controller
-          name="itemName"
+          name="name"
           control={control}
           render={({ field }) => (
             <Input {...field} label="ชื่อรายการ" floatingLabel />
@@ -136,7 +130,7 @@ export function CompensationSearchModal({
         />
 
         <Controller
-          name="approver"
+          name="approvedBy"
           control={control}
           render={({ field }) => (
             <Input {...field} label="ผู้อนุมัติ / ตรวจสอบ" floatingLabel />
