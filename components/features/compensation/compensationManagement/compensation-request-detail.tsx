@@ -226,7 +226,7 @@ export default function CompensationRequestDetail({
       take: getPageSize(),
       // requestNo: "",
       // name: "",
-      startDate: null,
+      // startDate: null,
       // positionId: "",
       // positionLevelId: "",
       // departmentId: "",
@@ -279,7 +279,6 @@ export default function CompensationRequestDetail({
 
   const {
     data: personnelListResponse,
-    // isLoading: isLoadingPersonnel,
     isError: isErrorPersonnel,
     error: errorPersonnel,
   } = useGetCompensationPersonnelList(reqId || "", groupsId || "", queryBody);
@@ -394,14 +393,10 @@ export default function CompensationRequestDetail({
 
             const allocPercent = pStr !== "" ? parseFloat(pStr) : null;
             const allocQuotaPercent = qStr !== "" ? parseFloat(qStr) : null;
-            const allocAmount =
-              aStr !== "" && aStr !== "0" ? Number(aStr) : null;
+            const allocAmount = aStr !== "" ? Number(aStr) : null;
 
-            // ตรวจสอบว่ารอบนี้มีค่าที่ถูกแก้ไขจริงหรือไม่ (ไม่เป็น null และไม่เป็น 0)
-            const hasActiveValue =
-              (allocPercent !== null && allocPercent !== 0) ||
-              (allocQuotaPercent !== null && allocQuotaPercent !== 0) ||
-              (allocAmount !== null && allocAmount !== 0);
+            // ตรวจสอบว่ารอบนี้มีค่าที่ถูกแก้ไขจริงหรือไม่ (ยอมรับค่า 0 ด้วย)
+            const hasActiveValue = pStr !== "" || qStr !== "" || aStr !== "";
 
             if (!hasActiveValue) return undefined;
 
@@ -412,21 +407,34 @@ export default function CompensationRequestDetail({
             };
           };
 
-          const round1 = buildRound(
-            changedItem.allocPercentRound1,
-            changedItem.allocQuotaPercentRound1,
-            changedItem.allocAmountRound1,
-          );
-          const round2 = buildRound(
-            changedItem.allocPercentRound2,
-            changedItem.allocQuotaPercentRound2,
-            changedItem.allocAmountRound2,
-          );
-          const round3 = buildRound(
-            changedItem.allocPercentRound3,
-            changedItem.allocQuotaPercentRound3,
-            changedItem.allocAmountRound3,
-          );
+          const currentRound = groupDetail?.round ?? 1;
+
+          const round1 =
+            currentRound === 1
+              ? buildRound(
+                  changedItem.allocPercentRound1,
+                  changedItem.allocQuotaPercentRound1,
+                  changedItem.allocAmountRound1,
+                )
+              : undefined;
+
+          const round2 =
+            currentRound === 2
+              ? buildRound(
+                  changedItem.allocPercentRound2,
+                  changedItem.allocQuotaPercentRound2,
+                  changedItem.allocAmountRound2,
+                )
+              : undefined;
+
+          const round3 =
+            currentRound === 3
+              ? buildRound(
+                  changedItem.allocPercentRound3,
+                  changedItem.allocQuotaPercentRound3,
+                  changedItem.allocAmountRound3,
+                )
+              : undefined;
 
           const employeeUpdate: any = {};
           if (round1) employeeUpdate.round1 = round1;
@@ -447,32 +455,13 @@ export default function CompensationRequestDetail({
         });
       }
     },
-    [personnelData],
+    [personnelData, groupDetail?.round],
   );
 
   const handleSaveRow = useCallback(
     async (row: ConsultantData, originalRow: ConsultantData) => {
-      // ตรวจรอบ ที่ถูกแก้ไข
-      let editedRound = 1;
-      if (
-        row.allocPercentRound3 !== originalRow.allocPercentRound3 ||
-        row.allocQuotaPercentRound3 !== originalRow.allocQuotaPercentRound3 ||
-        row.allocAmountRound3 !== originalRow.allocAmountRound3
-      ) {
-        editedRound = 3;
-      } else if (
-        row.allocPercentRound2 !== originalRow.allocPercentRound2 ||
-        row.allocQuotaPercentRound2 !== originalRow.allocQuotaPercentRound2 ||
-        row.allocAmountRound2 !== originalRow.allocAmountRound2
-      ) {
-        editedRound = 2;
-      } else if (
-        row.allocPercentRound1 !== originalRow.allocPercentRound1 ||
-        row.allocQuotaPercentRound1 !== originalRow.allocQuotaPercentRound1 ||
-        row.allocAmountRound1 !== originalRow.allocAmountRound1
-      ) {
-        editedRound = 1;
-      }
+      // ใช้รอบปัจจุบันจาก groupDetail?.round โดยตรง
+      const editedRound = groupDetail?.round ?? 1;
 
       let allocPercent: number | null = null;
       let allocAmount: number | null = null;
@@ -556,21 +545,21 @@ export default function CompensationRequestDetail({
         toastError(title, description || c("error-detail"));
       }
     },
-    [saveMutation, groupsId, c],
+    [saveMutation, groupsId, c, groupDetail?.round],
   );
 
   const onSearch = (formData: any) => {
     setFilters({
       ...filters,
       page: 1,
-      requestNo: formData?.requestNo,
-      name: formData?.name,
-      startDate: formData.startDate
-        ? new Date(formData.startDate).getTime()
-        : null,
-      positionId: formData?.positionId,
-      positionLevelId: formData?.positionLevelId,
-      departmentId: formData?.departmentId,
+      // requestNo: formData?.requestNo,
+      // name: formData?.name,
+      // startDate: formData.startDate
+      //   ? new Date(formData.startDate).getTime()
+      //   : null,
+      // positionId: formData?.positionId,
+      // positionLevelId: formData?.positionLevelId,
+      // departmentId: formData?.departmentId,
     });
   };
 
@@ -578,12 +567,12 @@ export default function CompensationRequestDetail({
     setFilters({
       ...filters,
       page: 1,
-      requestNo: "",
-      name: "",
-      startDate: null,
-      positionId: "",
-      positionLevelId: "",
-      departmentId: "",
+      // requestNo: "",
+      // name: "",
+      // startDate: null,
+      // positionId: "",
+      // positionLevelId: "",
+      // departmentId: "",
     });
     setSearchCompensationOpen(false);
   };
