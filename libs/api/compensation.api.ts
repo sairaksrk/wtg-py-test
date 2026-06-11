@@ -28,8 +28,10 @@ export async function getCompensationList(
       params: {
         page: params?.page,
         take: params?.take,
-        ...(params?.search ? { search: params.search } : {}),
-        ...(params?.startDate ? { startDate: params.startDate } : {}),
+        ...(params?.createdAt ? { createdAt: params.createdAt } : {}),
+        ...(params?.name ? { name: params.name } : {}),
+        ...(params?.status ? { status: params.status } : {}),
+        ...(params?.approvedBy ? { approvedBy: params.approvedBy } : {}),
       },
       plugin: "py",
     },
