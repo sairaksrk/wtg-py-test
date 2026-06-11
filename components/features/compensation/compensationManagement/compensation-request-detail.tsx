@@ -224,12 +224,11 @@ export default function CompensationRequestDetail({
     {
       page: 1,
       take: getPageSize(),
-      // requestNo: "",
-      // name: "",
-      // startDate: null,
-      // positionId: "",
-      // positionLevelId: "",
-      // departmentId: "",
+      positionNumber: "",
+      employeeName: "",
+      positionId: "",
+      positionLevelId: "",
+      departmentId: "",
     },
   );
 
@@ -268,11 +267,11 @@ export default function CompensationRequestDetail({
       page: filters.page || 1,
       take: filters.take || 10,
       previewData,
-      // requestNo: filters.requestNo || undefined,
-      // name: filters.name || undefined,
-      // positionId: filters.positionId || undefined,
-      // positionLevelId: filters.positionLevelId || undefined,
-      // departmentId: filters.departmentId || undefined,
+      positionNumber: filters.positionNumber || undefined,
+      employeeName: filters.employeeName || undefined,
+      positionId: filters.positionId || undefined,
+      positionLevelId: filters.positionLevelId || undefined,
+      departmentId: filters.departmentId || undefined,
     }),
     [filters, previewData],
   );
@@ -552,14 +551,11 @@ export default function CompensationRequestDetail({
     setFilters({
       ...filters,
       page: 1,
-      // requestNo: formData?.requestNo,
-      // name: formData?.name,
-      // startDate: formData.startDate
-      //   ? new Date(formData.startDate).getTime()
-      //   : null,
-      // positionId: formData?.positionId,
-      // positionLevelId: formData?.positionLevelId,
-      // departmentId: formData?.departmentId,
+      positionNumber: formData?.positionNumber,
+      employeeName: formData?.employeeName,
+      positionId: formData?.positionId,
+      positionLevelId: formData?.positionLevelId,
+      departmentId: formData?.departmentId,
     });
   };
 
@@ -567,12 +563,11 @@ export default function CompensationRequestDetail({
     setFilters({
       ...filters,
       page: 1,
-      // requestNo: "",
-      // name: "",
-      // startDate: null,
-      // positionId: "",
-      // positionLevelId: "",
-      // departmentId: "",
+      positionNumber: "",
+      employeeName: "",
+      positionId: "",
+      positionLevelId: "",
+      departmentId: "",
     });
     setSearchCompensationOpen(false);
   };

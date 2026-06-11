@@ -148,9 +148,8 @@ export interface GetCompensationPersonnelParams {
   page: number;
   take: number;
   previewData?: PreviewDataItem[];
-  search?: string;
-  requestNo?: string;
-  name?: string;
+  positionNumber?: string;
+  employeeName?: string;
   positionId?: string;
   positionLevelId?: string;
   departmentId?: string;
