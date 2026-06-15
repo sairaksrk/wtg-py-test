@@ -55,7 +55,7 @@ export interface CreditLimitList {
   employeeCount: number;
   totalSalary: number;
   positionLevelNames: string[];
-  allocPercent: number;
+  allocPercent: number | string;
   status: string;
   reviewerName: string | null;
 }
@@ -103,7 +103,7 @@ export interface CompensationGroup {
   reviewerId: string;
   reviewerName?: string | null;
 
-  allocPercent: number;
+  allocPercent: number | string;
   employeeCount: number;
 }
 

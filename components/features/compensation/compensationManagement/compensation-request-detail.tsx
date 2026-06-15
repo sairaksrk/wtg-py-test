@@ -15,7 +15,6 @@ import {
   useDeleteCreditLimitList,
   useGetCompensationGroupDetail,
   useGetCompensationPersonnelList,
-  useGetCompensationRequestById,
   useSaveCompensationGroupItems,
   useUpdateStatusConsider,
 } from "@/libs/query/compensation.queries";
@@ -246,14 +245,10 @@ export default function CompensationRequestDetail({
     error: errorGroupDetail,
   } = useGetCompensationGroupDetail(groupsId || "");
 
-  // ดึงข้อมูลรายการหลักเพื่อเอาชื่อรายการมาแสดงใน Breadcrumb
-  const { data: compensationRequestData } = useGetCompensationRequestById(
-    reqId || "",
-  );
   // Breadcrumb ชื่อรายการหลัก และชื่อกลุ่ม
   useSetBreadcrumb([
     {
-      name: compensationRequestData?.period?.name || "กำลังโหลด...",
+      name: groupDetail?.period?.name || "กำลังโหลด...",
       url: `/manage-compensation/item-request/${reqId}`,
     },
     {
@@ -605,8 +600,6 @@ export default function CompensationRequestDetail({
       minimumFractionDigits: 2,
     }) || "-";
   const isMainBalanceNegative = mainBalance.trim().startsWith("-");
-  // const [status] = useState<string>("รอพิจารณา");
-  // const currentStatus = statusConfig[status] || statusConfig["รอพิจารณา"];
 
   const statusConfig: Record<
     string,
@@ -635,6 +628,16 @@ export default function CompensationRequestDetail({
   const totalPersonnel =
     personnelListResponse?.meta?.itemCount ?? personnelData.length;
   const subGroups = groupDetail?.subGroups || [];
+
+  // จัดรูปแบบเปอร์เซ็นต์ทั้งตัวเลขเดี่ยวและข้อความที่มีสแลชคั่น
+  const formatPercentValue = (val: any) => {
+    if (val === undefined || val === null || val === "") return "-";
+    const str = String(val);
+    if (str.includes("/")) return str; // แสดงผลตรงๆ ตัวหากมีสแลชคั่น
+    const num = parseFloat(str);
+    return isNaN(num) ? str : num.toFixed(2);
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="max-w-full mx-auto px-4">
@@ -713,9 +716,7 @@ export default function CompensationRequestDetail({
                 <div className="flex flex-col gap-1">
                   <span className="text-sm text-subdude">จัดสรรร้อยละ (%)</span>
                   <span className="text-base font-normal text-[#18181B]">
-                    {groupDetail?.budgetPercent?.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                    }) || "-"}
+                    {formatPercentValue(groupDetail?.allocPercent)}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -763,11 +764,7 @@ export default function CompensationRequestDetail({
                     minimumFractionDigits: 2,
                   }) || "0.00"
                 }
-                percent={
-                  sub.budgetPercent?.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                  }) || "0.00"
-                }
+                percent={formatPercentValue(sub.budgetPercent)}
                 allocated={
                   sub.budgetAmount?.toLocaleString(undefined, {
                     minimumFractionDigits: 2,

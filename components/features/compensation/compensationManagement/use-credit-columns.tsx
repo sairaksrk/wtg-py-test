@@ -112,13 +112,21 @@ export function useCreditColumns({
         size: 10,
         cell: ({ row }) => {
           const data = row.original.allocPercent;
-          return (
-            <h1>
-              {data !== undefined && data !== null
-                ? `${Number(data).toFixed(2)} %`
-                : "-"}
-            </h1>
-          );
+
+          if (data === undefined || data === null || data === "") {
+            return <h1>-</h1>;
+          }
+
+          const strVal = String(data);
+
+          // หากมีเครื่องหมายสแลช (/) ให้แสดงผลตรงๆ ตัวตามที่หลังบ้านส่งมาเลย
+          if (strVal.includes("/")) {
+            return <h1>{strVal} %</h1>;
+          }
+
+          // กรณีปกติที่เป็นตัวเลขเดี่ยว ๆ ให้จัดรูปแบบทศนิยม 2 ตำแหน่ง
+          const num = parseFloat(strVal);
+          return <h1>{isNaN(num) ? strVal : `${num.toFixed(2)} %`}</h1>;
         },
       },
       {

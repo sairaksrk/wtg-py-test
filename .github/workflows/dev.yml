@@ -32,7 +32,6 @@ jobs:
           NEXT_PUBLIC_PAGE_SIZE=10
           NEXT_PUBLIC_PAGE_SIZE_MINI=5
           NEXT_PUBLIC_IS_LOCALE=false
-          NEXT_PUBLIC_APP_VERSION=0.0.0.
           EOF
 
       - name: Login Docker
