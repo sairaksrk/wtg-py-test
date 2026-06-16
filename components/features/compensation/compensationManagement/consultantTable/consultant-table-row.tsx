@@ -61,18 +61,6 @@ export function ConsultantTableRow({
     onInputChange(field, value);
   };
 
-  // ฟังก์ชันจัดการการเปลี่ยนค่าเปอร์เซ็นต์ (เก็บเป็น string เพื่อให้พิมพ์จุดทศนิยมได้สะดวก)
-  const handlePercentStringChange = (
-    field: keyof ConsultantData,
-    value: string,
-  ) => {
-    // อนุญาตให้พิมพ์ตัวเลขและจุดทศนิยมเพียงจุดเดียว
-    const cleanValue = value
-      .replace(/[^0-9.]/g, "")
-      .replace(/(\..*?)\..*/g, "$1");
-    onInputChange(field, cleanValue);
-  };
-
   // ฟังก์ชันควบคุมโควตาจัดสรรร้อยละ (รวมกัน 3 รอบต้องไม่เกิน 3%)
   const handleLimitChange = (
     field: "allocPercentRound1" | "allocPercentRound2" | "allocPercentRound3",
@@ -112,6 +100,48 @@ export function ConsultantTableRow({
     }
   };
 
+  // ฟังก์ชันควบคุมโควตาผลพิจารณาร้อยละ (รวมกัน 3 รอบต้องไม่เกิน 6%)
+  const handleQuotaLimitChange = (
+    field:
+      | "allocQuotaPercentRound1"
+      | "allocQuotaPercentRound2"
+      | "allocQuotaPercentRound3",
+    value: string,
+  ) => {
+    const cleanValue = value
+      .replace(/[^0-9.]/g, "")
+      .replace(/(\..*?)\..*/g, "$1");
+
+    if (cleanValue === "" || cleanValue === ".") {
+      onInputChange(field, cleanValue);
+      return;
+    }
+
+    const parsed = parseFloat(cleanValue);
+    if (isNaN(parsed)) return;
+
+    const otherFields = (
+      [
+        "allocQuotaPercentRound1",
+        "allocQuotaPercentRound2",
+        "allocQuotaPercentRound3",
+      ] as const
+    ).filter((f) => f !== field);
+
+    const otherSum = otherFields.reduce(
+      (sum, f) => sum + (parseFloat(String(displayRow[f])) || 0),
+      0,
+    );
+
+    const maxAllowed = Math.max(0, 6 - otherSum);
+
+    if (parsed > maxAllowed) {
+      onInputChange(field, maxAllowed.toString());
+    } else {
+      onInputChange(field, cleanValue);
+    }
+  };
+
   return (
     <TableRow
       onDoubleClick={() => !readOnly && onEditClick(row)}
@@ -123,9 +153,7 @@ export function ConsultantTableRow({
       <TableCell className="py-5 text-foreground">{row.positionNo}</TableCell>
       <TableCell className="py-5">
         <div className="flex flex-col">
-          <span className="text-foreground text-base">
-            {row.name}
-          </span>
+          <span className="text-foreground text-base">{row.name}</span>
           <span className="text-sm text-subdude">{row.subPosition}</span>
         </div>
       </TableCell>
@@ -247,10 +275,7 @@ export function ConsultantTableRow({
           <Input
             value={displayRow.allocQuotaPercentRound1 ?? ""}
             onChange={(e) =>
-              handlePercentStringChange(
-                "allocQuotaPercentRound1",
-                e.target.value,
-              )
+              handleQuotaLimitChange("allocQuotaPercentRound1", e.target.value)
             }
             className="h-11 rounded-xl"
             iconPosition="right"
@@ -299,7 +324,7 @@ export function ConsultantTableRow({
               <Input
                 value={displayRow.allocQuotaPercentRound2 ?? ""}
                 onChange={(e) =>
-                  handlePercentStringChange(
+                  handleQuotaLimitChange(
                     "allocQuotaPercentRound2",
                     e.target.value,
                   )
@@ -353,7 +378,7 @@ export function ConsultantTableRow({
               <Input
                 value={displayRow.allocQuotaPercentRound3 ?? ""}
                 onChange={(e) =>
-                  handlePercentStringChange(
+                  handleQuotaLimitChange(
                     "allocQuotaPercentRound3",
                     e.target.value,
                   )
