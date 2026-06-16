@@ -764,7 +764,7 @@ export default function CompensationRequestDetail({
                     minimumFractionDigits: 2,
                   }) || "0.00"
                 }
-                percent={formatPercentValue(sub.budgetPercent)}
+                percent={formatPercentValue(sub.allocPercent)}
                 allocated={
                   sub.budgetAmount?.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
