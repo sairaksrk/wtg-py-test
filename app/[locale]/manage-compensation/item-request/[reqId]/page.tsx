@@ -12,7 +12,7 @@ import {
   getReviewerList,
   getStructureUnitList,
 } from "@/libs/api/master.api";
-import { masterKeys } from "@/libs/query/master.queries";
+import { masterKeys, useGetPermissions } from "@/libs/query/master.queries";
 
 interface CompensationRequestPageProps {
   params: Promise<{ reqId: any; locale: string }>;
@@ -53,9 +53,14 @@ export default async function CompensationRequestPage({
     queryFn: () => getGroupsListCheckBox(reqId),
   });
 
+  await client.prefetchQuery({
+    queryKey: masterKeys.permissions(),
+    queryFn: () => useGetPermissions(),
+  });
+
   return (
-    // <Hydrate state={dehydrate(client)}>
-    <Hydrate state={null}>
+    <Hydrate state={dehydrate(client)}>
+      {/* <Hydrate state={null}> */}
       <CompensationRequestForm reqId={reqId} />
     </Hydrate>
   );

@@ -4,6 +4,7 @@ import { getCompensationList } from "@/libs/api/compensation.api";
 import { dehydrate } from "@tanstack/react-query";
 import { queryClient } from "@/libs/query/client";
 import { compensationKeys } from "@/libs/query/compensation.queries";
+import { masterKeys, useGetPermissions } from "@/libs/query/master.queries";
 
 /**
  * Server Component - PY Table Compensation Information Page
@@ -21,9 +22,14 @@ export default async function CompensationListPage() {
     queryFn: () => getCompensationList(defaultParams),
   });
 
+  await client.prefetchQuery({
+    queryKey: masterKeys.permissions(),
+    queryFn: () => useGetPermissions(),
+  });
+
   return (
-    // <Hydrate state={dehydrate(client)}>
-    <Hydrate state={null}>
+    <Hydrate state={dehydrate(client)}>
+      {/* <Hydrate state={null}> */}
       <CompensationList />
     </Hydrate>
   );
