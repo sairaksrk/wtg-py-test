@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { ApiError, ApiErrorPayload } from "@/types/api";
+import { authClient } from "../auth/auth-client";
 
 // 1. The Base Config
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
@@ -77,15 +78,11 @@ export async function api<T = any>(
   url: string,
   data?: any,
   config: AxiosRequestConfig & {
-    plugin?:
-      | "plugin"
-      | "core"
-      | "storage"
-      | "master"
-      | "master-data-rp"
-      | "master-data-py"
-      | "rp"
-      | "py";
+    plugin?: "plugin" | "core" | "storage" | "master";
+    // | "master-data-rp"
+    // | "master-data-py"
+    // | "rp"
+    // | "py";
   } = {},
 ): Promise<T> {
   const isServer = typeof window === "undefined";
@@ -94,8 +91,8 @@ export async function api<T = any>(
     "x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY),
     "x-internal-secret": String(process.env.NEXT_PUBLIC_INTERNAL_SECRET),
     // ในอนาคตควรดึงจาก Session แต่ตอนนี้ใส่เป็นค่าคงที่
-    "x-user-id": "user-e01",
-    "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
+    // "x-user-id": "user-e01",
+    // "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
     ...(config.headers || {}),
   };
   const configWithPlugin = { ...config, plugin: config.plugin || "plugin" };
@@ -116,18 +113,18 @@ export async function api<T = any>(
     case "master":
       baseUrl = `${BASE_URL}/api/master`;
       break;
-    case "master-data-rp":
-      baseUrl = `${BASE_URL}/api/rp/master-data`;
-      break;
-    case "master-data-py":
-      baseUrl = `${BASE_URL}/api/py/master-data`;
-      break;
-    case "rp":
-      baseUrl = `${BASE_URL}/api/rp`;
-      break;
-    case "py":
-      baseUrl = `${BASE_URL}/api/py`;
-      break;
+    // case "master-data-rp":
+    //   baseUrl = `${BASE_URL}/api/rp/master-data`;
+    //   break;
+    // case "master-data-py":
+    //   baseUrl = `${BASE_URL}/api/py/master-data`;
+    //   break;
+    // case "rp":
+    //   baseUrl = `${BASE_URL}/api/rp`;
+    //   break;
+    // case "py":
+    //   baseUrl = `${BASE_URL}/api/py`;
+    //   break;
     default:
       baseUrl = `${BASE_URL}/api`;
       break;
@@ -149,6 +146,9 @@ export async function api<T = any>(
       .join("; ");
     // 2. Attach Cookies
     headers.Cookie = allCookies;
+
+    headers["x-user-id"] = headersList.get("x-user-id") || "";
+    headers["x-organization-id"] = headersList.get("x-organization-id") || "";
 
     const locale =
       cookieStore.get(LOCALE_COOKIE_NAME)?.value ||
@@ -177,12 +177,23 @@ export async function api<T = any>(
       });
 
       // Add Interceptors only once per plugin instance
-      clientInstances[pluginKey].interceptors.request.use((cfg) => {
+      clientInstances[pluginKey].interceptors.request.use(async (cfg) => {
         // 2. Attach Language
         // Helper to read cookie on client side
         const locale =
           getClientCookie(LOCALE_COOKIE_NAME) || navigator.language || "th";
         cfg.headers["Accept-Language"] = locale;
+        const session = await authClient.getSession();
+        if (session?.data?.user) {
+          cfg.headers["x-user-id"] = session.data.user.id;
+          cfg.headers["x-organization-id"] =
+            (session.data.user as any).organizationId || "";
+        }
+
+        // DEBUG: (F12)
+        // console.log(
+        //   `[Client API] ${cfg.method?.toUpperCase()} ${cfg.url} | User: ${cfg.headers["x-user-id"]} | Org: ${cfg.headers["x-organization-id"]}`,
+        // );
         return cfg;
       });
     }

@@ -15,6 +15,8 @@ import type {
 } from "@/types/compensation";
 import { api } from "./api";
 
+const BASE = "/py";
+
 // หน้า 1 จัดการค่าตอบแทน - ดึงข้อมูล จัดการค่าตอบแทน Get All
 
 export async function getCompensationList(
@@ -22,7 +24,7 @@ export async function getCompensationList(
 ): Promise<PaginatedResponse<CompensationList>> {
   return api<PaginatedResponse<CompensationList>>(
     "GET",
-    "/payroll/increment/rounds",
+    `${BASE}/payroll/increment/rounds`,
     undefined,
     {
       params: {
@@ -33,7 +35,7 @@ export async function getCompensationList(
         ...(params?.status ? { status: params.status } : {}),
         ...(params?.approvedBy ? { approvedBy: params.approvedBy } : {}),
       },
-      plugin: "py",
+      plugin: "plugin",
     },
   );
 }
@@ -43,8 +45,8 @@ export async function getCompensationList(
 export async function createCompensationItem(
   payload: CreateCompensationItem,
 ): Promise<{ id: string }> {
-  return api("POST", `/payroll/increment/rounds`, payload, {
-    plugin: "py",
+  return api("POST", `${BASE}/payroll/increment/rounds`, payload, {
+    plugin: "plugin",
   });
 }
 
@@ -53,8 +55,8 @@ export async function createCompensationItem(
 export async function deleteCompensationItem(
   id: string,
 ): Promise<{ id: string }> {
-  return api("DELETE", `/payroll/increment/rounds/${id}`, undefined, {
-    plugin: "py",
+  return api("DELETE", `${BASE}/payroll/increment/rounds/${id}`, undefined, {
+    plugin: "plugin",
   });
 }
 
@@ -63,8 +65,8 @@ export async function deleteCompensationItem(
 export async function updateCompensationItem(
   payload: UpdateCompensationItem,
 ): Promise<{ id: string }> {
-  return api("POST", `/payroll/increment/rounds`, payload, {
-    plugin: "py",
+  return api("POST", `${BASE}/payroll/increment/rounds`, payload, {
+    plugin: "plugin",
   });
 }
 
@@ -75,10 +77,10 @@ export async function getCompensationItemById(
 ): Promise<CompensationItem> {
   return api<CompensationItem>(
     "GET",
-    `/payroll/increment/rounds/${reqId}`,
+    `${BASE}/payroll/increment/rounds/${reqId}`,
     undefined,
     {
-      plugin: "py",
+      plugin: "plugin",
     },
   );
 }
@@ -91,14 +93,14 @@ export async function getCompensationRequestById(
 ): Promise<CompensationRequestData> {
   return api<CompensationRequestData>(
     "GET",
-    `/payroll/master/increment-groups/${reqId}`,
+    `${BASE}/payroll/master/increment-groups/${reqId}`,
     undefined,
     {
       params: {
         page: params?.page,
         take: params?.take,
       },
-      plugin: "py",
+      plugin: "plugin",
     },
   );
 }
@@ -108,12 +110,17 @@ export async function getCompensationRequestById(
 export async function getGroupsListCheckBox(
   reqId: string,
 ): Promise<GroupItem[]> {
-  return api<GroupItem[]>("GET", `/payroll/master/groups/options`, undefined, {
-    params: {
-      periodId: reqId,
+  return api<GroupItem[]>(
+    "GET",
+    `${BASE}/payroll/master/groups/options`,
+    undefined,
+    {
+      params: {
+        periodId: reqId,
+      },
+      plugin: "plugin",
     },
-    plugin: "py",
-  });
+  );
 }
 
 // หน้า 2 - Modal เพิ่ม รายการบริหารวงเงิน
@@ -121,17 +128,22 @@ export async function getGroupsListCheckBox(
 export async function createCreditLimitList(
   payload: CreateCreditLimit,
 ): Promise<{ payrollPeriodId: string }> {
-  return api("POST", `/payroll/increment/groups`, payload, {
-    plugin: "py",
+  return api("POST", `${BASE}/payroll/increment/groups`, payload, {
+    plugin: "plugin",
   });
 }
 
 // หน้า 2 - ลบ รายการบริหารวงเงิน
 
 export async function deleteCreditLimitList(id: string): Promise<void> {
-  return api<void>("DELETE", `/payroll/increment/groups/${id}`, undefined, {
-    plugin: "py",
-  });
+  return api<void>(
+    "DELETE",
+    `${BASE}/payroll/increment/groups/${id}`,
+    undefined,
+    {
+      plugin: "plugin",
+    },
+  );
 }
 
 // หน้า 3 - ดึงข้อมูลรายละเอียดกลุ่มบริหารวงเงินตาม groupsId
@@ -141,10 +153,10 @@ export async function getCompensationGroupDetail(
 ): Promise<any> {
   return api<any>(
     "GET",
-    `/payroll/master/increment-groups/detail/${groupsId}`,
+    `${BASE}/payroll/master/increment-groups/detail/${groupsId}`,
     undefined,
     {
-      plugin: "py",
+      plugin: "plugin",
     },
   );
 }
@@ -152,17 +164,27 @@ export async function getCompensationGroupDetail(
 // หน้า 2 - ปุ่ม บันทึกการนำส่ง Update Status นำส่งเอกสาร (รอทำ)
 
 export async function updateSubmitDeliver(reqId: string): Promise<void> {
-  return api("POST", `/payroll/increment/rounds/${reqId}/submit`, undefined, {
-    plugin: "py",
-  });
+  return api(
+    "POST",
+    `${BASE}/payroll/increment/rounds/${reqId}/submit`,
+    undefined,
+    {
+      plugin: "plugin",
+    },
+  );
 }
 
 // หน้า 2 - ปุ่ม เสร็จสิ้น Update Status เสร็จสิ้น (รอทำ)
 
 export async function updateSubmitSuccess(reqId: string): Promise<void> {
-  return api("POST", `/payroll/increment/rounds/${reqId}/finish`, undefined, {
-    plugin: "py",
-  });
+  return api(
+    "POST",
+    `${BASE}/payroll/increment/rounds/${reqId}/finish`,
+    undefined,
+    {
+      plugin: "plugin",
+    },
+  );
 }
 
 // หน้า 3 - ดึงรายชื่อพนักงานในกลุ่มพร้อมผลคะแนนประเมินและการจัดสรร
@@ -174,10 +196,10 @@ export async function getCompensationPersonnelList(
 ): Promise<any> {
   return api<any>(
     "POST",
-    `/payroll/increment/list/${reqId}/${groupsId}`,
+    `${BASE}/payroll/increment/list/${reqId}/${groupsId}`,
     body,
     {
-      plugin: "py",
+      plugin: "plugin",
     },
   );
 }
@@ -188,9 +210,14 @@ export async function saveCompensationGroupItems(
   groupsId: string,
   payload: SaveCompensationPayload,
 ): Promise<void> {
-  return api("POST", `/payroll/increment/groups/${groupsId}/save`, payload, {
-    plugin: "py",
-  });
+  return api(
+    "POST",
+    `${BASE}/payroll/increment/groups/${groupsId}/save`,
+    payload,
+    {
+      plugin: "plugin",
+    },
+  );
 }
 
 // หน้า 3 - กดปุ่ม พิจารณาเสร็จสิ้น
@@ -198,10 +225,10 @@ export async function saveCompensationGroupItems(
 export async function updateStatusConsider(groupsId: string): Promise<void> {
   return api(
     "POST",
-    `/payroll/increment/groups/${groupsId}/submit`,
+    `${BASE}/payroll/increment/groups/${groupsId}/submit`,
     undefined,
     {
-      plugin: "py",
+      plugin: "plugin",
     },
   );
 }

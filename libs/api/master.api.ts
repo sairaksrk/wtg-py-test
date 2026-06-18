@@ -1,6 +1,8 @@
 import { MasterSelectProps } from "@/types/api";
 import { api } from "./api";
 
+const BASE = "/py";
+
 // ประเภทและระดับตำแหน่ง PY
 
 export async function getPositionTypeLevelList(params?: {
@@ -8,10 +10,10 @@ export async function getPositionTypeLevelList(params?: {
 }): Promise<MasterSelectProps[]> {
   return api<MasterSelectProps[]>(
     "GET",
-    `/payroll/master/position-levels`,
+    `${BASE}/payroll/master/position-levels`,
     undefined,
     {
-      plugin: "py",
+      plugin: "plugin",
       params,
     },
   );
@@ -22,8 +24,8 @@ export async function getPositionTypeLevelList(params?: {
 export async function getStructureUnitList(params?: {
   lang?: string;
 }): Promise<MasterSelectProps[]> {
-  return api<MasterSelectProps[]>("GET", `/payroll/master/units`, undefined, {
-    plugin: "py",
+  return api<MasterSelectProps[]>("GET", `${BASE}/payroll/master/units`, undefined, {
+    plugin: "plugin",
     params,
   });
 }
@@ -35,10 +37,10 @@ export async function getReviewerList(params?: {
 }): Promise<MasterSelectProps[]> {
   return api<MasterSelectProps[]>(
     "GET",
-    `/master-data/reviewers/options`,
+    `${BASE}/master-data/reviewers/options`,
     undefined,
     {
-      plugin: "py",
+      plugin: "plugin",
       params,
     },
   );

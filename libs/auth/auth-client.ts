@@ -2,7 +2,7 @@ import { customSessionClient, usernameClient } from "better-auth/client/plugins"
 import { createAuthClient } from "better-auth/react"
 
 export const authClient = createAuthClient({
-	baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/auth`, // Points to NestJS Backend
+	baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/core/auth`, // Points to NestJS Backend
 	fetchOptions: {
 		// Required so browser will store/send Better Auth cookies.
 		credentials: "include",
