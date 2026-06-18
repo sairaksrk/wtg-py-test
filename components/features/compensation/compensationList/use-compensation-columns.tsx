@@ -8,6 +8,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
 import { CompensationList } from "@/types/compensation";
+import { useGetPermissions } from "@/libs/query/master.queries";
 
 interface UseCompensationColumnsProps {
   onEdit?: (id: string) => void;
@@ -40,6 +41,8 @@ export function useCompensationColumns({
   const { formatToBuddhist } = useDateFormatter();
   const router = useRouter();
   const c = useTranslations("common");
+
+  const { data: permissionsData } = useGetPermissions();
 
   const columns: ColumnDef<CompensationList>[] = useMemo(() => {
     return [
@@ -110,50 +113,50 @@ export function useCompensationColumns({
         header: c("tools"),
         size: 10,
         cell: ({ row }) => {
-          const status = row.original.status;
+          const { id, status } = row.original;
 
-          return (
-            <div className="flex items-center gap-2">
-              {status === "success" ? (
+          const canViewOnly =
+            status === "success" ||
+            (status === "submitted" && permissionsData?.isHR === false);
+
+          if (canViewOnly) {
+            return (
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() =>
-                    router.push(
-                      `/manage-compensation/item-request/${row.original.id}`,
-                    )
+                    router.push(`/manage-compensation/item-request/${id}`)
                   }
                   title={c("view-item")}
                   className="text-black hover:text-black"
                 >
                   <Icon icon="solar:eye-outline" className="size-4" />
                 </Button>
-              ) : (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEdit?.(row.original.id)}
-                    title={c("edit-item")}
-                    className="text-black hover:text-black"
-                  >
-                    <Icon icon="solar:pen-outline" className="size-4" />
-                  </Button>
+              </div>
+            );
+          }
+          return (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onEdit?.(id)}
+                title={c("edit-item")}
+                className="text-black hover:text-black"
+              >
+                <Icon icon="solar:pen-outline" className="size-4" />
+              </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onDelete?.(row.original.id)}
-                    title={c("delete-item")}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Icon
-                      icon="solar:trash-bin-trash-outline"
-                      className="size-4"
-                    />
-                  </Button>
-                </>
-              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onDelete?.(id)}
+                title={c("delete-item")}
+                className="text-destructive hover:text-destructive"
+              >
+                <Icon icon="solar:trash-bin-trash-outline" className="size-4" />
+              </Button>
             </div>
           );
         },

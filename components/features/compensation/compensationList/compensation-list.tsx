@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAlert } from "@/components/common/alert-provider";
 import Loading from "@/components/common/loading";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ import {
   useDeleteCompensationItem,
   useGetCompensationList,
 } from "@/libs/query/compensation.queries";
+import { useGetPermissions } from "@/libs/query/master.queries";
 
 export default function CompensationList() {
   const router = useRouter();
@@ -50,6 +51,23 @@ export default function CompensationList() {
     id: null,
     state: false,
   });
+
+  const { data: permissionsData } = useGetPermissions();
+
+  // useEffect(() => {
+  //   if (permissionsData) {
+  //     sessionStorage.setItem(
+  //       "permissions",
+  //       JSON.stringify({
+  //         isHR: permissionsData.isHR,
+  //         isReviewer: permissionsData.isReviewer,
+  //         roleName: permissionsData.roleName,
+  //       }),
+  //     );
+  //   }
+  // }, [permissionsData]);
+
+  // const permission = usePermissionStorage();
 
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_SESSION_KEY,
@@ -170,17 +188,20 @@ export default function CompensationList() {
               <h1 className="text-xl font-medium">{menuName}</h1>
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                onClick={() =>
-                  setItemManagementModalOpen({ id: null, state: true })
-                }
-                disabled={isLoading}
-              >
-                <Icon icon="solar:add-circle-outline" />
-                {c("button.add-item")}
-                {/* เพิ่มรายการ */}
-              </Button>
+              {permissionsData?.isHR === true && (
+                <Button
+                  type="button"
+                  onClick={() =>
+                    setItemManagementModalOpen({ id: null, state: true })
+                  }
+                  disabled={isLoading}
+                >
+                  <Icon icon="solar:add-circle-outline" />
+                  {c("button.add-item")}
+                  {/* เพิ่มรายการ */}
+                </Button>
+              )}
+
               <Popover
                 open={searchCompensationOpen}
                 onOpenChange={setSearchCompensationOpen}
