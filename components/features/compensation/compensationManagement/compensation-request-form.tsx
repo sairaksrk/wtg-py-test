@@ -39,6 +39,7 @@ import {
 import { useDateFormatter } from "@/hooks/use-date-formatter";
 import ErrorComponent from "@/components/common/error";
 import { useSetBreadcrumb } from "@/hooks/breadcrumb/use-set-breadcrumb";
+import { useGetPermissions } from "@/libs/query/master.queries";
 
 interface RequestFormProps {
   reqId: string;
@@ -62,6 +63,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     state: false,
   });
   const [exportCompensationOpen, setExportCompensationOpen] = useState(false);
+
+  const { data: permissionsData } = useGetPermissions();
 
   const [filters, setFilters] = useTableState<CompensationListParams>(
     CREDIT_LIMIT_LIST_SESSION_KEY,
@@ -364,21 +367,24 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                             {compensationRequestData?.period?.name ?? "-"}
                           </h1>
                         </CardTitle>
-                        {status === "draft" || status === "reviewing" ? (
-                          <Button
-                            type="button"
-                            className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                            onClick={() =>
-                              setItemManagementModalOpen({
-                                id: compensationRequestData?.period?.id || null,
-                                state: true,
-                              })
-                            }
-                          >
-                            <Icon icon="solar:pen-outline" />
-                            จัดการข้อมูล
-                          </Button>
-                        ) : null}
+
+                        {(status === "draft" || status === "reviewing") &&
+                          permissionsData?.isHR === true && (
+                            <Button
+                              type="button"
+                              className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
+                              onClick={() =>
+                                setItemManagementModalOpen({
+                                  id:
+                                    compensationRequestData?.period?.id || null,
+                                  state: true,
+                                })
+                              }
+                            >
+                              <Icon icon="solar:pen-outline" />
+                              จัดการข้อมูล
+                            </Button>
+                          )}
                       </div>
 
                       <div className="flex items-start justify-start gap-4 mt-2">
@@ -442,65 +448,73 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                         </div>
                       </CardTitle>
 
-                      <div className="flex items-center gap-2">
-                        {status == "draft" ||
-                        status == "reviewing" ||
-                        status == "pending" ? (
-                          <Button
-                            type="button"
-                            onClick={() =>
-                              setCreditManagementModalOpen({
-                                id: null,
-                                state: true,
-                              })
-                            }
-                            disabled={isLoading}
-                          >
-                            <Icon icon="solar:add-circle-outline" />
-                            {c("button.add-item")}
-                            {/* เพิ่มรายการ */}
-                          </Button>
-                        ) : (
-                          <Popover
-                            open={exportCompensationOpen}
-                            onOpenChange={setExportCompensationOpen}
-                          >
-                            <PopoverTrigger asChild>
-                              <Button
-                                type="button"
-                                className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
-                              >
-                                <Icon icon="solar:download-minimalistic-linear" />
-                                ออกรายงาน
-                                <Icon icon="solar:alt-arrow-down-linear" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              align="end"
-                              className="w-[230px] overflow-hidden rounded-2xl border-none shadow-2xl mt-2"
+                      {permissionsData?.isHR === true && (
+                        <div className="flex items-center gap-2">
+                          {status == "draft" ||
+                          status == "reviewing" ||
+                          status == "pending" ? (
+                            <Button
+                              type="button"
+                              onClick={() =>
+                                setCreditManagementModalOpen({
+                                  id: null,
+                                  state: true,
+                                })
+                              }
+                              disabled={isLoading}
                             >
-                              <div className="flex flex-col gap-4 p-2 text-black w-full cursor-pointer">
-                                <div className="flex gap-4" onClick={onExport1}>
-                                  <Icon
-                                    className="w-4 h-4"
-                                    icon="solar:download-minimalistic-linear"
-                                  />
-                                  บัญชีรายละเอียดการเลื่อนเงิน <br />
-                                  เดือนข้าราชการ
+                              <Icon icon="solar:add-circle-outline" />
+                              {c("button.add-item")}
+                              {/* เพิ่มรายการ */}
+                            </Button>
+                          ) : (
+                            <Popover
+                              open={exportCompensationOpen}
+                              onOpenChange={setExportCompensationOpen}
+                            >
+                              <PopoverTrigger asChild>
+                                <Button
+                                  type="button"
+                                  className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
+                                >
+                                  <Icon icon="solar:download-minimalistic-linear" />
+                                  ออกรายงาน
+                                  <Icon icon="solar:alt-arrow-down-linear" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                align="end"
+                                className="w-[230px] overflow-hidden rounded-2xl border-none shadow-2xl mt-2"
+                              >
+                                <div className="flex flex-col gap-4 p-2 text-black w-full cursor-pointer">
+                                  <div
+                                    className="flex gap-4"
+                                    onClick={onExport1}
+                                  >
+                                    <Icon
+                                      className="w-4 h-4"
+                                      icon="solar:download-minimalistic-linear"
+                                    />
+                                    บัญชีรายละเอียดการเลื่อนเงิน <br />
+                                    เดือนข้าราชการ
+                                  </div>
+                                  <div
+                                    className="flex gap-4"
+                                    onClick={onExport2}
+                                  >
+                                    <Icon
+                                      className="w-4 h-4"
+                                      icon="solar:download-minimalistic-linear"
+                                    />
+                                    รายชื่อข้าราชการผู้มีผล <br />
+                                    ประเมินระดับดีเด่นและดีมาก
+                                  </div>
                                 </div>
-                                <div className="flex gap-4" onClick={onExport2}>
-                                  <Icon
-                                    className="w-4 h-4"
-                                    icon="solar:download-minimalistic-linear"
-                                  />
-                                  รายชื่อข้าราชการผู้มีผล <br />
-                                  ประเมินระดับดีเด่นและดีมาก
-                                </div>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        )}
-                      </div>
+                              </PopoverContent>
+                            </Popover>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -581,7 +595,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         </main>
       </div>
 
-      {status !== "success" && (
+      {status !== "success" && permissionsData?.isHR !== false && (
         <footer className="sticky bottom-0 z-10 rounded-full bg-white px-6 py-4">
           <div className="flex items-center justify-between gap-3">
             {status === "draft" || status === "reviewing" ? (

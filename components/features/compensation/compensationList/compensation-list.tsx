@@ -54,21 +54,6 @@ export default function CompensationList() {
 
   const { data: permissionsData } = useGetPermissions();
 
-  // useEffect(() => {
-  //   if (permissionsData) {
-  //     sessionStorage.setItem(
-  //       "permissions",
-  //       JSON.stringify({
-  //         isHR: permissionsData.isHR,
-  //         isReviewer: permissionsData.isReviewer,
-  //         roleName: permissionsData.roleName,
-  //       }),
-  //     );
-  //   }
-  // }, [permissionsData]);
-
-  // const permission = usePermissionStorage();
-
   const [filters, setFilters] = useTableState<CompensationListParams>(
     COMPENSATION_SESSION_KEY,
     {
