@@ -21,7 +21,7 @@ jobs:
       - name: Create .env
         run: |
           cat <<EOF > .env
-          NEXT_PUBLIC_BASE_URL=http://${{ secrets.SERVER_HOST }}:3003
+          NEXT_PUBLIC_BASE_URL=http://${{ secrets.SERVER_HOST }}
           NEXT_PUBLIC_CORE_URL=http://${{ secrets.SERVER_HOST }}:3000
           NEXT_PUBLIC_API_URL=http://159.65.6.121
           NEXT_PUBLIC_STORAGE_URL=http://159.65.6.121
