@@ -3,7 +3,7 @@ import { ApiError, ApiErrorPayload } from "@/types/api";
 import { authClient } from "../auth/auth-client";
 
 // 1. The Base Config
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE"; // Standard for next-intl
 
 // 2. Client-Side Singletons per plugin (Reuse to keep interceptors alive)
