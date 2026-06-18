@@ -168,3 +168,10 @@ export interface SaveCompensationItem {
 export interface SaveCompensationPayload {
   items: SaveCompensationItem[];
 }
+
+export interface MasterPermissionProps {
+  userId: string;
+  roleName: string;
+  isHR: boolean;
+  isReviewer: boolean;
+}

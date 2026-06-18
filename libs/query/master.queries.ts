@@ -1,10 +1,12 @@
 import type { ApiError, MasterSelectProps } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 import {
+  getPermission,
   getPositionTypeLevelList,
   getReviewerList,
   getStructureUnitList,
 } from "../api/master.api";
+import { MasterPermissionProps } from "@/types/compensation";
 
 /**
  * Query keys for master-related queries
@@ -17,6 +19,7 @@ export const masterKeys = {
   positionTypeLevels: () =>
     [...masterKeys.all, "position-type-levels"] as const,
   reviewer: () => [...masterKeys.all, "reviewer"] as const,
+  permissions: () => [...masterKeys.all, "permissions"] as const,
 };
 
 // ประเภทและระดับตำแหน่ง PY
@@ -51,6 +54,18 @@ export function useGetReviewerList() {
     queryFn: async () => {
       const response = await getReviewerList();
       return Array.isArray(response) ? response : [];
+    },
+  });
+}
+
+// Permissions
+
+export function useGetPermissions() {
+  return useQuery<MasterPermissionProps, ApiError>({
+    queryKey: masterKeys.permissions(),
+    queryFn: async () => {
+      const response = await getPermission();
+      return response;
     },
   });
 }
