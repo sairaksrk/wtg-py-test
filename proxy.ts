@@ -112,99 +112,135 @@ export const config = {
   ],
 };
 
-// import type { NextRequest } from "next/server"
-// import console from "node:console"
-// import createMiddleware from "next-intl/middleware"
-// import { NextResponse } from "next/server"
-// import { routing } from "./i18n/routing"
+// import type { NextRequest } from "next/server";
+// import console from "node:console";
+// import createMiddleware from "next-intl/middleware";
+// import { NextResponse } from "next/server";
+// import { routing } from "./i18n/routing";
 
 // // List of paths that don't require authentication (without locale prefix)
-// const publicPaths = ["/login", "/api/auth"]
+// const publicPaths = ["/login", "/api/auth", "/api/core/auth"];
 
 // // Helper function to check if path is public (handles locale prefixes)
 // function isPublicPath(pathname: string): boolean {
-// 	const pathnameWithoutLocale = pathname.replace(/^\/en/, "")
-// 	return publicPaths.some(path => pathnameWithoutLocale.startsWith(path))
+//   // Remove locale prefix if present (only /en for as-needed strategy)
+//   const pathnameWithoutLocale = pathname.replace(/^\/en/, "");
+//   return publicPaths.some((path) => pathnameWithoutLocale.startsWith(path));
 // }
 
 // // Helper function to get locale from pathname
 // function getLocaleFromPath(pathname: string): "th" | "en" {
-// 	return pathname.startsWith("/en") ? "en" : "th"
+//   // With as-needed strategy: /en/* is English, everything else is Thai (default)
+//   return pathname.startsWith("/en") ? "en" : "th";
 // }
 
 // export async function proxy(request: NextRequest) {
-// 	const { pathname } = request.nextUrl
+//   const { pathname } = request.nextUrl;
 
-// 	// Step 1: Handle next-intl routing first
-// 	const handleI18nRouting = createMiddleware(routing)
-// 	const i18nResponse = handleI18nRouting(request)
+//   // Step 1: Handle next-intl routing first
+//   const handleI18nRouting = createMiddleware(routing);
+//   const i18nResponse = handleI18nRouting(request);
 
-// 	if (i18nResponse.status === 307 || i18nResponse.status === 308) {
-// 		return i18nResponse
-// 	}
+//   // If next-intl wants to redirect (e.g., adding default locale), let it
+//   if (i18nResponse.status === 307 || i18nResponse.status === 308) {
+//     return i18nResponse;
+//   }
 
-// 	// --- DEVELOPMENT BYPASS ---
-// 	// ถ้าต้องการเทสหน้าจอโดยไม่มี Backend ให้ตั้งค่า SKIP_AUTH=true ใน .env
-// 	if (process.env.NEXT_PUBLIC_SKIP_AUTH === "true") {
-// 		return i18nResponse
-// 	}
-// 	// --------------------------
+//   const coreBaseUrl = process.env.NEXT_PUBLIC_CORE_URL || "";
+//   const loginUrl = new URL(`${coreBaseUrl}/login`, request.url);
 
-// 	const coreBaseUrl = process.env.NEXT_PUBLIC_CORE_URL || ""
-// 	const loginUrl = new URL(`${coreBaseUrl}/login`, request.url)
-// 	const currentPath = process.env.NEXT_PUBLIC_BASE_URL + request.nextUrl.pathname + request.nextUrl.search
-// 	loginUrl.searchParams.set("redirect", currentPath)
+//   // Pass current path as "redirect" param (encoded) to redirect back after login
+//   const currentPath =
+//     process.env.NEXT_PUBLIC_BASE_URL +
+//     request.nextUrl.pathname +
+//     request.nextUrl.search;
+//   loginUrl.searchParams.set("redirect", currentPath);
 
-// 	const isPublic = isPublicPath(pathname)
-// 	const pathnameWithoutLocale = pathname.replace(/^\/en/, "")
-// 	const isLogin = pathnameWithoutLocale === "/login"
+//   // Check if current path is public
+//   const isPublic = isPublicPath(pathname);
+//   const pathnameWithoutLocale = pathname.replace(/^\/en/, "");
+//   const isLogin = pathnameWithoutLocale === "/login";
 
-// 	if (isPublic) {
-// 		return i18nResponse
-// 	}
+//   if (isPublic) {
+//     return i18nResponse;
+//   }
 
-// 	const sessionCookie = request.cookies.get("better-auth.session_token")
-// 		|| request.cookies.get("__Secure-better-auth.session_token")
+//   // 1. Check if the session cookie exists at all
+//   let sessionCookie =
+//     request.cookies.get("better-auth.session_token") ||
+//     request.cookies.get("__Secure-better-auth.session_token");
 
-// 	if (!sessionCookie) {
-// 		return NextResponse.redirect(new URL(loginUrl, request.url))
-// 	}
+//   // --- MOCK COOKIE FOR LOCAL DEVELOPMENT ---
+//   const mockToken = "2zlRwjLUE6waoT8KeFc8IIu7r0EjAxS6.y6awA%2FcwwGnylx%2FDXzfA9W3v5ulWPENF0zM103luQeM%3D";
+//   let isMocked = false;
 
-// 	try {
-// 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-session`, {
-// 			headers: {
-// 				"x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY) || "",
-// 				"cookie": request.headers.get("cookie") || "",
-// 			},
-// 		})
+//   if (!sessionCookie && process.env.NODE_ENV === "development") {
+//     sessionCookie = {
+//       name: "better-auth.session_token",
+//       value: decodeURIComponent(mockToken),
+//     } as any;
+//     isMocked = true;
+//   }
 
-// 		const session = await res.json()
+//   if (!sessionCookie) {
+//     return NextResponse.redirect(new URL(loginUrl, request.url));
+//   }
 
-// 		if (!session) {
-// 			return NextResponse.redirect(new URL(loginUrl, request.url))
-// 		}
+//   // 2. Validate with Backend
+//   try {
+//     const apiUrl =
+//       process.env.SERVER_API_URL ||
+//       process.env.NEXT_PUBLIC_API_URL ||
+//       "http://wtg-core-api:4000";
 
-// 		if (isLogin) {
-// 			const locale = getLocaleFromPath(pathname)
-// 			const homeUrl = new URL(locale === "en" ? "/en" : "/", request.url)
-// 			return NextResponse.redirect(homeUrl)
-// 		}
+//     let cookieHeader = request.headers.get("cookie") || "";
+//     if (isMocked || !cookieHeader) {
+//       cookieHeader = `better-auth.session_token=${decodeURIComponent(mockToken)}`;
+//     }
 
-// 		i18nResponse.headers.set("x-user-id", session.user.id)
-// 		return i18nResponse
-// 	}
-// 	catch (error) {
-// 		console.error("Auth Middleware Error:", error)
-// 		// ในกรณีที่ Backend ยังไม่รัน แต่เราอยากเทสหน้าจอ ให้ปล่อยผ่านไปก่อน (เฉพาะ Dev)
-// 		if (process.env.NODE_ENV === "development") {
-// 			return i18nResponse
-// 		}
-// 		return NextResponse.redirect(new URL(loginUrl, request.url))
-// 	}
+//     const res = await fetch(`${apiUrl}/api/core/auth/get-session`, {
+//       headers: {
+//         "x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY) || "",
+//         cookie: cookieHeader,
+//       },
+//     });
+
+//     const session = await res.json();
+    
+//     // 3. Handle Invalid Session
+//     if (!session) {
+//       return NextResponse.redirect(new URL(loginUrl, request.url));
+//     }
+
+//     if (isLogin) {
+//       // Preserve locale when redirecting
+//       const locale = getLocaleFromPath(pathname);
+//       const homeUrl = new URL(locale === "en" ? "/en" : "/", request.url);
+//       return NextResponse.redirect(homeUrl);
+//     }
+
+//     // 5. Pass user info to headers for easier access in pages
+//     i18nResponse.headers.set("x-user-id", session.user.id);
+//     i18nResponse.headers.set("x-organization-id", session.user.organizationId);
+
+//     // หากเราทำการ Mock Cookie ให้ทำการเขียน Cookie ลง Browser จริงด้วย เพื่อให้ Client-side (Axios) นำไปใช้ต่อได้
+//     if (isMocked && process.env.NODE_ENV === "development") {
+//       i18nResponse.cookies.set("better-auth.session_token", decodeURIComponent(mockToken), {
+//         path: "/",
+//         httpOnly: false,
+//         sameSite: "lax",
+//       });
+//     }
+
+//     return i18nResponse;
+//   } catch (error) {
+//     console.error("Auth Middleware Error:", error);
+//     return NextResponse.redirect(new URL(loginUrl, request.url));
+//   }
 // }
 
 // export const config = {
-// 	matcher: [
-// 		"/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
-// 	],
-// }
+//   matcher: [
+//     "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
+//   ],
+// };
