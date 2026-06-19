@@ -17,15 +17,7 @@ interface UseCreditColumnsProps {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  draft: {
-    label: "ฉบับร่าง",
-    color: "bg-[#F4F4F5] text-subdude",
-  },
   pending: {
-    label: "รอพิจารณา",
-    color: "bg-[#FFF7ED] text-[#F97316]",
-  },
-  reviewing: {
     label: "รอพิจารณา",
     color: "bg-[#FFF7ED] text-[#F97316]",
   },

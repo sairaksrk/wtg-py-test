@@ -91,7 +91,7 @@ export function useCompensationColumns({
       },
       {
         accessorKey: "approvedBy",
-        header: "ผู้อนุมัติ / ตรวจสอบ",
+        header: "ผู้รับผิดชอบ",
         size: 9,
         cell: ({ row }) => {
           const approver = row.original.approvedBy;
