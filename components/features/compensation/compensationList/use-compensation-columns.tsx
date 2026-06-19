@@ -148,15 +148,20 @@ export function useCompensationColumns({
                 <Icon icon="solar:pen-outline" className="size-4" />
               </Button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onDelete?.(id)}
-                title={c("delete-item")}
-                className="text-destructive hover:text-destructive"
-              >
-                <Icon icon="solar:trash-bin-trash-outline" className="size-4" />
-              </Button>
+              {permissionsData?.isHR && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onDelete?.(id)}
+                  title={c("delete-item")}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Icon
+                    icon="solar:trash-bin-trash-outline"
+                    className="size-4"
+                  />
+                </Button>
+              )}
             </div>
           );
         },
