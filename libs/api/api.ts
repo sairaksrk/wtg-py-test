@@ -3,7 +3,12 @@ import { ApiError, ApiErrorPayload } from "@/types/api";
 import { authClient } from "../auth/auth-client";
 
 // 1. The Base Config
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+// const BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+// const BASE_URL = "http://localhost:3003" //test localhost
+const BASE_URL =
+  process.env.NEXT_PUBLIC_IS_LOCALE === "false"
+    ? `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL}`
+    : `http://localhost:3003`;
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE"; // Standard for next-intl
 
 // 2. Client-Side Singletons per plugin (Reuse to keep interceptors alive)
@@ -86,15 +91,27 @@ export async function api<T = any>(
   } = {},
 ): Promise<T> {
   const isServer = typeof window === "undefined";
-
   const headers: any = {
     "x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY),
     "x-internal-secret": String(process.env.NEXT_PUBLIC_INTERNAL_SECRET),
-    // ในอนาคตควรดึงจาก Session แต่ตอนนี้ใส่เป็นค่าคงที่
-    // "x-user-id": "user-e01",
-    // "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
+
+    ...(process.env.NEXT_PUBLIC_IS_LOCALE !== "false"
+      ? {
+          "x-user-id": "user-e01",
+          "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
+        }
+      : {}),
+
     ...(config.headers || {}),
   };
+  // const headers: any = {
+  //   "x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY),
+  //   "x-internal-secret": String(process.env.NEXT_PUBLIC_INTERNAL_SECRET),
+  //   // ในอนาคตควรดึงจาก Session แต่ตอนนี้ใส่เป็นค่าคงที่
+  //   "x-user-id": "user-e01",
+  //   "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
+  //   ...(config.headers || {}),
+  // };
   const configWithPlugin = { ...config, plugin: config.plugin || "plugin" };
   const pluginKey = configWithPlugin.plugin;
   let instance: AxiosInstance;

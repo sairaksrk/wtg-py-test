@@ -234,6 +234,10 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                 className="text-foreground mb-8 shrink-0 text-xl font-medium whitespace-pre-wrap"
               >
                 {nameLocalize(
+                  //   session?.menu.find((item) => item.code === active)?.nameTh ||
+                  //     "",
+                  //   session?.menu.find((item) => item.code === active)?.nameEn ||
+                  //     "",
                   mockupSession?.find((item: any) => item.code === active)
                     ?.nameTh || "",
                   mockupSession?.find((item: any) => item.code === active)
@@ -242,13 +246,15 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
               </motion.h1>
 
               <ul className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 min-h-0 flex-1 space-y-2 overflow-x-hidden overflow-y-auto pr-2">
+                {/* {session?.menu */}
                 {mockupSession
                   .find((item: any) => item.code === active)
-                  ?.modules.filter(
-                    (item: any) => item.type.toUpperCase() === "MENU",
-                  )
+                  ?.modules.filter((item: any) => item.type === "menu")
                   .map((item: any, index: any) => {
                     const hasChildren = item.modules && item.modules.length > 0;
+                    const furl =
+                      session?.menu.find((item) => item.code === active)
+                        ?.furl ?? "";
 
                     // Check if any child is active
                     const isAnyChildActive = hasChildren
@@ -280,6 +286,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                             onClick={() => toggleCollapse(item.nameTh, isOpen)}
                             className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-4 py-2 text-left transition-all hover:bg-white/50"
                           >
+                            {/* {item.icon && <Icon icon={item.icon} />} */}
                             <span className="flex-1">
                               {nameLocalize(item.nameTh, item.nameEn)}
                             </span>
@@ -305,7 +312,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                                       }}
                                     >
                                       <Link
-                                        href={subItem.url}
+                                        href={`${furl}${subItem.url}`}
                                         onClick={() => sessionStorage.clear()}
                                       >
                                         <motion.button
@@ -318,6 +325,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                                               : "text-foreground hover:bg-white/50",
                                           )}
                                         >
+                                          {/* {subItem.icon && <Icon icon={subItem.icon} />} */}
                                           <span>
                                             {nameLocalize(
                                               subItem.nameTh,
@@ -344,7 +352,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                         transition={{ delay: 0.1 + index * 0.05 }}
                       >
                         <Link
-                          href={item.url}
+                          href={`${furl}${item.url}`}
                           onClick={() => sessionStorage.clear()}
                         >
                           <motion.button
@@ -357,6 +365,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                                 : "text-text-primary hover:bg-white/50",
                             )}
                           >
+                            {/* {item.icon && <Icon icon={item.icon} />} */}
                             <span>
                               {nameLocalize(item.nameTh, item.nameEn)}
                             </span>

@@ -8,6 +8,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/utils/helpers";
 import { CompensationGroup } from "@/types/compensation";
+import { useGetPermissions } from "@/libs/query/master.queries";
 
 interface UseCreditColumnsProps {
   onEdit?: (id: string) => void;
@@ -16,15 +17,7 @@ interface UseCreditColumnsProps {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  draft: {
-    label: "ฉบับร่าง",
-    color: "bg-[#F4F4F5] text-subdude",
-  },
   pending: {
-    label: "รอพิจารณา",
-    color: "bg-[#FFF7ED] text-[#F97316]",
-  },
-  reviewing: {
     label: "รอพิจารณา",
     color: "bg-[#FFF7ED] text-[#F97316]",
   },
@@ -42,6 +35,8 @@ export function useCreditColumns({
   const { formatToBuddhist } = useDateFormatter();
   const router = useRouter();
   const c = useTranslations("common");
+
+  const { data: permissionsData } = useGetPermissions();
 
   const columns: ColumnDef<CompensationGroup>[] = useMemo(() => {
     return [
@@ -176,10 +171,13 @@ export function useCreditColumns({
         header: "เครื่องมือ",
         size: 8,
         cell: ({ row }) => {
-          const status = row.original.status;
-          return (
-            <div className="flex items-center gap-2">
-              {status === "success" ? (
+          const { id, status } = row.original;
+
+          const canViewOnly = status === "success";
+
+          if (canViewOnly) {
+            return (
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -189,31 +187,35 @@ export function useCreditColumns({
                 >
                   <Icon icon="solar:eye-outline" className="size-4" />
                 </Button>
-              ) : (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEdit?.(row.original.id)}
-                    title={c("edit-item")}
-                    className="text-black hover:text-black"
-                  >
-                    <Icon icon="solar:pen-outline" className="size-4" />
-                  </Button>
+              </div>
+            );
+          }
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onDelete?.(row.original.id)}
-                    title={c("delete-item")}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Icon
-                      icon="solar:trash-bin-trash-outline"
-                      className="size-4"
-                    />
-                  </Button>
-                </>
+          return (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onEdit?.(id)}
+                title={c("edit-item")}
+                className="text-black hover:text-black"
+              >
+                <Icon icon="solar:pen-outline" className="size-4" />
+              </Button>
+
+              {permissionsData?.isHR && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onDelete?.(id)}
+                  title={c("delete-item")}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Icon
+                    icon="solar:trash-bin-trash-outline"
+                    className="size-4"
+                  />
+                </Button>
               )}
             </div>
           );
