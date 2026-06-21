@@ -44,6 +44,7 @@ export function ItemsManagementModal({
 }: PositionManageModalProps) {
   const router = useRouter();
   const c = useTranslations("common");
+  const cl = useTranslations("compensation");
   const updateLoading = useLoadingStore((state) => state.updateLoading);
 
   const {
@@ -121,8 +122,10 @@ export function ItemsManagementModal({
   return (
     <Modal
       open={open}
-      header={"จัดการข้อมูล"}
-      subHeader={"กรอกและตรวจสอบข้อมูลให้ถูกต้องครบถ้วน"}
+      // จัดการข้อมูล
+      header={cl("title.manage-information")}
+      // กรอกและตรวจสอบข้อมูลให้ถูกต้องครบถ้วน
+      subHeader={cl("title.fill-and-review-information")}
       size="rp"
       onClose={onClose}
     >
@@ -133,14 +136,18 @@ export function ItemsManagementModal({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
-            <p className="text-base font-medium">ข้อมูลรายละเอียดคำขอ</p>
+            {/* ข้อมูลรายละเอียดคำขอ */}
+            <p className="text-base font-medium">
+              {cl("title.request-detail-information")}
+            </p>
             <Controller
               name="name"
               control={control}
               render={({ field }) => (
                 <Input
                   {...field}
-                  label="ชื่อรายการ"
+                  // label="ชื่อรายการ"
+                  label={cl("field.item-name")}
                   floatingLabel
                   required
                   error={errors.name?.message}
@@ -156,7 +163,8 @@ export function ItemsManagementModal({
               render={({ field }) => (
                 <TextArea
                   {...field}
-                  label="หมายเหตุ"
+                  // label="หมายเหตุ"
+                  label={cl("field.remark")}
                   floatingLabel
                   className="h-36"
                   error={errors.remarks?.message}
@@ -173,10 +181,12 @@ export function ItemsManagementModal({
               onClick={onClose}
               disabled={isSaving}
             >
-              ยกเลิก
+              {c("button.cancel")}
+              {/* ยกเลิก */}
             </Button>
             <Button type="submit" disabled={isSaving}>
-              บันทึก
+              {c("button.save")}
+              {/* บันทึก */}
             </Button>
           </div>
         </form>

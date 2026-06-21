@@ -49,6 +49,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   const router = useRouter();
   const alert = useAlert();
   const c = useTranslations("common");
+  const cl = useTranslations("compensation");
+
   const updateLoading = useLoadingStore((state) => state.updateLoading);
 
   const { formatToBuddhist } = useDateFormatter();
@@ -129,7 +131,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
   const onSubmitDeliver = () => {
     alert.fire({
       type: "warning",
-      title: "ยืนยันการนำส่งข้อมูล",
+      title: c("confirm-submit-data"),
       description: c("save-data-confirmation-description"),
       confirmButton: {
         label: c("button.confirm"),
@@ -299,7 +301,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         disabled={isDisabled || !isAllSuccess}
         onClick={onSubmitDeliver}
       >
-        บันทึกการนำส่ง
+        {/* บันทึกการนำส่ง */}
+        {c("button.submit-delivery")}
       </Button>
     ) : status === "submitted" ? (
       <Button
@@ -307,7 +310,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
         disabled={isDisabled || !isAllSuccess}
         onClick={onSubmitSuccess}
       >
-        เสร็จสิ้น
+        {/* เสร็จสิ้น */}
+        {c("button.complete")}
       </Button>
     ) : null;
 
@@ -354,7 +358,10 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                     className="text-base"
                   />
                 </Button>
-                <h1 className="text-xl font-medium">ย้อนกลับ</h1>
+                <h1 className="text-xl font-medium">
+                  {/* ย้อนกลับ */}
+                  {c("button.back")}
+                </h1>
               </div>
 
               <div className="flex flex-col gap-6">
@@ -382,7 +389,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                               }
                             >
                               <Icon icon="solar:pen-outline" />
-                              จัดการข้อมูล
+                              {/* จัดการข้อมูล */}
+                              {c("button.manage-information")}
                             </Button>
                           )}
                       </div>
@@ -404,7 +412,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                         <div className="flex items-center justify-center gap-2 text-subdude">
                           <Icon icon="solar:calendar-linear" />
                           <h1 className="text-sm font-normal text-subdude">
-                            วันที่สร้าง {""}
+                            {/* วันที่สร้าง  */}
+                            {cl("field.created-date")}{" "}
                             {formatToBuddhist(
                               Number(
                                 compensationRequestData?.period?.createdAt,
@@ -443,7 +452,9 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                       <CardTitle>
                         <div className="flex items-center gap-1">
                           <h1 className="text-xl font-medium">
-                            รายการบริหารวงเงิน
+                            {/* รายการบริหารวงเงิน */}
+
+                            {cl("title.budget-management-list")}
                           </h1>
                         </div>
                       </CardTitle>
@@ -478,7 +489,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                                   className="bg-[#F4F4F5] text-black hover:bg-[#F4F4F5]"
                                 >
                                   <Icon icon="solar:download-minimalistic-linear" />
-                                  ออกรายงาน
+                                  {/* ออกรายงาน */}
+                                  {c("button.export-report")}
                                   <Icon icon="solar:alt-arrow-down-linear" />
                                 </Button>
                               </PopoverTrigger>
@@ -492,22 +504,27 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                                     onClick={onExport1}
                                   >
                                     <Icon
-                                      className="w-4 h-4"
+                                      className="w-4 h-4 shrink-0"
                                       icon="solar:download-minimalistic-linear"
                                     />
-                                    บัญชีรายละเอียดการเลื่อนเงิน <br />
-                                    เดือนข้าราชการ
+                                    {/* บัญชีรายละเอียดการเลื่อนเงิน <br />
+                                    เดือนข้าราชการ */}
+
+                                    {cl("report.salary-increment-details")}
                                   </div>
                                   <div
                                     className="flex gap-4"
                                     onClick={onExport2}
                                   >
                                     <Icon
-                                      className="w-4 h-4"
+                                      className="w-4 h-4 shrink-0"
                                       icon="solar:download-minimalistic-linear"
                                     />
-                                    รายชื่อข้าราชการผู้มีผล <br />
-                                    ประเมินระดับดีเด่นและดีมาก
+                                    {/* รายชื่อข้าราชการผู้มีผล <br />
+                                    ประเมินระดับดีเด่นและดีมาก */}
+                                    {cl(
+                                      "report.outstanding-and-very-good-performance-list",
+                                    )}
                                   </div>
                                 </div>
                               </PopoverContent>
@@ -556,7 +573,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                         </div>
 
                         <h1 className="text-sm font-light text-subdude">
-                          ยังไม่มีข้อมูล
+                          {c("no-data")}
                         </h1>
                       </div>
                     )}
@@ -606,7 +623,8 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                 onClick={() => onDeleteRequest?.(reqId)}
                 disabled={!reqId}
               >
-                ลบรายการ
+                {/* ลบรายการ */}
+                {c("button.delete-item")}
               </Button>
             ) : (
               <div />

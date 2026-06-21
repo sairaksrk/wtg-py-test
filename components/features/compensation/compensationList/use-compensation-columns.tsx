@@ -41,6 +41,7 @@ export function useCompensationColumns({
   const { formatToBuddhist } = useDateFormatter();
   const router = useRouter();
   const c = useTranslations("common");
+  const cl = useTranslations("compensation");
 
   const { data: permissionsData } = useGetPermissions();
 
@@ -48,7 +49,8 @@ export function useCompensationColumns({
     return [
       {
         accessorKey: "createdAt",
-        header: "วันที่สร้าง",
+        // header: "วันที่สร้าง",
+        header: cl("column.created-date"),
         size: 12,
         cell: ({ row }) =>
           formatToBuddhist(
@@ -58,17 +60,20 @@ export function useCompensationColumns({
       },
       {
         accessorKey: "name",
-        header: "ชื่อรายการ",
+        // header: "ชื่อรายการ",
+        header: cl("column.item-name"),
         size: 12,
       },
       {
         accessorKey: "employeeCount",
-        header: "จำนวนบุคลากร",
+        // header: "จำนวนบุคลากร",
+        header: cl("column.employee-count"),
         size: 12,
       },
       {
         accessorKey: "status",
-        header: "สถานะ",
+        // header: "สถานะ",
+        header: cl("column.status"),
         size: 5,
         cell: ({ row }) => {
           const status = row.original.status;
@@ -91,7 +96,8 @@ export function useCompensationColumns({
       },
       {
         accessorKey: "approvedBy",
-        header: "ผู้รับผิดชอบ",
+        // header: "ผู้รับผิดชอบ",
+        header: cl("column.responsible-person"),
         size: 9,
         cell: ({ row }) => {
           const approver = row.original.approvedBy;
@@ -110,7 +116,8 @@ export function useCompensationColumns({
       },
       {
         id: "tools",
-        header: c("tools"),
+        // header: "เครื่องมือ",
+        header: cl("column.tools"),
         size: 10,
         cell: ({ row }) => {
           const { id, status } = row.original;

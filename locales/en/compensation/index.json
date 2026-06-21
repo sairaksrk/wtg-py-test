@@ -1,0 +1,46 @@
+{
+  "title": {
+    "compensation-management": "Compensation Management",
+    "manage-information": "Manage Information",
+    "fill-and-review-information": "Fill in and review the information carefully and completely",
+    "request-detail-information": "Request Details",
+    "budget-management-list": "Budget Management List"
+  },
+
+  "report": {
+    "salary-increment-details": "Civil Servant Salary Increment Details Report",
+    "outstanding-and-very-good-performance-list": "List of Civil Servants with Outstanding and Very Good Performance Ratings"
+  },
+
+  "field": {
+    "request-number": "Request Number",
+    "date-of-request": "Search Request",
+    "agency": "Agency",
+    "position-of-request": "Position",
+    "status": "Status",
+    "responsible-person": "Responsible Person",
+    "select-agency": "Select Agency",
+    "position-type": "Position Type",
+    "position-level": "Position Level",
+    "position": "Position",
+    "quantity": "Quantity",
+    "amount": "Amount",
+    "item-name": "Item Name",
+    "remark": "Remark",
+    "created-date": "Created Date",
+    "approver-reviewer": "Approver / Reviewer"
+  },
+
+  "column": {
+    "tools": "Tools",
+    "created-date": "Created Date",
+    "item-name": "Item Name",
+    "employee-count": "Employee Count",
+    "status": "Status",
+    "responsible-person": "Responsible Person",
+    "total-current-salary": "Total Current Salary",
+    "position-type-level": "Position Type and Level",
+    "allocation-percent": "Allocation Percentage (%)",
+    "reviewer": "Reviewer"
+  }
+}

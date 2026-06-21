@@ -1,19 +1,27 @@
 {
   "button": {
-    "save": "บันทึกรายการ",
-    "cancel": "ยกเลิกรายการ",
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
     "secondary-cancel": "ยกเลิก",
     "confirm": "ยืนยัน",
     "close": "ปิด",
     "add-item": "เพิ่มรายการ",
-    "delete": "ลบ"
+    "delete": "ลบ",
+    "back": "ย้อนกลับ",
+    "manage-information": "จัดการข้อมูล",
+    "submit-delivery": "บันทึกการนำส่ง",
+    "delete-item": "ลบรายการ",
+    "complete": "เสร็จสิ้น",
+    "export-report": "ออกรายงาน"
   },
+
   "pagination": {
     "from": "จาก",
     "show": "แสดง",
     "of": "ของ",
     "total": "รายการ"
   },
+
   "filter": "ตัวกรอง",
   "clear": "ล้างเงื่อนไข",
   "search-data": "ค้นหาข้อมูล",
@@ -22,7 +30,9 @@
   "successfully": "ดำเนินการสำเร็จ",
   "successfully-description": "ระบบได้ดำเนินการตามคำสั่งของคุณเรียบร้อยแล้ว",
   "save-data-confirmation": "ยืนยันการบันทึกข้อมูล",
-  "save-data-confirmation-description": "โปรดตรวจสอบความถูกต้องของข้อมูลก่อนบันทึก",
+  "confirm-submit-data": "ยืนยันการนำส่งข้อมูล",
+  "confirm-review": "ยืนยันการพิจารณา",
+  "save-data-confirmation-description": "โปรดตรวจสอบความถูกต้องของข้อมูล",
   "delete-confirmation": "ยืนยันการลบ",
   "delete-confirmation-description": "คุณต้องการที่จะลบรายการนี้ใช่หรือไม่?",
   "tools": "เครื่องมือ",
@@ -39,7 +49,7 @@
   "active": "ใช้งาน",
   "inactive": "ไม่ใช้งาน",
   "created-at": "วันที่สร้าง",
-  "no-data": "ไม่มีข้อมูล",
+  "no-data": "ยังไม่มีข้อมูล",
   "showing-results": "แสดง {from} ถึง {to} จาก {total} รายการ",
   "edit-item": "แก้ไขรายการ",
   "delete-item": "ลบรายการ",

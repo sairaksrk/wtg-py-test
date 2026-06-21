@@ -6,7 +6,13 @@
     "confirm": "Confirm",
     "close": "Close",
     "add-item": "Add Item",
-    "delete": "Delete"
+    "delete": "Delete",
+    "back": "Back",
+    "manage-information": "Manage Information",
+    "submit-delivery": "Submit Delivery",
+    "delete-item": "Delete Item",
+    "complete": "Complete",
+    "export-report": "Export Report"
   },
   "pagination": {
     "from": "From",
@@ -23,7 +29,9 @@
   "successfully": "Successfully",
   "successfully-description": "The system has successfully processed your order.",
   "save-data-confirmation": "Save Data Confirmation",
-  "save-data-confirmation-description": "โปรดตรวจสอบความถูกต้องของข้อมูลก่อนบันทึก",
+  "confirm-submit-data": "Confirm Data Submission",
+  "confirm-review": "Confirm Review",
+  "save-data-confirmation-description": "Please verify the information.",
   "delete-confirmation": "Delete Confirmation",
   "delete-confirmation-description": "Are you sure you want to delete this item? This action cannot be undone.",
   "tools": "Tools",

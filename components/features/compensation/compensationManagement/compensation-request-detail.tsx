@@ -150,7 +150,7 @@ export default function CompensationRequestDetail({
   const onSubmit = async () => {
     alert.fire({
       type: "warning",
-      title: "ยืนยันการพิจารณา",
+      title: c("confirm-review"),
       description: c("save-data-confirmation-description"),
       confirmButton: {
         label: c("button.confirm"),
