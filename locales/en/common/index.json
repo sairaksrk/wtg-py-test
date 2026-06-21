@@ -8,6 +8,7 @@
     "add-item": "Add Item",
     "delete": "Delete"
   },
+
   "pagination": {
     "from": "From",
     "show": "Show",
@@ -48,6 +49,7 @@
   "breadcrumb": {
     "detail": "Detail"
   },
+
   "alert": {
     "confirm": "Confirm",
     "cancel": "Cancel",
@@ -55,6 +57,7 @@
     "error-occur": "Error occur",
     "error-detail": "Error detail"
   },
+
   "add-item": "Add Item",
   "module-title": "Dashboard <br></br> System",
   "external": {
@@ -90,6 +93,7 @@
       "length": "Length: {count}"
     }
   },
+  
   "demo": {
     "refresh": "Refresh",
     "loading": "Loading...",

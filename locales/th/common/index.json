@@ -8,12 +8,14 @@
     "add-item": "เพิ่มรายการ",
     "delete": "ลบ"
   },
+
   "pagination": {
     "from": "จาก",
     "show": "แสดง",
     "of": "ของ",
     "total": "รายการ"
   },
+
   "filter": "ตัวกรอง",
   "clear": "ล้างเงื่อนไข",
   "search-data": "ค้นหาข้อมูล",
@@ -48,6 +50,7 @@
     "detail": "รายละเอียด",
     "item-request": "รายละเอียดคำขอ"
   },
+
   "alert": {
     "confirm": "ยืนยัน",
     "cancel": "ยกเลิก",
@@ -55,6 +58,7 @@
     "error-occur": "พบข้อผิดพลาด",
     "error-detail": "รายละเอียดข้อผิดพลาด"
   },
+  
   "add-item": "เพิ่มรายการ",
   "module-title": "ระบบแดชบอร์ด <br></br> (Dashboard)",
   "external": {
