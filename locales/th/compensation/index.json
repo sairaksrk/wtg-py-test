@@ -1,6 +1,17 @@
 {
-  "add-request-information": "เพิ่มข้อมุลคำขอ",
-  "rate": "อัตรา",
+  "title": {
+    "compensation-management": "จัดการค่าตอบแทน",
+    "manage-information": "จัดการข้อมูล",
+    "fill-and-review-information": "กรอกและตรวจสอบข้อมูลให้ถูกต้องครบถ้วน",
+    "request-detail-information": "ข้อมูลรายละเอียดคำขอ",
+    "budget-management-list": "รายการบริหารวงเงิน"
+  },
+
+  "report": {
+    "salary-increment-details": "บัญชีรายละเอียดการเลื่อนเงินเดือนข้าราชการ",
+    "outstanding-and-very-good-performance-list": "รายชื่อข้าราชการผู้มีผลประเมินระดับดีเด่นและดีมาก"
+  },
+
   "field": {
     "request-number": "เลขที่คำขอ",
     "date-of-request": "วันที่ขอ",
@@ -13,17 +24,23 @@
     "position-level": "ระดับตำแหน่ง",
     "position": "ตำแหน่ง",
     "quantity": "จำนวน",
-    "amount": "จำนวน"
+    "amount": "จำนวน",
+    "item-name": "ชื่อรายการ",
+    "remark": "หมายเหตุ",
+    "created-date": "วันที่สร้าง",
+    "approver-reviewer": "ผู้อนุมัติ / ผู้ตรวจสอบ"
   },
 
-  "column-manpower": {
-    "actions": "เครื่องมือ",
-    "request-number": "เลขที่คำขอ",
-    "submission-date": "วันที่ส่งเรื่อง",
-    "agency": "หน่วยงาน",
-    "number-of-requests": "จำนวนคำขอ",
-    "number-of-amount": "จำนวนอนุมัติ",
+  "column": {
+    "tools": "เครื่องมือ",
+    "created-date": "วันที่สร้าง",
+    "item-name": "ชื่อรายการ",
+    "employee-count": "จำนวนบุคลากร",
     "status": "สถานะ",
-    "responsible-person": "ผู้รับผิดชอบ"
+    "responsible-person": "ผู้รับผิดชอบ",
+    "total-current-salary": "เงินเดือนปัจจุบันรวม",
+    "position-type-level": "ประเภทและระดับตำแหน่ง",
+    "allocation-percent": "จัดสรรร้อยละ (%)",
+    "reviewer": "ผู้พิจารณา"
   }
 }

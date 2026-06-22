@@ -22,6 +22,7 @@ export function RequestSearchModal({
   onSearch,
 }: RequestSearchModalProps) {
   const c = useTranslations("common");
+  const cl = useTranslations("compensation");
   const { control, handleSubmit, reset } = useForm<any>({});
 
   useEffect(() => {
@@ -65,7 +66,12 @@ export function RequestSearchModal({
             name="createDate"
             control={control}
             render={({ field }) => (
-              <DatePicker {...field} label="วันที่สร้าง" floatingLabel />
+              <DatePicker
+                {...field}
+                // label="วันที่สร้าง"
+                label={cl("field.created-date")}
+                floatingLabel
+              />
             )}
           />
 
@@ -73,7 +79,12 @@ export function RequestSearchModal({
             name="itemName"
             control={control}
             render={({ field }) => (
-              <Input {...field} label="ชื่อรายการ" floatingLabel />
+              <Input
+                {...field}
+                // label="ชื่อรายการ"
+                label={cl("field.item-name")}
+                floatingLabel
+              />
             )}
           />
 
@@ -82,7 +93,6 @@ export function RequestSearchModal({
             control={control}
             render={({ field }) => (
               <Combobox
-                // options={positionOfRequestOptions}
                 options={[
                   {
                     label: "ฉบับร่าง",
@@ -106,7 +116,8 @@ export function RequestSearchModal({
                 onChange={(value) => {
                   field.onChange(value);
                 }}
-                label="สถานะ"
+                // label="สถานะ"
+                label={cl("field.status")}
                 floatingLabel
               />
             )}
@@ -116,7 +127,12 @@ export function RequestSearchModal({
             name="approver"
             control={control}
             render={({ field }) => (
-              <Input {...field} label="ผู้อนุมัติ / ตรวจสอบ" floatingLabel />
+              <Input
+                {...field}
+                // label="ผู้อนุมัติ / ตรวจสอบ"
+                label={cl("field.approver-reviewer")}
+                floatingLabel
+              />
             )}
           />
         </div>

@@ -21,6 +21,7 @@ export function CompensationSearchModal({
   onClearFilters,
 }: CompensationSearchModalProps) {
   const c = useTranslations("common");
+  const cl = useTranslations("compensation");
 
   const getInitialValues = () => {
     if (typeof window === "undefined") return {};
@@ -82,7 +83,12 @@ export function CompensationSearchModal({
           name="createdAt"
           control={control}
           render={({ field }) => (
-            <DatePicker {...field} label="วันที่สร้าง" floatingLabel />
+            <DatePicker
+              {...field}
+              // label="วันที่สร้าง"
+              label={cl("field.created-date")}
+              floatingLabel
+            />
           )}
         />
 
@@ -90,7 +96,12 @@ export function CompensationSearchModal({
           name="name"
           control={control}
           render={({ field }) => (
-            <Input {...field} label="ชื่อรายการ" floatingLabel />
+            <Input
+              {...field}
+              // label="ชื่อรายการ"
+              label={cl("field.item-name")}
+              floatingLabel
+            />
           )}
         />
 
@@ -123,7 +134,8 @@ export function CompensationSearchModal({
               onChange={(value) => {
                 field.onChange(value);
               }}
-              label="สถานะ"
+              // label="สถานะ"
+              label={cl("field.status")}
               floatingLabel
             />
           )}
@@ -133,7 +145,12 @@ export function CompensationSearchModal({
           name="approvedBy"
           control={control}
           render={({ field }) => (
-            <Input {...field} label="ผู้อนุมัติ / ตรวจสอบ" floatingLabel />
+            <Input
+              {...field}
+              // label="ผู้อนุมัติ / ตรวจสอบ"
+              label={cl("field.approver-reviewer")}
+              floatingLabel
+            />
           )}
         />
       </div>

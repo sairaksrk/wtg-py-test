@@ -40,8 +40,9 @@ import { useGetPermissions } from "@/libs/query/master.queries";
 
 export default function CompensationList() {
   const router = useRouter();
-  const menuName = useCurrentMenuName() || "จัดการค่าตอบแทน";
   const c = useTranslations("common");
+  const cl = useTranslations("compensation");
+  const menuName = useCurrentMenuName() || cl("title.compensation-management"); //จัดการค่าตอบแทน
   const alert = useAlert();
   const updateLoading = useLoadingStore((state) => state.updateLoading);
   //   useSetBreadcrumb([{ name: m("add-request-information") }]);
@@ -206,7 +207,8 @@ export default function CompensationList() {
                 >
                   <PopoverHeader className="flex flex-row items-center justify-between px-6 py-4">
                     <PopoverTitle className="text-xl font-medium text-[#18181B] mt-2">
-                      ตัวกรอง
+                      {c("filter")}
+                      {/* ตัวกรอง */}
                     </PopoverTitle>
                     <PopoverClose className="text-gray-400 hover:text-gray-600 transition-colors outline-none">
                       <Icon icon="mdi:close" className="size-6" />

@@ -35,6 +35,7 @@ export function useCreditColumns({
   const { formatToBuddhist } = useDateFormatter();
   const router = useRouter();
   const c = useTranslations("common");
+  const cl = useTranslations("compensation");
 
   const { data: permissionsData } = useGetPermissions();
 
@@ -42,12 +43,14 @@ export function useCreditColumns({
     return [
       {
         accessorKey: "name",
-        header: "ชื่อรายการ",
+        // header: "ชื่อรายการ",
+        header: cl("column.item-name"),
         size: 15,
       },
       {
         accessorKey: "employeeCount",
-        header: "จำนวนบุคลากร",
+        // header: "จำนวนบุคลากร",
+        header: cl("column.employee-count"),
         size: 10,
         cell: ({ row }) => {
           const data = row.original.employeeCount;
@@ -62,7 +65,8 @@ export function useCreditColumns({
       },
       {
         accessorKey: "totalSalary",
-        header: "เงินเดือนปัจุบันรวม",
+        // header: "เงินเดือนปัจุบันรวม",
+        header: cl("column.total-current-salary"),
         size: 12,
         cell: ({ row }) => {
           const data = row.original.totalSalary;
@@ -80,7 +84,8 @@ export function useCreditColumns({
       },
       {
         accessorKey: "positionLevelNames",
-        header: "ประเภทและระดับตำแหน่ง",
+        // header: "ประเภทและระดับตำแหน่ง",
+        header: cl("column.position-type-level"),
         size: 10,
         cell: ({ row }) => {
           const approver = row.original.positionLevelNames;
@@ -103,7 +108,8 @@ export function useCreditColumns({
       },
       {
         accessorKey: "allocPercent",
-        header: "จัดสรรร้อยละ (%)",
+        // header: "จัดสรรร้อยละ (%)",
+        header: cl("column.allocation-percent"),
         size: 10,
         cell: ({ row }) => {
           const data = row.original.allocPercent;
@@ -126,7 +132,8 @@ export function useCreditColumns({
       },
       {
         accessorKey: "status",
-        header: "สถานะ",
+        // header: "สถานะ",
+        header: cl("column.status"),
         size: 5,
         cell: ({ row }) => {
           const status = row.original.status;
@@ -149,7 +156,8 @@ export function useCreditColumns({
       },
       {
         accessorKey: "reviewerName",
-        header: "ผู้พิจารณา",
+        // header: "ผู้พิจารณา",
+        header: cl("column.reviewer"),
         size: 8,
         cell: ({ row }) => {
           const approver = row.original.reviewerName;
@@ -167,8 +175,9 @@ export function useCreditColumns({
         },
       },
       {
-        id: "actions",
-        header: "เครื่องมือ",
+        id: "tools",
+        // header: "เครื่องมือ",
+        header: cl("column.tools"),
         size: 8,
         cell: ({ row }) => {
           const { id, status } = row.original;

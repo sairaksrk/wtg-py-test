@@ -366,7 +366,7 @@ export function CreditManagementModal({
                       field.onChange("");
                       return;
                     }
-                    
+
                     // กรองให้พิมพ์ได้เฉพาะตัวเลขและจุดทศนิยม
                     const cleanVal = val
                       .replace(/[^0-9.]/g, "")
@@ -467,7 +467,7 @@ export function CreditManagementModal({
                   </div>
 
                   <h1 className="text-sm font-light text-subdude">
-                    ยังไม่มีข้อมูล
+                    {c("no-data")}
                   </h1>
                 </div>
               )}
