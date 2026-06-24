@@ -232,3 +232,29 @@ export async function updateStatusConsider(groupsId: string): Promise<void> {
     },
   );
 }
+
+// Export Report
+
+export async function exportSalary(reqId: string): Promise<Blob> {
+  return api<Blob>(
+    "GET",
+    `${BASE}/payroll/increment/export/salary-detail/${reqId}`,
+    undefined,
+    {
+      responseType: "blob",
+      plugin: "plugin",
+    },
+  );
+}
+
+export async function exportEvaluationResult(reqId: string): Promise<Blob> {
+  return api<Blob>(
+    "GET",
+    `${BASE}/payroll/increment/export/evaluation-list/${reqId}`,
+    undefined,
+    {
+      responseType: "blob",
+      plugin: "plugin",
+    },
+  );
+}

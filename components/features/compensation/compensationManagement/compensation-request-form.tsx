@@ -40,6 +40,10 @@ import { useDateFormatter } from "@/hooks/use-date-formatter";
 import ErrorComponent from "@/components/common/error";
 import { useSetBreadcrumb } from "@/hooks/breadcrumb/use-set-breadcrumb";
 import { useGetPermissions } from "@/libs/query/master.queries";
+import {
+  exportEvaluationResult,
+  exportSalary,
+} from "@/libs/api/compensation.api";
 
 interface RequestFormProps {
   reqId: string;
@@ -276,12 +280,54 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     });
   };
 
-  const onExport1 = async () => {
-    setExportCompensationOpen(false);
+  const onExportSarary = async () => {
+    updateLoading(true);
+    try {
+      const blob = await exportSalary(reqId);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        "บัญชีรายละเอียดการเลื่อนเงินเดือนข้าราชการ.xlsx",
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toastSuccess(c("successfully"), c("successfully-description"));
+      setExportCompensationOpen(false);
+    } catch (err) {
+      const { title, description } = formatApiError(error, c("error-occur"));
+      toastError(title, description || c("error-detail"));
+    } finally {
+      updateLoading(false);
+    }
   };
 
-  const onExport2 = async () => {
-    setExportCompensationOpen(false);
+  const onExportEvaluationResult = async () => {
+    updateLoading(true);
+    try {
+      const blob = await exportEvaluationResult(reqId);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        "รายชื่อข้าราชการผู้มีผลประเมินระดับดีเด่นและดีมาก.xlsx",
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toastSuccess(c("successfully"), c("successfully-description"));
+      setExportCompensationOpen(false);
+    } catch (err) {
+      const { title, description } = formatApiError(error, c("error-occur"));
+      toastError(title, description || c("error-detail"));
+    } finally {
+      updateLoading(false);
+    }
   };
 
   const isAllSuccess =
@@ -501,7 +547,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                                 <div className="flex flex-col gap-4 p-2 text-black w-full cursor-pointer">
                                   <div
                                     className="flex gap-4"
-                                    onClick={onExport1}
+                                    onClick={onExportSarary}
                                   >
                                     <Icon
                                       className="w-4 h-4 shrink-0"
@@ -514,7 +560,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
                                   </div>
                                   <div
                                     className="flex gap-4"
-                                    onClick={onExport2}
+                                    onClick={onExportEvaluationResult}
                                   >
                                     <Icon
                                       className="w-4 h-4 shrink-0"
