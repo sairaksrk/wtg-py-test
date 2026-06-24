@@ -280,6 +280,17 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
     });
   };
 
+  const getTimestampSuffix = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    return `_${year}${month}${day}_${hours}${minutes}${seconds}`;
+  };
+
   const onExportSarary = async () => {
     updateLoading(true);
     try {
@@ -289,7 +300,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       link.href = url;
       link.setAttribute(
         "download",
-        "บัญชีรายละเอียดการเลื่อนเงินเดือนข้าราชการ.xlsx",
+        `บัญชีรายละเอียดการเลื่อนเงินเดือนข้าราชการ${getTimestampSuffix()}.xlsx`,
       );
       document.body.appendChild(link);
       link.click();
@@ -314,7 +325,7 @@ export default function CompensationRequestForm({ reqId }: RequestFormProps) {
       link.href = url;
       link.setAttribute(
         "download",
-        "รายชื่อข้าราชการผู้มีผลประเมินระดับดีเด่นและดีมาก.xlsx",
+        `รายชื่อข้าราชการผู้มีผลประเมินระดับดีเด่นและดีมาก${getTimestampSuffix()}.xlsx`,
       );
       document.body.appendChild(link);
       link.click();
