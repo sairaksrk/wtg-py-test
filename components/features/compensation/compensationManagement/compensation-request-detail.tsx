@@ -299,7 +299,7 @@ export default function CompensationRequestDetail({
         employeeId: item.employeeId,
         positionNo: String(item.positionNumber || "-"),
         name: item.fullNameTh || "-",
-        subPosition: item.positionName || "-",
+        subPosition: item.positionTitle || "-",
         type: item.employeeTypeName || "-",
         department: item.unitName || "-",
         salary: Number(item.currentSalary || 0),

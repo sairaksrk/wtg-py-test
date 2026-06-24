@@ -21,7 +21,7 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         <TableHead className="w-30 font-normal text-subdude py-6 text-sm">
           ประเภท
         </TableHead>
-        <TableHead className="w-53 font-normal text-subdude py-6 text-sm">
+        <TableHead className="w-56 font-normal text-subdude py-6 text-sm">
           สำนัก/กอง
         </TableHead>
         <TableHead className="w-35 font-normal text-subdude py-6 text-left text-sm">
