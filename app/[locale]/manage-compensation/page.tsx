@@ -17,15 +17,16 @@ export default async function CompensationListPage() {
     take: 10,
   };
 
-  await client.prefetchQuery({
-    queryKey: compensationKeys.list(defaultParams),
-    queryFn: () => getCompensationList(defaultParams),
-  });
-
-  await client.prefetchQuery({
-    queryKey: masterKeys.permissions(),
-    queryFn: () => useGetPermissions(),
-  });
+  await Promise.all([
+    client.prefetchQuery({
+      queryKey: compensationKeys.list(defaultParams),
+      queryFn: () => getCompensationList(defaultParams),
+    }),
+    client.prefetchQuery({
+      queryKey: masterKeys.permissions(),
+      queryFn: () => useGetPermissions(),
+    }),
+  ]);
 
   return (
     <Hydrate state={dehydrate(client)}>

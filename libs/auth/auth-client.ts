@@ -8,7 +8,7 @@ const baseURL =
   typeof window === "undefined"
     ? process.env.INTERNAL_BASE_URL || "http://localhost:3000"
     : "";
-//  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/auth`, // Points to NestJS Backend
+// const baseURL = `${process.env.NEXT_PUBLIC_API_URL}/api/auth`; // Points to NestJS Backend
 
 export const authClient = createAuthClient({
   baseURL: baseURL,

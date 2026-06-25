@@ -28,39 +28,35 @@ export default async function CompensationRequestPage({
     take: 10,
   };
 
-  await client.prefetchQuery({
-    queryKey: compensationKeys.requestDetail(reqId, defaultParams),
-    queryFn: () => getCompensationRequestById(reqId, defaultParams),
-  });
-
-  await client.prefetchQuery({
-    queryKey: masterKeys.positionTypeLevels(),
-    queryFn: () => getPositionTypeLevelList(),
-  });
-
-  await client.prefetchQuery({
-    queryKey: masterKeys.agencies(),
-    queryFn: () => getStructureUnitList(),
-  });
-
-  await client.prefetchQuery({
-    queryKey: masterKeys.reviewer(),
-    queryFn: () => getReviewerList(),
-  });
-
-  await client.prefetchQuery({
-    queryKey: compensationKeys.groupsListCheckBox(reqId),
-    queryFn: () => getGroupsListCheckBox(reqId),
-  });
-
-  await client.prefetchQuery({
-    queryKey: masterKeys.permissions(),
-    queryFn: () => useGetPermissions(),
-  });
+  await Promise.all([
+    client.prefetchQuery({
+      queryKey: compensationKeys.requestDetail(reqId, defaultParams),
+      queryFn: () => getCompensationRequestById(reqId, defaultParams),
+    }),
+    client.prefetchQuery({
+      queryKey: masterKeys.positionTypeLevels(),
+      queryFn: () => getPositionTypeLevelList(),
+    }),
+    client.prefetchQuery({
+      queryKey: masterKeys.agencies(),
+      queryFn: () => getStructureUnitList(),
+    }),
+    client.prefetchQuery({
+      queryKey: masterKeys.reviewer(),
+      queryFn: () => getReviewerList(),
+    }),
+    client.prefetchQuery({
+      queryKey: compensationKeys.groupsListCheckBox(reqId),
+      queryFn: () => getGroupsListCheckBox(reqId),
+    }),
+    client.prefetchQuery({
+      queryKey: masterKeys.permissions(),
+      queryFn: () => useGetPermissions(),
+    }),
+  ]);
 
   return (
     <Hydrate state={dehydrate(client)}>
-      {/* <Hydrate state={null}> */}
       <CompensationRequestForm reqId={reqId} />
     </Hydrate>
   );
