@@ -2,7 +2,7 @@ import { MasterSelectProps } from "@/types/api";
 import { api } from "./api";
 import { MasterPermissionProps } from "@/types/compensation";
 
-const BASE = "/py";
+// const BASE = "/py";
 
 // ประเภทและระดับตำแหน่ง PY
 
@@ -11,7 +11,7 @@ export async function getPositionTypeLevelList(params?: {
 }): Promise<MasterSelectProps[]> {
   return api<MasterSelectProps[]>(
     "GET",
-    `${BASE}/payroll/master/position-levels`,
+    `/payroll/master/position-levels`,
     undefined,
     {
       plugin: "plugin",
@@ -25,15 +25,10 @@ export async function getPositionTypeLevelList(params?: {
 export async function getStructureUnitList(params?: {
   lang?: string;
 }): Promise<MasterSelectProps[]> {
-  return api<MasterSelectProps[]>(
-    "GET",
-    `${BASE}/payroll/master/units`,
-    undefined,
-    {
-      plugin: "plugin",
-      params,
-    },
-  );
+  return api<MasterSelectProps[]>("GET", `/payroll/master/units`, undefined, {
+    plugin: "plugin",
+    params,
+  });
 }
 
 // ผู้พิจารณา PY
@@ -43,7 +38,7 @@ export async function getReviewerList(params?: {
 }): Promise<MasterSelectProps[]> {
   return api<MasterSelectProps[]>(
     "GET",
-    `${BASE}/master-data/reviewers/options`,
+    `/master-data/reviewers/options`,
     undefined,
     {
       plugin: "plugin",
@@ -59,7 +54,7 @@ export async function getPermission(params?: {
 }): Promise<MasterPermissionProps> {
   return api<MasterPermissionProps>(
     "GET",
-    `${BASE}/master-data/permissions`,
+    `/master-data/permissions`,
     undefined,
     {
       plugin: "plugin",

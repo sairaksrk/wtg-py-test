@@ -4,11 +4,11 @@ import { authClient } from "../auth/auth-client";
 
 // 1. The Base Config
 // const BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
-// const BASE_URL = "http://localhost:3003" //test localhost
 const BASE_URL =
-  process.env.NEXT_PUBLIC_IS_LOCALE === "false"
-    ? `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL}`
-    : `http://localhost:3003`;
+  typeof window === "undefined"
+    ? process.env.INTERNAL_BASE_URL || "http://localhost:3000"
+    : "";
+// const BASE_URL = typeof window === "undefined" ? process.env.INTERNAL_BASE_URL || "http://localhost:3000" : (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3003")
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE"; // Standard for next-intl
 
 // 2. Client-Side Singletons per plugin (Reuse to keep interceptors alive)
@@ -84,10 +84,6 @@ export async function api<T = any>(
   data?: any,
   config: AxiosRequestConfig & {
     plugin?: "plugin" | "core" | "storage" | "master";
-    // | "master-data-rp"
-    // | "master-data-py"
-    // | "rp"
-    // | "py";
   } = {},
 ): Promise<T> {
   const isServer = typeof window === "undefined";
@@ -104,14 +100,6 @@ export async function api<T = any>(
 
     ...(config.headers || {}),
   };
-  // const headers: any = {
-  //   "x-api-key": String(process.env.NEXT_PUBLIC_X_API_KEY),
-  //   "x-internal-secret": String(process.env.NEXT_PUBLIC_INTERNAL_SECRET),
-  //   // ในอนาคตควรดึงจาก Session แต่ตอนนี้ใส่เป็นค่าคงที่
-  //   "x-user-id": "user-e01",
-  //   "x-organization-id": "706a10fd-269c-5efb-9633-b9b9221cfef7",
-  //   ...(config.headers || {}),
-  // };
   const configWithPlugin = { ...config, plugin: config.plugin || "plugin" };
   const pluginKey = configWithPlugin.plugin;
   let instance: AxiosInstance;
@@ -130,18 +118,6 @@ export async function api<T = any>(
     case "master":
       baseUrl = `${BASE_URL}/api/master`;
       break;
-    // case "master-data-rp":
-    //   baseUrl = `${BASE_URL}/api/rp/master-data`;
-    //   break;
-    // case "master-data-py":
-    //   baseUrl = `${BASE_URL}/api/py/master-data`;
-    //   break;
-    // case "rp":
-    //   baseUrl = `${BASE_URL}/api/rp`;
-    //   break;
-    // case "py":
-    //   baseUrl = `${BASE_URL}/api/py`;
-    //   break;
     default:
       baseUrl = `${BASE_URL}/api`;
       break;
