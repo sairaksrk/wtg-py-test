@@ -142,6 +142,18 @@ export function ConsultantTableRow({
     }
   };
 
+  // แปลงค่าที่ generated มาหลายทศนิยม ให้แสดงผลใน Input แล้วแต่ตำแหนง
+  const formatInputVal = (val: any) => {
+    if (val === undefined || val === null || val === "") return "";
+    const str = String(val);
+    const dotIdx = str.indexOf(".");
+    if (dotIdx !== -1 && str.length - dotIdx > 6) {
+      const num = parseFloat(str);
+      return isNaN(num) ? str : num.toFixed(5);
+    }
+    return str;
+  };
+
   return (
     <TableRow
       onDoubleClick={() => !readOnly && onEditClick(row)}
@@ -273,7 +285,7 @@ export function ConsultantTableRow({
       >
         {isEditing && roundtable === 1 ? (
           <Input
-            value={displayRow.allocQuotaPercentRound1 ?? ""}
+            value={formatInputVal(displayRow.allocQuotaPercentRound1) ?? ""}
             onChange={(e) =>
               handleQuotaLimitChange("allocQuotaPercentRound1", e.target.value)
             }
@@ -322,7 +334,7 @@ export function ConsultantTableRow({
           >
             {isEditing && roundtable === 2 ? (
               <Input
-                value={displayRow.allocQuotaPercentRound2 ?? ""}
+                value={formatInputVal(displayRow.allocQuotaPercentRound2) ?? ""}
                 onChange={(e) =>
                   handleQuotaLimitChange(
                     "allocQuotaPercentRound2",
@@ -376,7 +388,7 @@ export function ConsultantTableRow({
           >
             {isEditing && roundtable === 3 ? (
               <Input
-                value={displayRow.allocQuotaPercentRound3 ?? ""}
+                value={formatInputVal(displayRow.allocQuotaPercentRound3) ?? ""}
                 onChange={(e) =>
                   handleQuotaLimitChange(
                     "allocQuotaPercentRound3",
