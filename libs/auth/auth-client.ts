@@ -37,6 +37,7 @@ export interface CustomSession {
     id: string;
     email: string;
     username: string;
+    image?: string | null;
   };
 }
 interface ModulesMenu {
@@ -44,7 +45,7 @@ interface ModulesMenu {
   parentId: string;
   nameTh: string;
   nameEn: string;
-  type: "MENU" | "ACTION";
+  type: "menu" | "action";
   url: string;
   modules: ModulesMenu[];
 }

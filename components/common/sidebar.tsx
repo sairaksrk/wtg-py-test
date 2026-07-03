@@ -2,40 +2,50 @@
 
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { UserProfileAvatar } from "@/components/common/user-profile-avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { authClient, useSession } from "@/libs/auth/auth-client";
 import { cn } from "@/utils/helpers";
-import { MOCKUP_MENU } from "@/libs/constants/menu";
 
 interface SidebarProps {
   activeSection?: string;
   isOpen?: boolean;
   onToggle?: () => void;
+  modulesOnly?: boolean;
 }
 
-export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
+export default function Sidebar({
+  isOpen = true,
+  onToggle,
+  modulesOnly = false,
+}: SidebarProps) {
   const { data: session } = useSession();
-
-  // Use real menu if available, otherwise fallback to mockup
-  const mockupSession = useMemo(() => {
-    if (session?.menu && session.menu.length > 0) {
-      return session.menu;
-    }
-    return MOCKUP_MENU;
-  }, [session?.menu]);
-
-  const [active, setActive] = useState<string>("rp");
+  const [active, setActive] = useState<string>(
+    process.env.NEXT_PUBLIC_API_PREFIX || "",
+  );
   const pathname = usePathname();
   const locale = useLocale();
+  const t = useTranslations("common");
 
-  const { push, refresh } = useRouter();
+  const { push } = useRouter();
   const [collapsedItems, setCollapsedItems] = useState<Record<string, boolean>>(
     {},
   );
+  const [showNavMenu, setShowNavMenu] = useState(!modulesOnly);
+
+  useEffect(() => {
+    setShowNavMenu(!modulesOnly);
+  }, [modulesOnly]);
 
   const toggleCollapse = (title: string, currentOpenState: boolean) => {
     setCollapsedItems((prev) => ({
@@ -132,7 +142,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
             className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 min-h-0 flex-1 overflow-x-hidden overflow-y-auto pr-1"
           >
             <div className="flex flex-col items-center gap-4 pb-2">
-              {mockupSession.map((menu: any, index: number) => {
+              {session?.menu.map((menu, index) => {
                 const isActive = active === menu.code;
 
                 return (
@@ -146,6 +156,9 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                     onClick={() => {
                       setActive(menu.code);
                       sessionStorage.clear();
+                      if (modulesOnly) {
+                        setShowNavMenu(true);
+                      }
                     }}
                     title={menu.nameTh}
                     className={cn(
@@ -193,33 +206,43 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
               </motion.button>
             )}
 
-            {/* User/Logout Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={async () => {
-                await authClient.signOut();
-                refresh();
-              }}
-              className="flex size-11 cursor-pointer items-center justify-center rounded-full text-black transition-colors"
-            >
-              <div className="relative h-full w-full">
-                <Image
-                  src="/profile-img.jpg"
-                  alt="Profile Image"
-                  className="rounded-full object-cover"
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  fill
-                />
-              </div>
-            </motion.button>
+            {/* User Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex size-11 cursor-pointer items-center justify-center rounded-full text-black transition-colors"
+                >
+                  <div className="relative h-full w-full">
+                    <UserProfileAvatar imagePath={session?.user?.image} />
+                  </div>
+                </motion.button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="right"
+                align="end"
+                className="min-w-56 rounded-xl"
+              >
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={async () => {
+                    await authClient.signOut();
+                    window.location.href = `${process.env.NEXT_PUBLIC_CORE_URL}/login`;
+                  }}
+                >
+                  <Icon icon="solar:logout-outline" />
+                  {t("logout")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
         {/* Sidebar ที่สอง - Main Navigation Menu */}
         {/* Show on mobile when open, show on desktop when not collapsed */}
         <AnimatePresence>
-          {isOpen && (
+          {isOpen && showNavMenu && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -234,23 +257,18 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                 className="text-foreground mb-8 shrink-0 text-xl font-medium whitespace-pre-wrap"
               >
                 {nameLocalize(
-                  //   session?.menu.find((item) => item.code === active)?.nameTh ||
-                  //     "",
-                  //   session?.menu.find((item) => item.code === active)?.nameEn ||
-                  //     "",
-                  mockupSession?.find((item: any) => item.code === active)
-                    ?.nameTh || "",
-                  mockupSession?.find((item: any) => item.code === active)
-                    ?.nameEn || "",
+                  session?.menu.find((item) => item.code === active)?.nameTh ||
+                    "",
+                  session?.menu.find((item) => item.code === active)?.nameEn ||
+                    "",
                 )}
               </motion.h1>
 
               <ul className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 min-h-0 flex-1 space-y-2 overflow-x-hidden overflow-y-auto pr-2">
-                {/* {session?.menu */}
-                {mockupSession
-                  .find((item: any) => item.code === active)
-                  ?.modules.filter((item: any) => item.type === "menu")
-                  .map((item: any, index: any) => {
+                {session?.menu
+                  .find((item) => item.code === active)
+                  ?.modules.filter((item) => item.type === "menu")
+                  .map((item, index) => {
                     const hasChildren = item.modules && item.modules.length > 0;
                     const furl =
                       session?.menu.find((item) => item.code === active)
@@ -259,7 +277,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                     // Check if any child is active
                     const isAnyChildActive = hasChildren
                       ? item.modules?.some(
-                          (child: any) =>
+                          (child) =>
                             pathname === child.url ||
                             pathname.startsWith(`${child.url}/`),
                         )
@@ -299,45 +317,43 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                           {/* Submenu */}
                           {isOpen && (
                             <ul className="mt-1 space-y-1">
-                              {item.modules?.map(
-                                (subItem: any, subIndex: any) => {
-                                  const isSubActive = pathname === subItem.url;
-                                  return (
-                                    <motion.li
-                                      key={subItem.nameTh}
-                                      initial={{ opacity: 0, x: -5 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      transition={{
-                                        delay: 0.2 + subIndex * 0.05,
-                                      }}
+                              {item.modules?.map((subItem, subIndex) => {
+                                const isSubActive = pathname === subItem.url;
+                                return (
+                                  <motion.li
+                                    key={subItem.nameTh}
+                                    initial={{ opacity: 0, x: -5 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{
+                                      delay: 0.2 + subIndex * 0.05,
+                                    }}
+                                  >
+                                    <Link
+                                      href={`${furl}${subItem.url}`}
+                                      onClick={() => sessionStorage.clear()}
                                     >
-                                      <Link
-                                        href={`${furl}${subItem.url}`}
-                                        onClick={() => sessionStorage.clear()}
+                                      <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className={cn(
+                                          "flex w-full text-left gap-2 rounded-lg pr-4 py-2 transition-all cursor-pointer pl-10",
+                                          isSubActive
+                                            ? "bg-linear-to-r from-[#BFDBFE00] to-[#BFDBFE] text-primary"
+                                            : "text-foreground hover:bg-white/50",
+                                        )}
                                       >
-                                        <motion.button
-                                          whileHover={{ scale: 1.02 }}
-                                          whileTap={{ scale: 0.98 }}
-                                          className={cn(
-                                            "flex w-full text-left gap-2 rounded-lg pr-4 py-2 transition-all cursor-pointer pl-10",
-                                            isSubActive
-                                              ? "bg-linear-to-r from-[#BFDBFE00] to-[#BFDBFE] text-primary"
-                                              : "text-foreground hover:bg-white/50",
+                                        {/* {subItem.icon && <Icon icon={subItem.icon} />} */}
+                                        <span>
+                                          {nameLocalize(
+                                            subItem.nameTh,
+                                            subItem.nameEn,
                                           )}
-                                        >
-                                          {/* {subItem.icon && <Icon icon={subItem.icon} />} */}
-                                          <span>
-                                            {nameLocalize(
-                                              subItem.nameTh,
-                                              subItem.nameEn,
-                                            )}
-                                          </span>
-                                        </motion.button>
-                                      </Link>
-                                    </motion.li>
-                                  );
-                                },
-                              )}
+                                        </span>
+                                      </motion.button>
+                                    </Link>
+                                  </motion.li>
+                                );
+                              })}
                             </ul>
                           )}
                         </motion.li>
