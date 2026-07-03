@@ -8,7 +8,10 @@ const BASE_URL =
   typeof window === "undefined"
     ? process.env.INTERNAL_BASE_URL || "http://localhost:3000"
     : "";
-// const BASE_URL = typeof window === "undefined" ? process.env.INTERNAL_BASE_URL || "http://localhost:3000" : (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3003")
+// const BASE_URL =
+//   typeof window === "undefined"
+//     ? process.env.INTERNAL_BASE_URL || "http://localhost:3000"
+//     : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3006";
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE"; // Standard for next-intl
 
 // 2. Client-Side Singletons per plugin (Reuse to keep interceptors alive)
