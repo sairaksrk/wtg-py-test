@@ -111,6 +111,7 @@ export function ComboboxMulti(props: ComboboxMultiProps) {
             setOpen(isOpen);
             setIsFocused(isOpen);
           }}
+          modal={true}
         >
           <PopoverTrigger asChild>
             <div
