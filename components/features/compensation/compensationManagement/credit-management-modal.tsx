@@ -429,21 +429,7 @@ export function CreditManagementModal({
                 control={control}
                 render={({ field }) => (
                   <ComboboxMulti
-                    options={
-                      // structureUnitData ||
-                      [
-                        { value: "1", label: "mockup 1" },
-                        { value: "2", label: "mockup 2" },
-                        { value: "3", label: "mockup 3" },
-                        { value: "4", label: "mockup 4" },
-                        { value: "5", label: "mockup 5" },
-                        { value: "6", label: "mockup 6" },
-                        { value: "7", label: "mockup 7" },
-                        { value: "8", label: "mockup 8" },
-                        { value: "9", label: "mockup 9" },
-                        { value: "10", label: "mockup 10" },
-                      ]
-                    }
+                    options={structureUnitData || []}
                     value={field.value || []}
                     valueType="string"
                     onChange={(value) => {
