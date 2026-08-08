@@ -162,13 +162,20 @@ export function ConsultantTableRow({
         isEditing ? "bg-blue-50/30" : "hover:bg-gray-50/30",
       )}
     >
-      <TableCell className="py-5 text-foreground">{row.positionNo}</TableCell>
-      <TableCell className="py-5">
+      {/* ชื่อ-นามสกุล */}
+      <TableCell
+        className={cn(
+          "sticky left-0 z-10 py-5",
+          isEditing ? "bg-[#f8faff]" : "bg-white",
+        )}
+      >
         <div className="flex flex-col">
           <span className="text-foreground text-base">{row.name}</span>
           <span className="text-sm text-subdude">{row.subPosition}</span>
         </div>
       </TableCell>
+
+      <TableCell className="py-5 text-foreground">{row.positionNo}</TableCell>
       <TableCell className="py-5 text-foreground">{row.type}</TableCell>
       <TableCell className="py-5 text-foreground">{row.department}</TableCell>
       <TableCell className="py-5 text-left text-foreground">

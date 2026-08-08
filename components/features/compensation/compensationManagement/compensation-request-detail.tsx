@@ -856,7 +856,7 @@ export default function CompensationRequestDetail({
 
       {/* Sticky Footer */}
       {!isCompleted && (
-        <footer className="rounded-full bg-white px-6 py-4 sticky bottom-0 z-10">
+        <footer className="rounded-full bg-white px-10 py-4 sticky -bottom-4 z-30">
           <div className="flex items-center justify-between gap-3">
             <Button
               variant="outline"

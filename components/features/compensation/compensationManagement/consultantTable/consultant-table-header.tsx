@@ -8,15 +8,17 @@ interface ConsultantTableHeaderProps {
   roundtable?: number;
 }
 
-export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderProps) {
+export function ConsultantTableHeader({
+  roundtable = 1,
+}: ConsultantTableHeaderProps) {
   return (
     <TableHeader className="bg-white">
       <TableRow className="border-b border-gray-100">
+        <TableHead className="sticky left-0 z-10 bg-white w-74 font-normal text-subdude py-6 text-sm">
+          ชื่อ-นามสกุล
+        </TableHead>
         <TableHead className="w-32 font-normal text-subdude py-6 text-sm">
           เลขที่ตำแหน่ง
-        </TableHead>
-        <TableHead className="w-74 font-normal text-subdude py-6 text-sm">
-          ชื่อ-นามสกุล
         </TableHead>
         <TableHead className="w-30 font-normal text-subdude py-6 text-sm">
           ประเภท
@@ -39,20 +41,20 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         </TableHead>
 
         {/* ส่วนบริหารวงเงิน */}
-        <TableHead 
+        <TableHead
           className={cn(
             "w-48 font-normal py-6 text-center text-sm transition-colors",
-            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude"
+            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude",
           )}
         >
           จัดสรรร้อยละรอบที่ 1 (%)
         </TableHead>
-        
+
         {roundtable >= 2 && (
-          <TableHead 
+          <TableHead
             className={cn(
               "w-48 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude"
+              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude",
             )}
           >
             จัดสรรร้อยละรอบที่ 2 (%)
@@ -60,10 +62,10 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         )}
 
         {roundtable >= 3 && (
-          <TableHead 
+          <TableHead
             className={cn(
               "w-48 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude"
+              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude",
             )}
           >
             จัดสรรร้อยละรอบที่ 3 (%)
@@ -74,7 +76,7 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
         <TableHead
           className={cn(
             "w-89 font-normal py-6 text-center text-sm transition-colors",
-            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude"
+            roundtable === 1 ? "bg-[#FACC15] " : "text-subdude",
           )}
           colSpan={2}
         >
@@ -85,7 +87,7 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
           <TableHead
             className={cn(
               "w-89 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude"
+              roundtable === 2 ? "bg-[#FACC15] " : "text-subdude",
             )}
             colSpan={2}
           >
@@ -97,7 +99,7 @@ export function ConsultantTableHeader({ roundtable = 1 }: ConsultantTableHeaderP
           <TableHead
             className={cn(
               "w-89 font-normal py-6 text-center text-sm transition-colors",
-              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude"
+              roundtable === 3 ? "bg-[#FACC15] " : "text-subdude",
             )}
             colSpan={2}
           >
